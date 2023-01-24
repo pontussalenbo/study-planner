@@ -29,6 +29,6 @@ dist-ssr
 *.csproj.user
 *.sln
 *.sln.docstates
-.vs/*
+**/.vs/*
 **/obj/*
 **/bin/*
