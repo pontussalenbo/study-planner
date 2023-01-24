@@ -22,3 +22,13 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+
+# Visual studio
+*.csproj
+*.csproj.user
+*.sln
+*.sln.docstates
+.vs/*
+**/obj/*
+**/bin/*
