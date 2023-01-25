@@ -11,7 +11,7 @@ declare namespace Course {
 	export interface TimePlan {
 		startSpNr: number;
 		endSpNr: number;
-		studyPeriods: StudyPeriod[];
+		studyPeriods: (StudyPeriod | null)[];
 	}
 
 	export interface CourseData {
@@ -40,7 +40,7 @@ declare namespace Course {
 		motherDepartmentCode: string;
 		motherDepartment_sv: string;
 		motherDepartment_en: string;
-		maxParticipants: number;
+		maxParticipants: number | null;
 		entryRequirements: number;
 		assumedPriorKnowledge: number;
 		timeeditUrl_sv: string;
@@ -68,8 +68,8 @@ declare namespace Course {
 		specialisation_sv: string;
 		specialisation_en: string;
 		specialisationGeneral: number;
-		footnote_sv: string;
-		footnote_en: string;
+		footnote_sv: string | null;
+		footnote_en: string | null;
 		timePlans: TimePlan[];
 	}
 }
