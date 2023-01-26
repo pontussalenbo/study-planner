@@ -45,8 +45,21 @@ const getPeriodsForCourse = (course: Course.CourseData) => {
 		.filter(_ => !!_);
 
 	const dom = [Math.min(...periods), Math.max(...periods) + 1];
-	return { name: course.courseCode, periods: dom };
+	return dom;
 };
+
+const getCourseData = (course: Course.CourseData) => {
+	const periods = getPeriodsForCourse(course);
+	const data = {
+		courseCode: course.courseCode,
+		credits: Number.parseInt(course.credits, 10),
+		cycle: course.cycle,
+		name_en: course.name_en,
+		periods
+	};
+	return data;
+};
+
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const Table = <T extends Record<any, any>>({
 	headers,
@@ -57,14 +70,18 @@ const Table = <T extends Record<any, any>>({
 	usePagination = false
 }: ITableProps<T>) => {
 	const [page, setPage] = useState(1);
+
 	const { slice } = useTable(data, page, rowsPerPage);
+
 	return (
 		<>
 			<table className={styles.table}>
 				<thead className={styles.tableRowHeader}>
 					<tr>
 						{headers.map(header => (
-							<th className={styles.tableHeader}>{header}</th>
+							<th key={header} className={styles.tableHeader}>
+								{header}
+							</th>
 						))}
 					</tr>
 				</thead>
@@ -83,7 +100,7 @@ const Table = <T extends Record<any, any>>({
 								<button
 									onClick={() =>
 										addCourse(
-											getPeriodsForCourse(
+											getCourseData(
 												el as unknown as Course.CourseData
 											)
 										)

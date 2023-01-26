@@ -1,4 +1,7 @@
 export interface CourseData {
-    name: string;
+    courseCode: string;
+    credits: number;
+    cycle: string;
+    name_en: string;
     periods: number[];
 }

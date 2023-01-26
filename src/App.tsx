@@ -14,11 +14,41 @@ function getUniqueListBy(
 }
 
 const INIT_STATE = [
-	{ name: 'EDAN40', periods: [1, 2] },
-	{ name: 'ETSN01', periods: [1, 2] },
-	{ name: 'EDAA01', periods: [2, 3] },
-	{ name: 'EDAF50', periods: [3, 4] },
-	{ name: 'EITF35', periods: [4, 5] }
+	{
+		name_en: 'EDAN40',
+		periods: [1, 2],
+		credits: 7.5,
+		cycle: 'A',
+		courseCode: 'EDAN40'
+	},
+	{
+		name_en: 'ETSN01',
+		periods: [1, 2],
+		credits: 7.5,
+		cycle: 'A',
+		courseCode: 'ETSN01'
+	},
+	{
+		name_en: 'EDAA01',
+		periods: [2, 3],
+		credits: 7.5,
+		cycle: 'G2',
+		courseCode: 'EDAA01'
+	},
+	{
+		name_en: 'EDAF50',
+		periods: [3, 4],
+		credits: 7.5,
+		cycle: 'A',
+		courseCode: 'EDAF50'
+	},
+	{
+		name_en: 'EITF35',
+		periods: [4, 5],
+		credits: 7.5,
+		cycle: 'G1',
+		courseCode: 'EITF35'
+	}
 ];
 
 const App = () => {
@@ -40,6 +70,7 @@ const App = () => {
 		// TODO: fix type error?
 		const coursesFilter = getUniqueListBy(courses, 'courseCode');
 		setProgrammeCourses(coursesFilter);
+		console.log('YOU FUCKED UP');
 	}, []);
 
 	return (

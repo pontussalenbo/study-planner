@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import useFetch from './useFetch';
 
 const calculateRange = <T,>(data: T[], rowsPerPage: number) => {
 	const range = [];

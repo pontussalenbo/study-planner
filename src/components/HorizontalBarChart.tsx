@@ -43,7 +43,7 @@ const HorizontalBarChart = ({ courses }: ICourseProps) => (
 				}}
 				width={100}
 				type='category'
-				dataKey='name'
+				dataKey='name_en'
 			/>
 			<Bar barSize={30} dataKey='periods' fill='green' />
 		</BarChart>
