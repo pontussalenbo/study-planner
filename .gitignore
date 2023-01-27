@@ -33,4 +33,4 @@ dist-ssr
 **/obj/*
 **/bin/*
 
-common/db/
+common/db/data/
