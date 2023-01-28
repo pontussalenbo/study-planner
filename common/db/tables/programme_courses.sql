@@ -1,3 +1,5 @@
+PRAGMA foreign_keys = off;
+
 DROP TABLE IF EXISTS programme_courses;
 CREATE TABLE programme_courses (
     course_code TEXT,
