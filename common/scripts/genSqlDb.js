@@ -1,9 +1,8 @@
 const fs = require('fs').promises;
 const path = require('path');
-const inquirer = require('inquirer');
 
-const { DB_TABLES } = require('./utils/constants');
-const courses = require('../data/courses.json');
+const { FILE_PATHS } = require('./utils/constants');
+const courses = require('../data/courses_all.json');
 
 /**
  * Generate array of unique entries by given key
@@ -62,13 +61,13 @@ const SQL_KEYWORDS = ['PRIMARY', 'FOREIGN', 'REFERENCES', 'NOT NULL', 'UNIQUE'];
  */
 async function getKeyMapfromSQLTable(table) {
     try {
-        const data = await readFile(`db/tables/${table}.sql`, 'utf8');
+        const data = await readFile(`${FILE_PATHS.DB_TABLES}/${table}.sql`, 'utf8');
         // Advanced regex to get the string between (...);
         const regex = /(?<=(\()).*?(?=(\);))/s;
         const res = regex.exec(data)[0].trim();
         return res;
     } catch (error) {
-    /** Something went wrong :( */
+        /** Something went wrong :( */
         return console.log(error);
     }
 }
@@ -89,8 +88,29 @@ const SqlToJsonType = new Map()
  * @param {string} table name of the table
  * @returns string representation of the table mappings
  */
+
 async function getTableMappings(table) {
-    return readFile(`db/tables/${table}_mappings.json`, 'utf8');
+    return readFile(`${FILE_PATHS.DB_TABLES_MAPPINGS}/${table}_mappings.json`, 'utf8');
+}
+
+function mapTableKeyWithJsonKey(table, jsonMappings) {
+    // Remove beautiful whitespace
+    const line = table.trim().slice(0, -1);
+    // If the key is a SQL keyword, we dont want to include it in our json
+    const isKeyword = SQL_KEYWORDS.some((x) => line.startsWith(x));
+    if (isKeyword) return null;
+    // Get the key and type from the string
+    const [key, type] = line.split(' ');
+
+    // Get the type from the string BEFORE the length is defined
+    const typeRegex = /^[^\\(]*/;
+    const [jsontype] = typeRegex.exec(type);
+
+    return {
+        tableKey: key,
+        type: SqlToJsonType.get(jsontype),
+        jsonKey: jsonMappings[key],
+    };
 }
 
 /**
@@ -107,25 +127,11 @@ async function mapPropToType(tableName, table) {
     // remove newlines and split on comma, get array of strings containing table keys and types
     const tableStr = table.replace(/\n\s*\n/g, '\n').split(/\r?\n/);
 
-    return tableStr.map((prop) => {
-        // Remove beautiful whitespace
-        const line = prop.trim().slice(0, -1);
-        // If the key is a SQL keyword, we dont want to include it in our json
-        const isKeyword = SQL_KEYWORDS.some((x) => line.startsWith(x));
-        if (isKeyword) return null;
-        // Get the key and type from the string
-        const [key, type] = line.split(' ');
-
-        // Get the type from the string BEFORE the length is defined
-        const typeRegex = /^[^\\(]*/;
-        const [jsontype] = typeRegex.exec(type);
-
-        return {
-            tableKey: key,
-            type: SqlToJsonType.get(jsontype),
-            jsonKey: mappings[key],
-        };
-    }).filter((_) => !!_);
+    return tableStr.reduce((memo, it) => {
+        const res = mapTableKeyWithJsonKey(it, mappings);
+        if (res) memo.push(res);
+        return memo;
+    }, []);
 }
 
 function getCoursePeriodSQLStmt(course) {
@@ -155,7 +161,7 @@ function getCoursePeriodSQLStmt(course) {
  * @returns string representation of the table
  */
 async function getSQLTable(tableName) {
-    return readFile(`db/tables/${tableName}.sql`, 'utf8');
+    return readFile(`${FILE_PATHS.DB_TABLES}//${tableName}.sql`, 'utf8');
 }
 /**
  * This is where the magic happens
@@ -166,7 +172,7 @@ async function genSqlStmt({ jsonKeys, tableName }) {
     // Read SQL table from file
     const table = await getSQLTable(tableName);
     // Add SQL syntax to the beginning of the file
-    let SQLStmt = `${table}\nBEGIN TRANSACTION;\n\nINSERT OR REPLACE`;
+    let SQLStmt = `${table}\n\nINSERT OR REPLACE`;
 
     console.log(`Generating ${tableName}...`);
 
@@ -176,8 +182,8 @@ async function genSqlStmt({ jsonKeys, tableName }) {
 
         SQLStmt += `\nINTO ${tableName}(${tableKeys})\nVALUES`;
 
-        const uniqueCourses = getUniqueListBy(courses, 'courseCode');
-        uniqueCourses.forEach((course) => {
+        // const uniqueCourses = getUniqueListBy(courses, 'courseCode');
+        courses.forEach((course) => {
             // Begin the row value statement
             SQLStmt += '\n      (';
 
@@ -209,9 +215,9 @@ async function genSqlStmt({ jsonKeys, tableName }) {
         // Remove last comma to prevent syntax error
         const data = SQLStmt.slice(0, -1);
         // create directory if it does not exist
-        await fs.mkdir('db/data', { recursive: true });
+        await fs.mkdir(`${FILE_PATHS.DB_DATA_OUT_DIR}`, { recursive: true });
         // Write to file
-        await fs.writeFile(`db/data/${tableName}.sql`, data, 'utf8');
+        await fs.writeFile(`${FILE_PATHS.DB_DATA_OUT_DIR}/${tableName}.sql`, data, 'utf8');
     } catch (error) {
         console.log(`Error generating ${tableName}`);
         console.log(error);
@@ -221,22 +227,8 @@ async function genSqlStmt({ jsonKeys, tableName }) {
 // Generate Array of objects with key and value from Map data structure
 const mapToArray = (map) => Array.from(map, ([name, value]) => ({ name, value }));
 
-const generalQuestions = [
-    {
-        type: 'checkbox',
-        name: 'db',
-        message: 'Which Databases would you like to update?',
-        choices: DB_TABLES,
-    },
-];
-
-// Self invoking async function, i.e run this function immediately
-// when the script is run
-(async () => {
-    const { db } = await inquirer.prompt(generalQuestions);
-    db.forEach(async (tableName) => {
-        const keyMappings = await getKeyMapfromSQLTable(tableName);
-        const jsonKeys = await mapPropToType(tableName, keyMappings);
-        genSqlStmt({ jsonKeys, tableName });
-    });
-})();
+module.exports = {
+    getKeyMapfromSQLTable,
+    mapPropToType,
+    genSqlStmt,
+};

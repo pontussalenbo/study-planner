@@ -4,7 +4,7 @@
 	"description": "",
 	"main": "index.js",
 	"scripts": {
-		"db-cli": "node ./scripts/genSqlDb.js"
+		"db-cli": "node ./scripts/cli.js"
 	},
 	"author": "",
 	"license": "ISC",
