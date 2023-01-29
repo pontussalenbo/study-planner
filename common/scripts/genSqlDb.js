@@ -1,8 +1,10 @@
 const fs = require('fs').promises;
 const path = require('path');
 const inquirer = require('inquirer');
-const { mkdir } = require('fs');
+
+const { DB_TABLES } = require('./utils/constants');
 const courses = require('../data/courses.json');
+
 /**
  * Generate array of unique entries by given key
  * @param {array} arr array to remove duplicates entries from
@@ -101,13 +103,15 @@ async function mapPropToType(tableName, table) {
     // Get the mappings from the json file, i.e which json key corresponds to which sql key
     const mappingsString = await getTableMappings(tableName);
     const mappings = JSON.parse(mappingsString);
+
     // remove newlines and split on comma, get array of strings containing table keys and types
-    const tableStr = table.replace(/\n\s*\n/g, '\n').split('\r\n');
+    const tableStr = table.replace(/\n\s*\n/g, '\n').split(/\r?\n/);
+
     return tableStr.map((prop) => {
         // Remove beautiful whitespace
         const line = prop.trim().slice(0, -1);
         // If the key is a SQL keyword, we dont want to include it in our json
-        const isKeyword = SQL_KEYWORDS.some((x) => line.includes(x));
+        const isKeyword = SQL_KEYWORDS.some((x) => line.startsWith(x));
         if (isKeyword) return null;
         // Get the key and type from the string
         const [key, type] = line.split(' ');
@@ -173,7 +177,7 @@ async function genSqlStmt({ jsonKeys, tableName }) {
         SQLStmt += `\nINTO ${tableName}(${tableKeys})\nVALUES`;
 
         const uniqueCourses = getUniqueListBy(courses, 'courseCode');
-        uniqueCourses.map((course) => {
+        uniqueCourses.forEach((course) => {
             // Begin the row value statement
             SQLStmt += '\n      (';
 
@@ -216,162 +220,6 @@ async function genSqlStmt({ jsonKeys, tableName }) {
 
 // Generate Array of objects with key and value from Map data structure
 const mapToArray = (map) => Array.from(map, ([name, value]) => ({ name, value }));
-
-/**
- * ALL MAPPINGS FOR TABLES AND KEYS ARE DEFINED HERE
- */
-const COURSES_INFO_TABLE = 'courses_info';
-const keyMapCoursesInfo = [
-    {
-        jsonKey: 'courseCode',
-        type: 'string',
-        tableKey: 'course_code',
-    },
-    {
-        jsonKey: 'name_sv',
-        type: 'string',
-        tableKey: 'course_name_sv',
-    },
-    {
-        jsonKey: 'name_en',
-        type: 'string',
-        tableKey: 'course_name_en',
-    },
-    {
-        jsonKey: 'credits',
-        type: 'number',
-        tableKey: 'credits',
-    },
-    {
-        jsonKey: 'cycle',
-        type: 'string',
-        tableKey: 'level',
-    },
-];
-
-const PROGRAMME_COURSE_TABLE = 'programme_courses';
-const keyMapProgrammeCourse = [
-    {
-        jsonKey: 'programmeCode',
-        type: 'string',
-        tableKey: 'programme_code',
-    },
-    {
-        jsonKey: 'courseCode',
-        type: 'string',
-        tableKey: 'course_code',
-    },
-];
-
-const COURSE_PERIODS_TABLE = 'course_period';
-const keyMapCoursePeriods = [
-    {
-        jsonKey: 'courseCode',
-        type: 'string',
-        tableKey: 'course_code',
-    },
-    {
-        jsonKey: 'periodStart',
-        type: 'number',
-        tableKey: 'period_start',
-    },
-    {
-        jsonKey: 'periodEnd',
-        type: 'number',
-        tableKey: 'period_end',
-    },
-];
-
-const PROGRAMMES_TABLE = 'programmes';
-const keyMapProgrammes = [
-    {
-        jsonKey: 'programmeCode',
-        type: 'string',
-        tableKey: 'programme_code',
-    },
-    {
-        jsonKey: 'programme_sv',
-        type: 'string',
-        tableKey: 'programme_name_sv',
-    },
-    {
-        jsonKey: 'programme_en',
-        type: 'string',
-        tableKey: 'programme_name_en',
-    },
-];
-
-const COURSE_MASTER_TABLE = 'masters';
-const keyMapCourseMaster = [
-    {
-        jsonKey: 'specialisationCode',
-        type: 'string',
-        tableKey: 'master_code',
-    },
-    {
-        jsonKey: 'specialisation_sv',
-        type: 'string',
-        tableKey: 'master_name_sv',
-    },
-    {
-        jsonKey: 'specialisation_en',
-        type: 'string',
-        tableKey: 'master_name_en',
-    },
-];
-
-const PROGRAMME_MASTERS_TABLE = 'programme_masters';
-const keyMapProgrammeMasters = [
-    {
-        jsonKey: 'programmeCode',
-        type: 'string',
-        tableKey: 'programme_code',
-    },
-    {
-        jsonKey: 'specialisationCode',
-        type: 'string',
-        tableKey: 'master_code',
-    },
-];
-
-const MASTER_COURSES_TABLE = 'masters_courses';
-const keyMapMasterCourses = [
-    {
-        jsonKey: 'specialisationCode',
-        type: 'string',
-        tableKey: 'master_code',
-    },
-    {
-        jsonKey: 'courseCode',
-        type: 'string',
-        tableKey: 'course_code',
-    },
-];
-
-/**
- * Simple hashmap to store all the mappings
- * between table names and their respective keys
- * in course json file
- * @deprecated
-*/
-const SimpleHashMap = new Map()
-    .set(COURSES_INFO_TABLE, keyMapCoursesInfo)
-    .set(PROGRAMME_COURSE_TABLE, keyMapProgrammeCourse)
-    .set(COURSE_PERIODS_TABLE, keyMapCoursePeriods)
-    .set(PROGRAMMES_TABLE, keyMapProgrammes)
-    .set(COURSE_MASTER_TABLE, keyMapCourseMaster)
-    .set(PROGRAMME_MASTERS_TABLE, keyMapProgrammeMasters)
-    .set(MASTER_COURSES_TABLE, keyMapMasterCourses);
-
-/*
-const keyMap = getKeyMapfromSQLTable(TABLE).then((res) => {
-    console.log(res);
-    const x = mapPropToType(TABLE, res);
-    return x;
-}).then(console.log);
-
-*/
-const DB_TABLES = Array.from(SimpleHashMap.keys());
 
 const generalQuestions = [
     {
