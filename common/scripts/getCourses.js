@@ -42,4 +42,4 @@ async function main({ programmeCode, classes }) {
     fs.writeFileSync('courses.json', JSON.stringify(unwrap.flat(2)));
 }
 
-main();
+main({ programmeCode: ['D'], classes: ['H19', 'H18'] });

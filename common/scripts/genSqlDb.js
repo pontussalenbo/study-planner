@@ -2,7 +2,7 @@ const fs = require('fs').promises;
 const path = require('path');
 
 const { FILE_PATHS } = require('./utils/constants');
-const courses = require('../data/courses_all.json');
+const courses = require('../data/courses_class_sens.json');
 
 /**
  * Generate array of unique entries by given key
@@ -95,13 +95,14 @@ async function getTableMappings(table) {
 
 function mapTableKeyWithJsonKey(table, jsonMappings) {
     // Remove beautiful whitespace
-    const line = table.trim().slice(0, -1);
+    const line = table.trim();//.slice(0, -1);
+    console.log(line);
     // If the key is a SQL keyword, we dont want to include it in our json
     const isKeyword = SQL_KEYWORDS.some((x) => line.startsWith(x));
     if (isKeyword) return null;
     // Get the key and type from the string
-    const [key, type] = line.split(' ');
-
+    const [key, type] = line.replace(',', '').split(' ');
+    console.log(key, type);
     // Get the type from the string BEFORE the length is defined
     const typeRegex = /^[^\\(]*/;
     const [jsontype] = typeRegex.exec(type);
@@ -177,7 +178,7 @@ async function genSqlStmt({ jsonKeys, tableName }) {
     console.log(`Generating ${tableName}...`);
 
     try {
-    // Get all table columns as a comma separated string
+        // Get all table columns as a comma separated string
         const tableKeys = jsonKeys.map((key) => key.tableKey).join(', ');
 
         SQLStmt += `\nINTO ${tableName}(${tableKeys})\nVALUES`;

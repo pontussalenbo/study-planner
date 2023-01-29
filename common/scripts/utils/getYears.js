@@ -1,17 +1,11 @@
-const { END_YEAR, START_YEAR } = require('./constants');
-
-function generateArrayOfYears() {
-    const max = END_YEAR;
-    const min = START_YEAR;
+function generateArrayOfYears(START_YEAR, END_YEAR) {
     const years = [];
 
-    for (let i = max; i >= min; i -= 1) {
+    for (let i = END_YEAR; i >= START_YEAR; i -= 1) {
         years.push(`H${i.toString().slice(-2)}`);
     }
     return years;
 }
-
-console.log(generateArrayOfYears());
 
 module.exports = generateArrayOfYears;
 module.exports.default = module.exports;
