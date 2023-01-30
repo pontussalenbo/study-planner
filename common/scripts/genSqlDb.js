@@ -4,21 +4,6 @@ const path = require('path');
 const { FILE_PATHS } = require('./utils/constants');
 const courses = require('../data/courses_new.json');
 
-/**
- * Generate array of unique entries by given key
- * @param {array} arr array to remove duplicates entries from
- * @param {*} key key to use for comparison when filtering duplicates
- * @returns array of unique entries
- */
-function getUniqueListBy(arr, key) {
-    // Generate 2d array holding key value pairs
-    const MapItems = arr.map((item) => [item[key], item]);
-    // Create a map from the 2d array
-    const map = new Map(MapItems);
-    // Spread the map into an array and return it
-    return [...map.values()];
-}
-
 async function readFile(filepath) {
     return fs.readFile(path.join(__dirname, `../${filepath}`), 'utf8');
 }
@@ -64,8 +49,8 @@ async function getKeyMapfromSQLTable(table) {
         const data = await readFile(`${FILE_PATHS.DB_TABLES}/${table}.sql`, 'utf8');
         // Advanced regex to get the string between (...);
         const regex = /(?<=(\()).*?(?=(\);))/s;
-        const res = regex.exec(data)[0].trim();
-        return res;
+        const [ match ] = regex.exec(data);
+        return match.trim();
     } catch (error) {
         /** Something went wrong :( */
         return console.log(error);
@@ -73,33 +58,22 @@ async function getKeyMapfromSQLTable(table) {
 }
 
 /**
- * Map holding the SQL types and their corresponding JSON types
- */
-const SqlToJsonType = new Map()
-    .set('VARCHAR', 'string')
-    .set('CHAR', 'string')
-    .set('INT', 'number')
-    .set('TEXT', 'string')
-    .set('REAL', 'number')
-    .set('DOUBLE', 'number');
-
-/**
  * Reads the sql table column to json key mappings from file and returns it as a string
  * @param {string} table name of the table
  * @returns string representation of the table mappings
  */
-
 async function getTableMappings(table) {
     return readFile(`${FILE_PATHS.DB_TABLES_MAPPINGS}/${table}_mappings.json`, 'utf8');
 }
 
 function mapTableKeyWithJsonKey(table, jsonMappings) {
     // Remove beautiful whitespace
-    const line = table.trim();//.slice(0, -1);
-    console.log(line);
+    const line = table.trim();
     // If the key is a SQL keyword, we dont want to include it in our json
     const isKeyword = SQL_KEYWORDS.some((x) => line.startsWith(x));
-    if (isKeyword) return null;
+    if (isKeyword) {
+        return null;
+    }
     // Get the key and type from the string
     const [key, type] = line.replace(',', '').split(' ');
     console.log(key, type);
