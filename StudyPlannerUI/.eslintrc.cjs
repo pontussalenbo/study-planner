@@ -22,6 +22,7 @@ module.exports = {
 		"prettier"
 	],
 	rules: {
+		"no-plusplus": ["error", { "allowForLoopAfterthoughts": true }],
 		"@typescript-eslint/naming-convention": "off",
 		"no-unused-vars": "off",
 		"@typescript-eslint/no-unused-vars": [
@@ -100,7 +101,7 @@ module.exports = {
 		"react/no-redundant-should-component-update": "off",
 		"react/no-render-return-value": "off",
 		"react/no-string-refs": "off",
-		"@typescript-eslint/no-shadow": ["error", {"allow": ["_", "e", "event"]}],
+		"@typescript-eslint/no-shadow": "off",
 		"react/no-this-in-sfc": "off",
 		"react/no-will-update-set-state": "off",
 		"react/prefer-es6-class": "off",
@@ -111,7 +112,7 @@ module.exports = {
 		"react/state-in-constructor": "off",
 		"react/static-property-placement": "off",
 		"react/require-default-props": "off",
-
+		"@typescript-eslint/explicit-function-return-type": ["error", { allowExpressions: true }],
 		"react/boolean-prop-naming": [
 			"error",
 			{
@@ -125,15 +126,6 @@ module.exports = {
 			}
 		],
 		"react/no-unstable-nested-components": "error",
-		"react/jsx-handler-names": [
-			"error",
-			{
-				"eventHandlerPrefix": "on",
-				"eventHandlerPropPrefix": "on",
-				"checkLocalVariables": true,
-				"checkInlineFunction": true
-			}
-		],
 		"react/jsx-key": "error",
 		"react/jsx-no-bind": [
 			"error",
@@ -155,6 +147,12 @@ module.exports = {
 		}
 	},
 	overrides: [
+		{
+			files: ['src/**/*.jsx', 'src/**/*.tsx'],
+			rules: {
+				'@typescript-eslint/explicit-module-boundary-types': ['off'],
+			},
+		},
 		{
 			files: ["src/**/*.ts?(x)"],
 			parserOptions: {
