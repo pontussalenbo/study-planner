@@ -137,7 +137,7 @@
 				]
 			}
 		],
-
+		"no-plusplus": ["error", { "allowForLoopAfterthoughts": true }],
 		"react/no-did-update-set-state": "off",
 		"react/no-find-dom-node": "off",
 		"react/no-is-mounted": "off",
