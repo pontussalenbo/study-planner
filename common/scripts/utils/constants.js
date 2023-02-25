@@ -46,8 +46,8 @@ const SqlToJsonType = new Map()
     .set('INT', 'number')
     .set('TEXT', 'string')
     .set('REAL', 'number')
-    .set('DOUBLE', 'number');
-
+    .set('DOUBLE', 'number')
+    .set('INTEGER', 'number');
 
 module.exports = {
     DB_TABLES,
@@ -56,7 +56,7 @@ module.exports = {
     END_YEAR,
     CLASSES,
     PROGRAMMES,
-    SqlToJsonType
+    SqlToJsonType,
 };
 
 module.exports.default = module.exports;
