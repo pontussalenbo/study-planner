@@ -46,7 +46,7 @@ function useFetch<T = unknown>(url?: string, options?: RequestInit): State<T> {
 
 		cancelRequest.current = false;
 
-		const fetchData = async () => {
+		const fetchData = async (): Promise<void> => {
 			dispatch({ type: 'loading' });
 
 			// If a cache exists for this url, return it
