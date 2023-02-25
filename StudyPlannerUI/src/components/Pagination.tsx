@@ -1,4 +1,5 @@
-import React from 'react';
+/* eslint-disable jsx-a11y/no-noninteractive-element-interactions */
+/* eslint-disable jsx-a11y/click-events-have-key-events */
 import styles from './Pagination.module.css';
 import { usePagination, DOTS } from '../hooks/usePagination';
 
@@ -10,14 +11,8 @@ interface IPaginationProps {
 	pageSize: number;
 }
 
-const Pagination = (props: IPaginationProps) => {
-	const {
-		onPageChange,
-		totalCount,
-		siblingCount = 1,
-		currentPage,
-		pageSize
-	} = props;
+function Pagination(props: IPaginationProps): JSX.Element | null {
+	const { onPageChange, totalCount, siblingCount = 1, currentPage, pageSize } = props;
 
 	const paginationRange = usePagination({
 		currentPage,
@@ -31,11 +26,11 @@ const Pagination = (props: IPaginationProps) => {
 		return null;
 	}
 
-	const onNext = () => {
+	const onNext = (): void => {
 		onPageChange(currentPage + 1);
 	};
 
-	const onPrevious = () => {
+	const onPrevious = (): void => {
 		onPageChange(currentPage - 1);
 	};
 
@@ -45,9 +40,7 @@ const Pagination = (props: IPaginationProps) => {
 			{/* Left navigation arrow */}
 			<li
 				className={
-					currentPage === 1
-						? styles.paginationItemDisabled
-						: styles.paginationItem
+					currentPage === 1 ? styles.paginationItemDisabled : styles.paginationItem
 				}
 				onClick={onPrevious}
 			>
@@ -57,30 +50,31 @@ const Pagination = (props: IPaginationProps) => {
 				// If the pageItem is a DOT, render the DOTS unicode character
 				if (pageNumber === DOTS) {
 					return (
-						<li className={styles.paginationItemDots}>&#8230;</li>
+						<li key={pageNumber} className={styles.paginationItemDots}>
+							&#8230;
+						</li>
 					);
 				}
 
 				// Render our Page Pills
 				return (
 					<li
+						key={pageNumber}
 						className={
 							pageNumber === currentPage
 								? `${styles.paginationItemSelected} ${styles.paginationItem}`
 								: styles.paginationItem
 						}
-						onClick={() => onPageChange(pageNumber)}
+						onClick={() => onPageChange(pageNumber as number)}
 					>
-						<a href='#'>{pageNumber}</a>
+						<a href='/#'>{pageNumber}</a>
 					</li>
 				);
 			})}
 			{/*  Right Navigation arrow */}
 			<li
 				className={
-					currentPage === lastPage
-						? styles.paginationItemDisabled
-						: styles.paginationItem
+					currentPage === lastPage ? styles.paginationItemDisabled : styles.paginationItem
 				}
 				onClick={onNext}
 			>
@@ -88,6 +82,6 @@ const Pagination = (props: IPaginationProps) => {
 			</li>
 		</ul>
 	);
-};
+}
 
 export default Pagination;
