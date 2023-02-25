@@ -13,7 +13,7 @@ module.exports = {
     },
     rules: {
         indent: ['error', 4],
-        'linebreak-style': ['error', 'off'],
+        'linebreak-style': 'off',
         'no-console': 'off',
     },
 };
