@@ -3,7 +3,7 @@ const fs = require('fs');
 
 const { FILE_PATHS, PROGRAMMES } = require('./utils/constants');
 
-/** 
+/**
  * Type definition for a course object.
  * @typedef Course
  * @type {object}
@@ -21,11 +21,11 @@ const { FILE_PATHS, PROGRAMMES } = require('./utils/constants');
 async function getCourses(queryObj) {
     try {
         const queries = Object.keys(queryObj)
-        .map((key) => `${key}=${queryObj[key]}`)
-        .join('&');
-    const url = `https://api.lth.lu.se/lot/courses?${queries}`;
-    const resp = await axios.get(url);
-    return resp.data;
+            .map((key) => `${key}=${queryObj[key]}`)
+            .join('&');
+        const url = `https://api.lth.lu.se/lot/courses?${queries}`;
+        const resp = await axios.get(url);
+        return resp.data;
     } catch (error) {
         if (error.response) {
             // The request was made and the server responded with a status code
@@ -33,24 +33,26 @@ async function getCourses(queryObj) {
             console.log(error.response.data);
             console.log(error.response.status);
             console.log(error.response.headers);
-          } else if (error.request) {
+        } else if (error.request) {
             // The request was made but no response was received
             // `error.request` is an instance of XMLHttpRequest in the browser and an instance of
             // http.ClientRequest in node.js
             console.log(error.request);
-          } else {
+        } else {
             // Something happened in setting up the request that triggered an Error
             console.log('Error', error.message);
-          }
-          console.log(error.config);
+        }
+        console.log(error.config);
     }
 }
 
 /**
- * Fetches courses for a given programme within the specific class (i.e courses given that specific term/semester)
+ * Fetches courses for a given programme within the specific class
+ * (i.e courses given that specific term/semester)
  * @param {string} programmeCode - Programme code for the specific program to query courses for.
  * @param {string} kull - Class-specific term to query courses for (H19, H18, H17, etc).
- * @returns {Promise<Object>} Promise resolving to an array of course objects for the given programme injected with the class the course was given for.
+ * @returns {Promise<Object>} Promise resolving to an array of course objects
+ * for the given programme njected with the class the course was given for.
  */
 async function getCoursesForClass(programmeCode, kull) {
     const courses = await getCourses({ programmeCode, kull });
@@ -71,6 +73,7 @@ async function main({ programmeCode, classes }) {
             console.log('Retrieving course data for programme: ' + programme + ' and class: ' + kull + '...');
             const courses = await getCourses({ programmeCode: programme, kull });
         // Get all courses for each class in each programme
+        // eslint-disable-next-line arrow-body-style
         const coursesWithinClass = classes.map(async (kull) => {
             // []
             return getCoursesForClass(programme, kull);
