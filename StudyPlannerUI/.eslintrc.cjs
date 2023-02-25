@@ -1,45 +1,13 @@
-{
-	"root": true,
-	"env": {
+module.exports = {
+	root: true,
+	env: {
 		"browser": true,
 		"node": true,
 		"es2021": true
 	},
-	"parser": "@typescript-eslint/parser",
-	"overrides": [
-		{
-			"files": ["src/**/*.ts?(x)"],
-			"excludedFiles": ["src/**/__tests__/*.tsx"],
-			"parserOptions": {
-				"project": ["**/tsconfig.json"]
-			}
-		},
-		{
-			"files": ["vite.config.ts", "cypress.config.ts"],
-			"parserOptions": {
-				"project": ["**/tsconfig.node.json"]
-			}
-		},
-		{
-			"files": ["**/__tests__/**/*.ts?(x)"],
-			"extends": ["plugin:testing-library/react"],
-			"rules": {
-				"@typescript-eslint/no-magic-numbers": ["off"],
-				"testing-library/no-await-sync-events": [
-					"error",
-					{
-						"eventModules": ["fire-event"]
-					}
-				],
-				"testing-library/no-manual-cleanup": "error",
-				"testing-library/prefer-explicit-assert": "error",
-				"testing-library/prefer-user-event": "error",
-				"testing-library/prefer-wait-for": "error"
-			}
-		}
-	],
-	"plugins": ["react-prefer-function-component"],
-	"extends": [
+	parser: "@typescript-eslint/parser",
+	plugins: ["react-prefer-function-component"],
+	extends: [
 		"eslint:all",
 		"plugin:@typescript-eslint/all",
 		"plugin:import/recommended",
@@ -53,30 +21,20 @@
 		"plugin:react-prefer-function-component/recommended",
 		"prettier"
 	],
-	"rules": {
-		"testing-library/no-unnecessary-act ": "off",
-		"testing-library/prefer-user-event": "off",
-		"jsx-a11y/label-has-associated-control": "off",
-		"react/button-has-type": "off",
-		"react/jsx-props-no-spreading": "off",
-		"@typescript-eslint/no-unsafe-argument": "off",
-		"@typescript-eslint/no-unsafe-member-access": "off",
-		"react/jsx-key": "off",
-		"react/function-component-definition": [
-			2,
-			{
-				"namedComponents": "arrow-function",
-				"unnamedComponents": "arrow-function"
-			}
-		],
-		"no-dupe-else-if": "error",
-		"@typescript-eslint/no-shadow": "off",
-		"import/no-absolute-path": "off",
+	rules: {
+		"@typescript-eslint/naming-convention": "off",
+		"no-unused-vars": "off",
+		"@typescript-eslint/no-unused-vars": [
+		"warn", // or "error"
+		{ 
+			"argsIgnorePattern": "^_",
+			"varsIgnorePattern": "^_",
+			"caughtErrorsIgnorePattern": "^_"
+		}],
 		"@typescript-eslint/no-type-alias": "off",
-		"explicit-function-return-type": "off",
+		"no-dupe-else-if": "error",
 		"no-promise-executor-return": "error",
 		"no-unreachable-loop": "error",
-		"@typescript-eslint/explicit-function-return-type": "off",
 		"no-useless-backreference": "error",
 		"require-atomic-updates": "error",
 		"default-case-last": "error",
@@ -85,8 +43,6 @@
 		"no-implicit-coercion": "error",
 		"prefer-regex-literals": "error",
 		"capitalized-comments": "error",
-		"@typescript-eslint/no-misused-promises": "off",
-
 		"no-restricted-syntax": [
 			"error",
 			{
@@ -129,7 +85,7 @@
 			{
 				"devDependencies": [
 					"cypress.config.ts",
-					"vite.config.ts",
+					`${__dirname}/vite.config.ts`,
 					"src/setupTests.ts",
 					"src/testUtils.tsx",
 					"src/mocks/**",
@@ -137,13 +93,14 @@
 				]
 			}
 		],
-		"no-plusplus": ["error", { "allowForLoopAfterthoughts": true }],
+
 		"react/no-did-update-set-state": "off",
 		"react/no-find-dom-node": "off",
 		"react/no-is-mounted": "off",
 		"react/no-redundant-should-component-update": "off",
 		"react/no-render-return-value": "off",
 		"react/no-string-refs": "off",
+		"@typescript-eslint/no-shadow": ["error", {"allow": ["_", "e", "event"]}],
 		"react/no-this-in-sfc": "off",
 		"react/no-will-update-set-state": "off",
 		"react/prefer-es6-class": "off",
@@ -153,8 +110,7 @@
 		"react/sort-comp": "off",
 		"react/state-in-constructor": "off",
 		"react/static-property-placement": "off",
-		"react/prop-types": "off", // Since we do not use prop-types
-		"react/require-default-props": "off", // Since we do not use prop-type
+		"react/require-default-props": "off",
 
 		"react/boolean-prop-naming": [
 			"error",
@@ -162,7 +118,23 @@
 				"validateNested": true
 			}
 		],
+		"react/function-component-definition": [
+			"error",
+			{
+				"namedComponents": "function-declaration"
+			}
+		],
 		"react/no-unstable-nested-components": "error",
+		"react/jsx-handler-names": [
+			"error",
+			{
+				"eventHandlerPrefix": "on",
+				"eventHandlerPropPrefix": "on",
+				"checkLocalVariables": true,
+				"checkInlineFunction": true
+			}
+		],
+		"react/jsx-key": "error",
 		"react/jsx-no-bind": [
 			"error",
 			{
@@ -181,5 +153,41 @@
 		"react": {
 			"version": "detect"
 		}
-	}
+	},
+	overrides: [
+		{
+			files: ["src/**/*.ts?(x)"],
+			parserOptions: {
+				tsconfigRootDir: __dirname,
+				project: ["./tsconfig.json"]
+			}
+		},
+		{
+			files: ["vite.config.ts", "cypress.config.ts", ".eslintrc.cjs"],
+			parserOptions: {
+				"tsconfigRootDir": __dirname,
+				"project": ["./tsconfig.node.json"]
+			}
+		},
+		{
+			"files": ["**/__tests__/**/*.ts?(x)"],
+			"extends": ["plugin:testing-library/react"],
+			"rules": {
+				"@typescript-eslint/no-magic-numbers": ["off"],
+				"testing-library/no-await-sync-events": [
+					"error",
+					{
+						"eventModules": ["fire-event"]
+					}
+				],
+				"testing-library/no-manual-cleanup": "error",
+				"testing-library/prefer-explicit-assert": "error",
+				"testing-library/prefer-user-event": "error",
+				"testing-library/prefer-wait-for": "error"
+			}
+		}
+	]
 }
+
+
+
