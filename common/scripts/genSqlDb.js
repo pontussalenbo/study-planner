@@ -49,7 +49,7 @@ async function getKeyMapfromSQLTable(table) {
         const data = await readFile(`${FILE_PATHS.DB_TABLES}/${table}.sql`, 'utf8');
         // Advanced regex to get the string between (...);
         const regex = /(?<=(\()).*?(?=(\);))/s;
-        const [ match ] = regex.exec(data);
+        const [match] = regex.exec(data);
         return match.trim();
     } catch (error) {
         /** Something went wrong :( */
@@ -66,45 +66,64 @@ async function getTableMappings(table) {
     return readFile(`${FILE_PATHS.DB_TABLES_MAPPINGS}/${table}_mappings.json`, 'utf8');
 }
 
-function mapTableKeyWithJsonKey(table, jsonMappings) {
-    // Remove beautiful whitespace
-    const line = table.trim();
-    // If the key is a SQL keyword, we dont want to include it in our json
-    const isKeyword = SQL_KEYWORDS.some((x) => line.startsWith(x));
-    if (isKeyword) {
-        return null;
-    }
-    // Get the key and type from the string
-    const [key, type] = line.replace(',', '').split(' ');
-    console.log(key, type);
-    // Get the type from the string BEFORE the length is defined
+/**
+ * This function is used to parse a row in an SQL table definition file
+ * to get its column-name, JSON type and correspondig json key in course data.
+ *
+ * @param line - a column line in the SQL table definition.
+ * @returns {{tableKey: string, type: string, jsonKey: *}}
+ * an object containing the column name, its type and the corresponding JSON key in course data.
+ */
+function getColType(line, jsonMappings) {
+    /**
+     * Remove commas as they only separate each column and type
+     * Split the string on whitespace to get the columns and corresponding type
+     */
+    const [col, type] = line.replace(',', '').split(' ');
+    // Get the type from the string BEFORE the length is defined, e.g VARCHAR(255) -> VARCHAR
     const typeRegex = /^[^\\(]*/;
     const [jsontype] = typeRegex.exec(type);
 
     return {
-        tableKey: key,
+        tableKey: col,
         type: SqlToJsonType.get(jsontype),
-        jsonKey: jsonMappings[key],
+        jsonKey: jsonMappings[col],
     };
 }
 
+function mapTableCols(table, jsonMappings) {
+    // Remove beautiful whitespace
+    const line = table.trim();
+    // If the key is a SQL keyword, we dont want to include it in our mappings
+    const isKeyword = SQL_KEYWORDS.some((x) => line.startsWith(x));
+    if (isKeyword) {
+        return null;
+    }
+    return getColType(line, jsonMappings);
+}
+
 /**
- *
- * @param {*} tableName
- * @param {*} table
- * @returns {object} array of objects containing the table key, type and json key
+ * @param {string} tableName - the name of the database table to map
+ * @param {string} table - the contents of the database table to map
+ * @returns {Promise<Array<{property:string, type:string}>>} - the array of mappings
  */
 async function mapPropToType(tableName, table) {
-    // Get the mappings from the json file, i.e which json key corresponds to which sql key
+    // get the mapping from the database
     const mappingsString = await getTableMappings(tableName);
+    // parse the JSON string into an object
     const mappings = JSON.parse(mappingsString);
 
-    // remove newlines and split on comma, get array of strings containing table keys and types
+    // split the table string into an array of rows
     const tableStr = table.replace(/\n\s*\n/g, '\n').split(/\r?\n/);
 
+    // map the table rows into an array of mappings
     return tableStr.reduce((memo, it) => {
-        const res = mapTableKeyWithJsonKey(it, mappings);
-        if (res) memo.push(res);
+        // see if we can map the row to a property
+        const res = mapTableCols(it, mappings);
+        // if we can, add it to the array
+        if (res) {
+            memo.push(res);
+        }
         return memo;
     }, []);
 }
@@ -138,12 +157,34 @@ function getCoursePeriodSQLStmt(course) {
 async function getSQLTable(tableName) {
     return readFile(`${FILE_PATHS.DB_TABLES}//${tableName}.sql`, 'utf8');
 }
+
+function parseKey(course, key) {
+    // TODO: Make this function get each json key and its type
+    const { jsonKey, type } = key;
+    // Early return as period start will handle logic for period start and end,
+    // since it is one row in our sql table
+    if (jsonKey === 'periodEnd') {
+        return '';
+    }
+    /**
+     * Special treatment for period start, since it is a special case
+     * where we need to create multiple rows for each period a course has
+     */
+    if (jsonKey === 'periodStart') {
+        const str = getCoursePeriodSQLStmt(course);
+        return `${str}) `;
+    }
+    // If the type is a string, we need to add quotes around the value
+    const str = type === 'string' ? `'${course[jsonKey]}'` : course[jsonKey];
+    return `${str}, `;
+}
+
 /**
  * This is where the magic happens
  * @param {object} param0 object holding json keyMappings and the table name
  * @returns void
  */
-async function genSqlStmt({ jsonKeys, tableName }) {
+async function genSqlStmt({ mappings, tableName }) {
     // Read SQL table from file
     const table = await getSQLTable(tableName);
     // Add SQL syntax to the beginning of the file
@@ -153,7 +194,8 @@ async function genSqlStmt({ jsonKeys, tableName }) {
 
     try {
         // Get all table columns as a comma separated string
-        const tableKeys = jsonKeys.map((key) => key.tableKey).join(', ');
+        const tableKeys = mappings.map((key) => key.tableKey).join(', ');
+        console.log(tableKeys);
 
         SQLStmt += `\nINTO ${tableName}(${tableKeys})\nVALUES`;
 
@@ -162,25 +204,8 @@ async function genSqlStmt({ jsonKeys, tableName }) {
             // Begin the row value statement
             SQLStmt += '\n      (';
 
-            jsonKeys.forEach((key) => {
-                const { jsonKey, type } = key;
-                // Early return as period start will handle logic for period start and end,
-                // since it is one row in our sql table
-                if (jsonKey === 'periodEnd') {
-                    return;
-                }
-                /**
-                 * Special treatment for period start, since it is a special case
-                 * where we need to create multiple rows for each period a course has
-                 */
-                if (jsonKey === 'periodStart') {
-                    const stmt = getCoursePeriodSQLStmt(course);
-                    SQLStmt += `${stmt}) `;
-                } else {
-                    // If the type is a string, we need to add quotes around the value
-                    const stmt = type === 'string' ? `'${course[jsonKey]}'` : course[jsonKey];
-                    SQLStmt += `${stmt}, `;
-                }
+            mappings.forEach((key) => {
+                SQLStmt += parseKey(course, key);
             });
             // Evil hack to remove the last comma
             SQLStmt = SQLStmt.slice(0, -2);
@@ -207,3 +232,5 @@ module.exports = {
     mapPropToType,
     genSqlStmt,
 };
+
+module.exports.default = module.exports;
