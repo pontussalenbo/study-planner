@@ -1,6 +1,7 @@
+/* eslint-disable */
 import React, { useEffect } from 'react';
 
-const Table = (props: any) => {
+function Table(props: any) {
 	const headers = ['Course Code', 'Credits', 'Level', 'Name'];
 	const contents = ['courseCode', 'credits', 'cycle', 'name_en'];
 
@@ -19,7 +20,7 @@ const Table = (props: any) => {
 					</tr>
 				</thead>
 				<tbody>
-					{props.courses.map(course => (
+					{props.courses.map((course: never) => (
 						<tr>
 							{contents.map(content => (
 								<td>{course[content]}</td>
@@ -30,6 +31,6 @@ const Table = (props: any) => {
 			</table>
 		</div>
 	);
-};
+}
 
 export default Table;
