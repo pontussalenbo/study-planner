@@ -3,5 +3,5 @@ export interface CourseData {
     credits: number;
     cycle: string;
     name_en: string;
-    periods: number[];
+    periods?: Record<string, number>[];
 }
