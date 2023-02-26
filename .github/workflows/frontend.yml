@@ -34,7 +34,7 @@ jobs:
             - name: Install dependencies
               run: pnpm install
             - name: Build project
-              run: pnpm run build --if-present
+              run: pnpm run build
         env:
             # Other environment variables
             HUSKY: '0' # By default do not run HUSKY install
