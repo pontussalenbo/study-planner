@@ -1,4 +1,4 @@
-import { XAxis, YAxis, CartesianGrid, ResponsiveContainer, BarChart, Bar } from 'Recharts';
+import { XAxis, YAxis, CartesianGrid, ResponsiveContainer, BarChart, Bar } from 'recharts';
 import type { SelectedCourse } from 'interfaces/SelectedCourse';
 
 interface ICourseProps {
