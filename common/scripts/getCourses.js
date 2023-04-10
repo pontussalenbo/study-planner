@@ -28,6 +28,8 @@ async function main({ programmeCode, classes }) {
     const x = programmeCode.map(async (programme) => {
         // Promise<[][]>
         const y = classes.map(async (kull) => {
+            await new Promise(resolve => setTimeout(resolve, 1000));
+            console.log('Retrieving course data for programme: ${programme}, year: ${kull}');
             const courses = await getCourses({ programmeCode: programme, kull });
             // []
             const coursesWithCLass = courses.map((course) => ({
@@ -42,4 +44,7 @@ async function main({ programmeCode, classes }) {
     fs.writeFileSync('courses.json', JSON.stringify(unwrap.flat(2)));
 }
 
-main({ programmeCode: ['D'], classes: ['H19', 'H18'] });
+main({
+    programmeCode: ['B', 'C', 'D', 'E', 'F', 'M', 'MD', 'I', 'K', 'L', 'N', 'Pi', 'V', 'W'],
+    classes: ['H07', 'H08', 'H09', 'H10', 'H11', 'H12', 'H13', 'H14', 'H15', 'H16', 'H17', 'H18', 'H19']
+});
