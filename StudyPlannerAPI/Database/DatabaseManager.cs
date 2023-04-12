@@ -32,16 +32,16 @@ namespace StudyPlannerAPI.Database
                 var obj = Activator.CreateInstance<T>();
                 var properties = typeof(T).GetProperties();
 
-                // Make sure we have enough room
-                Debug.Assert(properties.Length >= reader.FieldCount);
                 for (int i = 0; i < reader.FieldCount; i++)
                 {
-                    if (reader[i] == DBNull.Value)
+                    var colName = reader.GetName(i);
+                    var property = Array.Find(properties, p => p.Name == colName);
+
+                    if (property == null || reader[i] == DBNull.Value)
                     {
                         continue;
-                    }
-                    var p = properties[i];
-                    p.SetValue(obj, Convert.ChangeType(reader[i], p.PropertyType));
+                    }                    
+                    property.SetValue(obj, Convert.ChangeType(reader[i], property.PropertyType));
                 }
                 data.Add(obj);
             }
