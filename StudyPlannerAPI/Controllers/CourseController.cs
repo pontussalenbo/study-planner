@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using StudyPlannerAPI.Database;
 using StudyPlannerAPI.Controllers.Params;
+using System.Data.SQLite;
 
 namespace StudyPlannerAPI.Controllers
 {
@@ -17,9 +18,9 @@ namespace StudyPlannerAPI.Controllers
             this.databaseManager = databaseManager;
         }
 
-        [HttpGet]
+        [HttpPost]
         [Consumes("application/json")]
-        public IActionResult GetCourses([FromQuery] CourseParams courseParams)
+        public IActionResult GetCourses([FromBody] CourseParams courseParams)
         {
             List<string> p = new();
             string query = @"SELECT course_code, course_name_sv, course_name_en, credits, level FROM courses_info";
@@ -39,40 +40,52 @@ namespace StudyPlannerAPI.Controllers
                 }
             }
             query = query + joinString + conditionString;
-
-            var result = databaseManager.GetEnumerable<CourseInfoSerializable>(query, p.ToArray());
-            return new JsonResult(result.ToList());
+                
+            try
+            {
+                var result = databaseManager.GetEnumerable<CourseInfoSerializable>(query, p.ToArray());
+                return new JsonResult(result.ToList());
+            }
+            catch (Exception e)
+            {
+                logger.LogError("Encountered {exception}: {message}", e.GetType().Name, e.Message);
+                return new StatusCodeResult(500); // DB-connection could not be established
+            }
         }
 
-        [HttpGet]
+        [HttpPost]
         [Route("master")]
         [Consumes("application/json")]
-        public IActionResult GetMasterCourses([FromQuery] CourseParams courseParams)
+        public IActionResult GetMasterCourses([FromBody] CourseParams courseParams)
         {
 
-            if (courseParams.Master == null || courseParams.Programme == null || courseParams.Year == null)
+            if (courseParams.Master == null || courseParams.Programme == null)
             {
-                return new StatusCodeResult(400);
+                return new StatusCodeResult(400); // Must select master and programme
             }
 
-            List<string> p = new();
-
-            // TODO: make it not require class year
+            List<string> parameters = new();
 
             string query =
                 @"
                 SELECT course_code, course_name_sv, course_name_en, credits, level
                 FROM programme_master
-                JOIN master_course USING(master_code)
-                JOIN courses_info USING(course_code)
-                JOIN course_class USING(programme_code, course_code)
-                WHERE master_code = @p0 AND programme_code = @p1 AND class = @p2;
+                     JOIN master_course USING(master_code)
+                     JOIN courses_info USING(course_code)
+                     JOIN course_class USING(programme_code, course_code)
+                WHERE master_code = @p0
+                      AND programme_code = @p1
                 ";
-            p.Add(courseParams.Master);
-            p.Add(courseParams.Programme);
-            p.Add(courseParams.Year);
+            parameters.Add(courseParams.Master);
+            parameters.Add(courseParams.Programme);
 
-            var result = databaseManager.GetEnumerable<CourseInfoSerializable>(query, p.ToArray());
+            if (courseParams.Year != null)
+            {
+                query += " AND class = @p2";
+                parameters.Add(courseParams.Year);
+            }
+
+            var result = databaseManager.GetEnumerable<CourseInfoSerializable>(query, parameters.ToArray());
             return new JsonResult(result.ToList());
         }
 

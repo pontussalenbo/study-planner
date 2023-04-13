@@ -1,4 +1,6 @@
 using StudyPlannerAPI.Database;
+using System.Data;
+using System.Data.SQLite;
 
 namespace StudyPlannerAPI
 {
@@ -19,6 +21,7 @@ namespace StudyPlannerAPI
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
             builder.Services.AddScoped<IDatabaseManager, DatabaseManager>();
+            builder.Services.AddScoped<IDbConnection, SQLiteConnection>();
 
             var app = builder.Build();
 
