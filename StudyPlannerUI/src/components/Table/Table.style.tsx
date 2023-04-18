@@ -9,22 +9,14 @@ export const Table = styled.table`
 export const TableRowHeader = styled.thead`
     background-color: transparent;
     transition: all 0.25s ease;
-    border-radius: 10px;
 `;
 
 export const TableHeader = styled.th`
     background-color: #f1f1f1;
-    padding: 12px;
     font-weight: 500;
     text-align: left;
-    font-size: 14px;
+    font-size: 1rem;
     color: #2c3e50;
-    first-child {
-        border-top-left-radius: 10px;
-    }
-    last-child {
-        border-top-right-radius: 10px;
-    }
 `;
 
 export const TableRow = styled.tr`
@@ -35,7 +27,6 @@ export const TableRow = styled.tr`
 `;
 
 export const TableCell = styled.td`
-    padding: 12px;
-    font-size: 14px;
-    color: grey;
+    border: none;
+    padding: 0.3rem;
 `;

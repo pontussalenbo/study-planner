@@ -6,12 +6,28 @@ import { VitePWA } from 'vite-plugin-pwa';
 import tsconfigPaths from 'vite-tsconfig-paths';
 import { visualizer } from 'rollup-plugin-visualizer';
 
+// eslint-disable-next-line @typescript-eslint/prefer-ts-expect-error, @typescript-eslint/ban-ts-comment
+/* @ts-ignore */
+import { dependencies } from './package.json';
+
+function renderChunks(deps: Record<string, string>): Record<string, string[]> {
+    const chunks: Record<string, string[]> = {};
+    Object.keys(deps).forEach(key => {
+        if (['react', 'react-dom'].includes(key)) return;
+        chunks[key] = [key];
+    });
+    return chunks;
+}
+
 export default defineConfig(({ mode }) => ({
     build: {
         outDir: 'build',
         rollupOptions: {
-            manualChunks: {
-                recharts: ['recharts']
+            output: {
+                manualChunks: {
+                    vendor: ['react', 'react-dom'],
+                    ...renderChunks(dependencies)
+                }
             }
         }
     },

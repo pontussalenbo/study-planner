@@ -1,4 +1,6 @@
-.tableFooter {
+import styled from 'styled-components';
+
+export const TableFooterWrapper = styled.div`
     background-color: #f1f1f1;
     padding: 8px 0px;
     width: 100%;
@@ -11,23 +13,15 @@
     display: flex;
     align-items: center;
     justify-content: center;
-}
+`;
 
-.button {
+export const Button = styled.button<{ isActive: boolean }>`
     border: none;
     padding: 7px 14px;
     border-radius: 10px;
     cursor: pointer;
     margin-right: 4px;
     margin-left: 4px;
-}
-
-.activeButton {
-    color: white;
-    background: #185adb;
-}
-
-.inactiveButton {
-    color: #2c3e50;
-    background: #f9f9f9;
-}
+    color: ${props => (props.isActive ? 'white' : '#2c3e50')};
+    background: ${props => (props.isActive ? '#185adb' : '#f9f9f9')};
+`;

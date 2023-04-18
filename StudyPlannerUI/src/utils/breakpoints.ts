@@ -1,20 +1,20 @@
-export const sizes = {
-    mobileS: '320px',
-    mobileL: '600px',
-    tablet: '900px',
-    laptop: '1200px',
-    desktop: '1536px'
+export const breakpoints = {
+    xs: 0, // Extra small devices (portrait phones)
+    sm: 576, // Small devices (landscape phones)
+    md: 768, // Medium devices (tablets)
+    lg: 992, // Large devices (desktops)
+    xl: 1200 // Extra large devices (large desktops)
 };
 
 export const device = {
     /** xs-breakpoint */
-    mobileS: `(min-width: ${sizes.mobileS})`,
+    xs: `(min-width: ${breakpoints.xs})`,
     /** sm-breakpoint */
-    mobileL: `(min-width: ${sizes.mobileL})`,
+    sm: `(min-width: ${breakpoints.sm})`,
     /** md-breakpoint */
-    tablet: `(min-width: ${sizes.tablet})`,
+    md: `(min-width: ${breakpoints.md})`,
     /** lg-breakpoint */
-    laptop: `(min-width: ${sizes.laptop})`,
+    lg: `(min-width: ${breakpoints.lg})`,
     /** xl-breakpoint */
-    desktop: `(min-width: ${sizes.desktop})`
+    xl: `(min-width: ${breakpoints.xl})`
 };

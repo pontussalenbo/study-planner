@@ -1,7 +1,11 @@
-/* eslint-disable jsx-a11y/no-noninteractive-element-interactions */
-/* eslint-disable jsx-a11y/click-events-have-key-events */
-import styles from './Pagination.module.css';
 import { usePagination, DOTS } from '../hooks/usePagination';
+import {
+    PaginationContainer,
+    ArrowLeft,
+    ArrowRight,
+    PaginationItem,
+    PaginationItemDots
+} from './Pagination.styles';
 
 interface IPaginationProps {
     onPageChange: (page: number) => void;
@@ -21,7 +25,6 @@ function Pagination(props: IPaginationProps): JSX.Element | null {
         pageSize
     });
 
-    // If there are less than 2 times in pagination range we shall not render the component
     if (currentPage === 0 || paginationRange.length < 2) {
         return null;
     }
@@ -36,51 +39,37 @@ function Pagination(props: IPaginationProps): JSX.Element | null {
 
     const lastPage = paginationRange[paginationRange.length - 1];
     return (
-        <ul className={`${styles.paginationContainer} ${styles.paginationBar}`}>
-            {/* Left navigation arrow */}
-            <li
-                className={
-                    currentPage === 1 ? styles.paginationItemDisabled : styles.paginationItem
-                }
-                onClick={onPrevious}
+        <PaginationContainer>
+            <PaginationItem
+                disabled={currentPage === 1}
+                onClick={currentPage === 1 ? undefined : onPrevious}
             >
-                <div className={`${styles.arrow} ${styles.arrowLeft}`} />
-            </li>
+                <ArrowLeft />
+            </PaginationItem>
             {paginationRange.map(pageNumber => {
-                // If the pageItem is a DOT, render the DOTS unicode character
                 if (pageNumber === DOTS) {
-                    return (
-                        <li key={pageNumber} className={styles.paginationItemDots}>
-                            &#8230;
-                        </li>
-                    );
+                    return <PaginationItemDots key={pageNumber}>&#8230;</PaginationItemDots>;
                 }
 
-                // Render our Page Pills
                 return (
-                    <li
+                    <PaginationItem
                         key={pageNumber}
-                        className={
-                            pageNumber === currentPage
-                                ? `${styles.paginationItemSelected} ${styles.paginationItem}`
-                                : styles.paginationItem
-                        }
+                        selected={pageNumber === currentPage}
                         onClick={() => onPageChange(pageNumber as number)}
                     >
-                        <a href='/#'>{pageNumber}</a>
-                    </li>
+                        <a href='/#' onClick={e => e.preventDefault()}>
+                            {pageNumber}
+                        </a>
+                    </PaginationItem>
                 );
             })}
-            {/*  Right Navigation arrow */}
-            <li
-                className={
-                    currentPage === lastPage ? styles.paginationItemDisabled : styles.paginationItem
-                }
-                onClick={onNext}
+            <PaginationItem
+                disabled={currentPage === lastPage}
+                onClick={currentPage === lastPage ? undefined : onNext}
             >
-                <div className={`${styles.arrow} ${styles.arrowRight}`} />
-            </li>
-        </ul>
+                <ArrowRight />
+            </PaginationItem>
+        </PaginationContainer>
     );
 }
 

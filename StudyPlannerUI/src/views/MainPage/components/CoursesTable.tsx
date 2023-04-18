@@ -118,14 +118,14 @@ function CoursesTable({
     const headers = ['Course Code', 'Credits', 'Level', 'Course Name', 'Period(s)', 'Year', 'Add'];
 
     return (
-        <div style={{ width: '70%' }}>
+        <>
             <Table headers={headers}>
                 {slice.map(el => (
-                    <TableRow key={el.courseCode}>
+                    <TableRow key={`${el.courseCode as string}_data `}>
                         {dataProps.map(prop => {
                             if (prop === 'periods') {
                                 return (
-                                    <TableCell key={`${el.courseCode as string}`}>
+                                    <TableCell key={`${el.courseCode as string}_periods`}>
                                         {parsePeriods(el[prop] as any[], onChangePeriod)}
                                     </TableCell>
                                 );
@@ -136,14 +136,18 @@ function CoursesTable({
                         })}
                         <TableCell>
                             <select onChange={onChangeYear}>
-                                <option value=''>Select year</option>
+                                <option value='-1'>Select year</option>
                                 <option value='4'>4</option>
                                 <option value='5'>5</option>
                             </select>
                             <div>{errors?.[el.courseCode]?.year ?? null}</div>
                         </TableCell>
                         <TableCell>
-                            <button type='button' onClick={() => onHandleClick(el)}>
+                            <button
+                                type='button'
+                                disabled={year === DEFAULT_YEAR}
+                                onClick={() => onHandleClick(el)}
+                            >
                                 +
                             </button>
                         </TableCell>
@@ -156,7 +160,7 @@ function CoursesTable({
                 pageSize={7}
                 onPageChange={handlePageChange}
             />
-        </div>
+        </>
     );
 }
 

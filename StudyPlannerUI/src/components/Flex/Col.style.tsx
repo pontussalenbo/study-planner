@@ -19,31 +19,31 @@ const Col = styled.div<ColProps>`
 
     ${({ xs }) =>
         xs &&
-        `@media ${device.mobileS} {
-    flex: 0 0 ${calcColWidth(xs)};
-    max-width: ${calcColWidth(xs)};
-}`}
+        `@media ${device.xs} {
+            flex: 0 0 ${calcColWidth(xs)};
+            max-width: ${calcColWidth(xs)};
+        }`}
 
     ${({ sm }) =>
         sm &&
-        `@media ${device.mobileL} {
-    flex: 0 0 ${calcColWidth(sm)};
-    max-width: ${calcColWidth(sm)};
-}`}
+        `@media ${device.sm} {
+            flex: 0 0 ${calcColWidth(sm)};
+            max-width: ${calcColWidth(sm)};
+        }`}
 
-${({ md }) =>
+    ${({ md }) =>
         md &&
-        `@media ${device.tablet} {
-    flex: 0 0 ${calcColWidth(md)};
-    max-width: ${calcColWidth(md)};
-}`}
+        `@media ${device.md} {
+                flex: 0 0 ${calcColWidth(md)};
+                max-width: ${calcColWidth(md)};
+            }`}
 
-${({ lg }) =>
+    ${({ lg }) =>
         lg &&
-        `@media ${device.laptop} {
-    flex: 0 0 ${calcColWidth(lg)};
-    max-width: ${calcColWidth(lg)};
-}`}
+        `@media ${device.lg} {
+                flex: 0 0 ${calcColWidth(lg)};
+                max-width: ${calcColWidth(lg)};
+            }`}
 `;
 
 export default Col;

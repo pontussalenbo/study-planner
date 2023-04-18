@@ -1,3 +1,4 @@
+import GlobalStyles from 'style/GlobalStyles';
 import MainPage from 'views/MainPage';
 
 const INIT_STATE = [
@@ -39,6 +40,11 @@ const INIT_STATE = [
 ];
 
 function App(): JSX.Element {
-    return <MainPage />;
+    return (
+        <>
+            <GlobalStyles />
+            <MainPage />
+        </>
+    );
 }
 export default App;
