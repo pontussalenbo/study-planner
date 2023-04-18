@@ -33,5 +33,4 @@ dist-ssr
 **/bin/*
 
 common/db/data/
-common/mock
 .eslintcache
