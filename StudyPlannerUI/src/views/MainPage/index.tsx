@@ -1,15 +1,13 @@
-/* eslint-disable @typescript-eslint/no-unsafe-return */
-/* eslint-disable @typescript-eslint/no-unsafe-call */
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
-/* eslint-disable @typescript-eslint/no-unsafe-argument */
-/* eslint-disable @typescript-eslint/no-unsafe-member-access */
-/* eslint-disable @typescript-eslint/no-explicit-any */
-/* eslint-disable @typescript-eslint/no-shadow */
+import Col from 'components/Flex/Col.style';
+import Row from 'components/Flex/Row.style';
 import type { SelectedCourse } from 'interfaces/SelectedCourse';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import CoursesTable from './components/CoursesTable';
+import CreditsTable from './components/CreditsTable';
 import HorizontalBarChart from './components/HorizontalBarChart';
+import SelectedCoursesTable from './components/SelectedCourses';
 import { Container, Wrapper } from './style';
+import useFetchCourses from 'hooks/useFetchCourses';
 
 export interface Period {
     periodStart: number;
@@ -26,12 +24,9 @@ export interface CourseData {
 
 type SelectedCourses = Record<number, SelectedCourse[]>;
 
-function getUniqueListBy<T = unknown>(arr: T[], key: keyof T): T[] {
-    return [...new Map(arr.map(item => [item[key], item])).values()];
-}
-
 function MainPage(): JSX.Element {
-    const [courses, setCourses] = useState<any[]>([]);
+    const courses = useFetchCourses();
+
     const [selectedNames, setSelectedNames] = useState<Set<string>>(new Set());
     const [selectedCourses, setSelectedCourses] = useState<SelectedCourses>({
         4: [],
@@ -39,6 +34,9 @@ function MainPage(): JSX.Element {
     });
 
     const contents = ['courseCode', 'credits', 'cycle', 'name_en', 'periods'];
+
+    const getAllSelectedCourses = (): SelectedCourse[] =>
+        selectedCourses[4].concat(selectedCourses[5]);
 
     const onClickAddCourse = (course: SelectedCourse): void => {
         if (!selectedNames.has(course.courseCode)) {
@@ -50,25 +48,24 @@ function MainPage(): JSX.Element {
         }
     };
 
-    useEffect(() => {
-        const getData = async (): Promise<any[]> => {
-            const res = await fetch('http://localhost:3000/db/courses');
-            const resp = await res.json();
-            const { courses } = resp;
-            return getUniqueListBy(courses, 'courseCode');
-        };
-        void getData().then(data => setCourses(data));
-    }, []);
-
     return (
         <Container>
             <Wrapper>
-                <CoursesTable
-                    addCourse={onClickAddCourse}
-                    dataProps={contents}
-                    data={courses}
-                    rowsPerPage={7}
-                />
+                <Row>
+                    <Col md={8}>
+                        <CoursesTable
+                            addCourse={onClickAddCourse}
+                            dataProps={contents}
+                            data={courses}
+                            rowsPerPage={7}
+                        />
+                    </Col>
+                    <Col md={3}>
+                        <CreditsTable courses={selectedCourses} />
+                        <SelectedCoursesTable courses={getAllSelectedCourses()} />
+                    </Col>
+                </Row>
+
                 <div style={{ display: 'flex' }}>
                     <HorizontalBarChart courses={Array.from(selectedCourses[4])} />
                     <HorizontalBarChart courses={Array.from(selectedCourses[5])} />

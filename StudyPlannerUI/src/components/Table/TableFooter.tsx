@@ -1,6 +1,7 @@
 import { useEffect } from 'react';
 
 import styles from './TableFooter.module.css';
+import { TableFooterWrapper, Button } from './TableFooter.styles';
 
 interface ITableFooterProps {
     range: number[];
@@ -15,21 +16,15 @@ function TableFooter({ range, setPage, page, slice }: ITableFooterProps): JSX.El
             setPage(page - 1);
         }
     }, [slice, page, setPage]);
+
     return (
-        <div className={styles.tableFooter}>
+        <TableFooterWrapper>
             {range.map(el => (
-                <button
-                    type='button'
-                    key={el}
-                    className={`${styles.button} ${
-                        page === el ? styles.activeButton : styles.inactiveButton
-                    }`}
-                    onClick={() => setPage(el)}
-                >
+                <Button key={el} isActive={page === el} onClick={() => setPage(el)}>
                     {el}
-                </button>
+                </Button>
             ))}
-        </div>
+        </TableFooterWrapper>
     );
 }
 
