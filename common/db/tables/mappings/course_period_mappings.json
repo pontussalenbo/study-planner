@@ -1,4 +1,5 @@
 {
+	"class": "class",
 	"course_code": "courseCode",
 	"period_start": "periodStart",
 	"period_end": "periodEnd"

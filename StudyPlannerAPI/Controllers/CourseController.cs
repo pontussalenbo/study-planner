@@ -1,7 +1,9 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using StudyPlannerAPI.Database;
 using StudyPlannerAPI.Controllers.Params;
-using System.Data.SQLite;
+using System.Text;
+using StudyPlannerAPI.Database.DTO;
+using System.IO.IsolatedStorage;
 
 namespace StudyPlannerAPI.Controllers
 {
@@ -18,56 +20,96 @@ namespace StudyPlannerAPI.Controllers
             this.databaseManager = databaseManager;
         }
 
+        // TODO: Make code not ugly
+
         [HttpPost]
         [Consumes("application/json")]
-        public IActionResult GetCourses([FromBody] CourseParams courseParams)
+        public async Task<IActionResult> GetCourses([FromBody] CourseParams courseParams)
         {
-            List<string> p = new();
-            string query = @"SELECT course_code, course_name_sv, course_name_en, credits, level FROM courses_info";
-            // TODO: Adapt to present params
-            string joinString = string.Empty;
-            string conditionString = " WHERE 1=1 ";
+            if (courseParams.Programme == null)
+            {
+                return new StatusCodeResult(StatusCodes.Status400BadRequest);
+            }
+
+            var parameters = new List<string>();
+            var queryBuilder = new StringBuilder(@"SELECT course_code, course_name_sv, course_name_en, credits, level FROM courses_info ");
+
             if (courseParams.Programme != null)
             {
-                joinString += " JOIN programme_course USING (course_code)";
-                conditionString += $" AND programme_code = @p{p.Count}";
-                p.Add(courseParams.Programme);
+                var joinStmtBuilder = new StringBuilder(" JOIN programme_course USING (course_code)");
+                var condStmtBuilder = new StringBuilder($" WHERE programme_code = @p{parameters.Count}");
+                parameters.Add(courseParams.Programme);
                 if (courseParams.Year != null)
                 {
-                    joinString += " JOIN course_class USING (programme_code, course_code)";
-                    conditionString += $" AND class = @p{p.Count}";
-                    p.Add(courseParams.Year);
+                    joinStmtBuilder.Append(" JOIN course_class USING (programme_code, course_code)");
+                    condStmtBuilder.Append($" AND class = @p{parameters.Count}");
+                    parameters.Add(courseParams.Year);
                 }
+                queryBuilder.AppendLine(joinStmtBuilder.ToString());
+                queryBuilder.AppendLine(condStmtBuilder.ToString());
             }
-            query = query + joinString + conditionString;
-                
+            var query = queryBuilder.ToString();
+
             try
             {
-                var result = databaseManager.GetEnumerable<CourseInfoSerializable>(query, p.ToArray());
-                return new JsonResult(result.ToList());
+                var courses = await databaseManager.GetList<CourseInfoDTO>(query, parameters.ToArray());
+                queryBuilder.Clear();
+                parameters.Clear();
+                queryBuilder.Append(@"SELECT * FROM course_period JOIN programme_course USING(course_code) WHERE 1=1");
+
+                if (courseParams.Year != null)
+                {
+                    queryBuilder.Append($" AND class = @p{parameters.Count}");
+                    parameters.Add(courseParams.Year);
+                }
+                if (courseParams.Programme != null)
+                {
+                    queryBuilder.Append($" AND programme_code = @p{parameters.Count}");
+                    parameters.Add(courseParams.Programme);
+                }
+
+                for (int i = 0; i < courses.Count; i++)
+                {
+                    string op = i == 0 ? "\nAND (": "\nOR";
+                    queryBuilder.Append($" {op} course_code = '{courses[i].course_code}'");
+                    if (i == courses.Count - 1)
+                    {
+                        queryBuilder.Append(')');
+                    }
+                }
+                query = queryBuilder.ToString();
+                var coursePeriods = await databaseManager.GetList<CoursePeriodDTO>(query, parameters.ToArray());
+
+                foreach (var course in courses)
+                {
+                    var periods = coursePeriods.Where(cp => cp.course_code == course.course_code).Select(cp => new PeriodDTO(cp.period_start, cp.period_end));
+                    foreach (var period in periods)
+                    {
+                        course.periods.Add(period);
+                    }
+                }
+
+                return new JsonResult(courses);
             }
-            catch (Exception e)
+            catch(Exception e)
             {
                 logger.LogError("Encountered {exception}: {message}", e.GetType().Name, e.Message);
-                return new StatusCodeResult(500); // DB-connection could not be established
+                return new StatusCodeResult(StatusCodes.Status500InternalServerError); // DB-connection could not be established
             }
         }
 
         [HttpPost]
         [Route("master")]
         [Consumes("application/json")]
-        public IActionResult GetMasterCourses([FromBody] CourseParams courseParams)
+        public async Task<IActionResult> GetMasterCourses([FromBody] CourseParams courseParams)
         {
-
             if (courseParams.Master == null || courseParams.Programme == null)
             {
-                return new StatusCodeResult(400); // Must select master and programme
+                return new StatusCodeResult(StatusCodes.Status400BadRequest); // Must select master and programme
             }
 
-            List<string> parameters = new();
-
-            string query =
-                @"
+            var parameters = new List<string>();
+            var queryBuilder = new StringBuilder(@"
                 SELECT course_code, course_name_sv, course_name_en, credits, level
                 FROM programme_master
                      JOIN master_course USING(master_code)
@@ -75,22 +117,27 @@ namespace StudyPlannerAPI.Controllers
                      JOIN course_class USING(programme_code, course_code)
                 WHERE master_code = @p0
                       AND programme_code = @p1
-                ";
+                ");
             parameters.Add(courseParams.Master);
             parameters.Add(courseParams.Programme);
 
             if (courseParams.Year != null)
             {
-                query += " AND class = @p2";
+                queryBuilder.Append(" AND class = @p2");
                 parameters.Add(courseParams.Year);
             }
 
-            var result = databaseManager.GetEnumerable<CourseInfoSerializable>(query, parameters.ToArray());
-            return new JsonResult(result.ToList());
+            var query = queryBuilder.ToString();
+            try
+            {
+                var result = await databaseManager.GetList<CourseInfoDTO>(query, parameters.ToArray());
+                return new JsonResult(result.ToList());
+            }
+            catch (Exception e)
+            {
+                logger.LogError("Encountered {exception}: {message}", e.GetType().Name, e.Message);
+                return new StatusCodeResult(StatusCodes.Status500InternalServerError); // DB-connection could not be established
+            }
         }
-
-        // TODO: endpoint, get course catalog (page parameter?)
-
-        // TODO: endpoint, filter course catalog
     }
 }

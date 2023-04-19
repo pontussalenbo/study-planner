@@ -1,5 +1,6 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
+using StudyPlannerAPI.Controllers.Params;
+using StudyPlannerAPI.Model;
 
 namespace StudyPlannerAPI.Controllers
 {
@@ -8,19 +9,31 @@ namespace StudyPlannerAPI.Controllers
     public class MasterCheckController : ControllerBase
     {
         private readonly ILogger<MasterCheckController> logger;
+        private readonly IMasterRequirementValidator masterRequirementValidator;
 
-        public MasterCheckController(ILogger<MasterCheckController> logger)
+        public MasterCheckController(IMasterRequirementValidator masterRequirementValidator, ILogger<MasterCheckController> logger)
         {
+            this.masterRequirementValidator = masterRequirementValidator;
             this.logger = logger;
         }
 
-
-        // TODO: endpoint, process chosen courses data, respond with result of master criteria check
-
-        [HttpGet]
-        public string GetSomeValue() 
+        [HttpPost]
+        public async Task<IActionResult> CheckMasterRequirements([FromBody] MasterCheckParams masterCheckParams) 
         {
-            return "Hoppla!";
+            try
+            {
+                var result = await masterRequirementValidator.ValidateCourseSelection(masterCheckParams);
+                if (result == null)
+                {
+                    return new StatusCodeResult(StatusCodes.Status400BadRequest);
+                }
+                return new JsonResult(result);
+            }
+            catch(Exception e)
+            {
+                logger.LogError("Encountered {exception}: {message}", e.GetType().Name, e.Message);
+                return new StatusCodeResult(StatusCodes.Status500InternalServerError);
+            }
         }
     }
 }

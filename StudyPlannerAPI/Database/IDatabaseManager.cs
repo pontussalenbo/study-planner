@@ -2,6 +2,6 @@
 {
     public interface IDatabaseManager
     {
-        IEnumerable<T> GetEnumerable<T>(string query, params object[] param); 
+        Task<IList<T>> GetList<T>(string query, params object[] param); 
     }
 }
