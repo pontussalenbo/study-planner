@@ -1,39 +1,37 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using StudyPlannerAPI.Controllers.Params;
+using StudyPlannerAPI.Extensions;
 using StudyPlannerAPI.Model;
 
-namespace StudyPlannerAPI.Controllers
+namespace StudyPlannerAPI.Controllers;
+
+[Route(Constants.ROUTE_MASTER_CHECK)]
+[ApiController]
+public class MasterCheckController : ControllerBase
 {
-    [Route(Constants.ROUTE_MASTER_CHECK)]
-    [ApiController]
-    public class MasterCheckController : ControllerBase
+    private readonly ILogger<MasterCheckController> logger;
+    private readonly IMasterRequirementValidator masterRequirementValidator;
+
+    public MasterCheckController(IMasterRequirementValidator masterRequirementValidator,
+        ILogger<MasterCheckController> logger)
     {
-        private readonly ILogger<MasterCheckController> logger;
-        private readonly IMasterRequirementValidator masterRequirementValidator;
+        this.masterRequirementValidator = masterRequirementValidator;
+        this.logger = logger;
+    }
 
-        public MasterCheckController(IMasterRequirementValidator masterRequirementValidator, ILogger<MasterCheckController> logger)
+    [HttpPost]
+    public async Task<IActionResult> CheckMasterRequirements([FromBody] MasterCheckParams masterCheckParams)
+    {
+        if (masterCheckParams.Year == string.Empty
+            || masterCheckParams.Programme == string.Empty
+            || masterCheckParams.SelectedCourses.Count == 0)
         {
-            this.masterRequirementValidator = masterRequirementValidator;
-            this.logger = logger;
+            return new StatusCodeResult(StatusCodes.Status400BadRequest);
         }
 
-        [HttpPost]
-        public async Task<IActionResult> CheckMasterRequirements([FromBody] MasterCheckParams masterCheckParams) 
-        {
-            try
-            {
-                var result = await masterRequirementValidator.ValidateCourseSelection(masterCheckParams);
-                if (result == null)
-                {
-                    return new StatusCodeResult(StatusCodes.Status400BadRequest);
-                }
-                return new JsonResult(result);
-            }
-            catch(Exception e)
-            {
-                logger.LogError("Encountered {exception}: {message}", e.GetType().Name, e.Message);
-                return new StatusCodeResult(StatusCodes.Status500InternalServerError);
-            }
-        }
+        var result = await this.PerformEndpointAction(
+            async () => await masterRequirementValidator.ValidateCourseSelection(masterCheckParams.Programme,
+                masterCheckParams.Year, masterCheckParams.SelectedCourses, masterCheckParams.MasterCodes), logger);
+        return result;
     }
 }

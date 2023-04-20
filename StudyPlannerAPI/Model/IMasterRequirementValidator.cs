@@ -1,9 +1,7 @@
-﻿using StudyPlannerAPI.Controllers.Params;
+﻿namespace StudyPlannerAPI.Model;
 
-namespace StudyPlannerAPI.Model
+public interface IMasterRequirementValidator
 {
-    public interface IMasterRequirementValidator
-    {
-        Task<IDictionary<string, MasterValidationResult>?> ValidateCourseSelection(MasterCheckParams masterCheckParams);
-    }
+    Task<IDictionary<string, MasterValidationResult>?> ValidateCourseSelection(string programme, string year,
+        List<string> selectedCourses, List<string> masterCodes);
 }
