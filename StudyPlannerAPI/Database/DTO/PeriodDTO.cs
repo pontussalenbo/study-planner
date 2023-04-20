@@ -1,33 +1,29 @@
-﻿namespace StudyPlannerAPI.Database.DTO
+﻿#pragma warning disable IDE1006
+namespace StudyPlannerAPI.Database.DTO;
+
+public class PeriodDTO
 {
-    public class PeriodDTO
+    public PeriodDTO(int start, int end)
     {
-#pragma warning disable IDE1006 // Naming Styles
-        public int start { get; set; }
-        public int end { get; set; }
-#pragma warning restore IDE1006
+        this.start = start;
+        this.end = end;
+    }
 
-        public PeriodDTO(int start, int end)
+    public int start { get; set; }
+    public int end { get; set; }
+
+    public override bool Equals(object? obj)
+    {
+        if (obj is not PeriodDTO dto)
         {
-            this.start = start;
-            this.end = end;
+            return false;
         }
 
-        public override bool Equals(object? obj)
-        {
-            if (obj is not PeriodDTO dto)
-            {
-                return false;
-            }
-            else
-            {
-                return start == dto.start && end == dto.end;
-            }
-        }
+        return start == dto.start && end == dto.end;
+    }
 
-        public override int GetHashCode()
-        {
-            return start ^ end;
-        }
+    public override int GetHashCode()
+    {
+        return start ^ end;
     }
 }
