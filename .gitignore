@@ -35,3 +35,4 @@ dist-ssr
 
 common/db/data/
 .eslintcache
+coverage

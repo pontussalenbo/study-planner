@@ -1,0 +1,14 @@
+{
+  "pv": {
+    "G1Credits": 0,
+    "G2Credits": 15,
+    "AdvancedCredits": 45,
+    "RequirementsFulfilled": true
+  },
+  "se": {
+    "G1Credits": 0,
+    "G2Credits": 15,
+    "AdvancedCredits": 7.5,
+    "RequirementsFulfilled": false
+  }
+}

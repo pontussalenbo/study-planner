@@ -1,0 +1,447 @@
+[
+	{
+		"course_code": "EDAF05",
+		"course_name_sv": "Algoritmer, datastrukturer och komplexitet",
+		"course_name_en": "Algorithms, Data Structures and Complexity",
+		"credits": 5,
+		"level": "G2",
+		"periods": [
+			{
+				"Start": 1,
+				"End": 1
+			},
+			{
+				"Start": 2,
+				"End": 2
+			}
+		]
+	},
+	{
+		"course_code": "EDAF35",
+		"course_name_sv": "Operativsystem",
+		"course_name_en": "Operating Systems",
+		"credits": 7.5,
+		"level": "G2",
+		"periods": [
+			{
+				"Start": 2,
+				"End": 3
+			}
+		]
+	},
+	{
+		"course_code": "EDAF45",
+		"course_name_sv": "Programvaruutveckling i grupp - projekt",
+		"course_name_en": "Software Development in Teams - Project",
+		"credits": 7.5,
+		"level": "G2",
+		"periods": [
+			{
+				"Start": 3,
+				"End": 4
+			}
+		]
+	},
+	{
+		"course_code": "EDAF50",
+		"course_name_sv": "C++ - programmering",
+		"course_name_en": "C++ Programming",
+		"credits": 7.5,
+		"level": "G2",
+		"periods": [
+			{
+				"Start": 4,
+				"End": 4
+			}
+		]
+	},
+	{
+		"course_code": "EDAF60",
+		"course_name_sv": "Objektorienterad modellering och design",
+		"course_name_en": "Object-oriented Modelling and Design",
+		"credits": 4.5,
+		"level": "G2",
+		"periods": [
+			{
+				"Start": 1,
+				"End": 1
+			}
+		]
+	},
+	{
+		"course_code": "EDAF75",
+		"course_name_sv": "Databasteknik",
+		"course_name_en": "Database Technology",
+		"credits": 7.5,
+		"level": "G2",
+		"periods": [
+			{
+				"Start": 3,
+				"End": 4
+			}
+		]
+	},
+	{
+		"course_code": "EDAG01",
+		"course_name_sv": "Effektiv C",
+		"course_name_en": "Efficient C",
+		"credits": 7.5,
+		"level": "G2",
+		"periods": [
+			{
+				"Start": 2,
+				"End": 2
+			}
+		]
+	},
+	{
+		"course_code": "EDAN01",
+		"course_name_sv": "Constraint-programmering",
+		"course_name_en": "Constraint Programming",
+		"credits": 7.5,
+		"level": "A",
+		"periods": [
+			{
+				"Start": 1,
+				"End": 1
+			}
+		]
+	},
+	{
+		"course_code": "EDAN10",
+		"course_name_sv": "Konfigurationshantering",
+		"course_name_en": "Configuration Management",
+		"credits": 7.5,
+		"level": "A",
+		"periods": [
+			{
+				"Start": 2,
+				"End": 3
+			},
+			{
+				"Start": 3,
+				"End": 4
+			}
+		]
+	},
+	{
+		"course_code": "EDAN15",
+		"course_name_sv": "Konstruktion av inbyggda system",
+		"course_name_en": "Design of Embedded Systems",
+		"credits": 7.5,
+		"level": "A",
+		"periods": [
+			{
+				"Start": 2,
+				"End": 3
+			}
+		]
+	},
+	{
+		"course_code": "EDAN20",
+		"course_name_sv": "Språkteknologi",
+		"course_name_en": "Language Technology",
+		"credits": 7.5,
+		"level": "A",
+		"periods": [
+			{
+				"Start": 1,
+				"End": 1
+			}
+		]
+	},
+	{
+		"course_code": "EDAN40",
+		"course_name_sv": "Funktionsprogrammering",
+		"course_name_en": "Functional Programming",
+		"credits": 7.5,
+		"level": "A",
+		"periods": [
+			{
+				"Start": 4,
+				"End": 4
+			}
+		]
+	},
+	{
+		"course_code": "EDAN55",
+		"course_name_sv": "Avancerade algoritmer",
+		"course_name_en": "Advanced Algorithms",
+		"credits": 7.5,
+		"level": "A",
+		"periods": [
+			{
+				"Start": 3,
+				"End": 3
+			}
+		]
+	},
+	{
+		"course_code": "EDAN65",
+		"course_name_sv": "Kompilatorer",
+		"course_name_en": "Compilers",
+		"credits": 7.5,
+		"level": "A",
+		"periods": [
+			{
+				"Start": 1,
+				"End": 2
+			}
+		]
+	},
+	{
+		"course_code": "EDAN70",
+		"course_name_sv": "Projekt i datavetenskap",
+		"course_name_en": "Project in Computer Science",
+		"credits": 7.5,
+		"level": "A",
+		"periods": [
+			{
+				"Start": 1,
+				"End": 1
+			},
+			{
+				"Start": 2,
+				"End": 2
+			},
+			{
+				"Start": 3,
+				"End": 3
+			}
+		]
+	},
+	{
+		"course_code": "EDAN80",
+		"course_name_sv": "Coachning av programvaruteam",
+		"course_name_en": "Coaching of Programming Teams",
+		"credits": 9,
+		"level": "A",
+		"periods": [
+			{
+				"Start": 2,
+				"End": 3
+			}
+		]
+	},
+	{
+		"course_code": "EDAN96",
+		"course_name_sv": "Tillämpad maskininlärning",
+		"course_name_en": "Applied Machine Learning ",
+		"credits": 7.5,
+		"level": "A",
+		"periods": [
+			{
+				"Start": 1,
+				"End": 1
+			}
+		]
+	},
+	{
+		"course_code": "EDAP01",
+		"course_name_sv": "Artificiell intelligens",
+		"course_name_en": "Artificial Intelligence",
+		"credits": 7.5,
+		"level": "A",
+		"periods": [
+			{
+				"Start": 2,
+				"End": 2
+			}
+		]
+	},
+	{
+		"course_code": "EDAP05",
+		"course_name_sv": "Programspråkskoncept",
+		"course_name_en": "Concepts of Programming Languages",
+		"credits": 7.5,
+		"level": "A",
+		"periods": [
+			{
+				"Start": 3,
+				"End": 3
+			}
+		]
+	},
+	{
+		"course_code": "EDAP10",
+		"course_name_sv": "Flertrådad programmering",
+		"course_name_en": "Concurrent Programming",
+		"credits": 7.5,
+		"level": "A",
+		"periods": [
+			{
+				"Start": 1,
+				"End": 2
+			}
+		]
+	},
+	{
+		"course_code": "EDAP15",
+		"course_name_sv": "Programanalys",
+		"course_name_en": "Program Analysis",
+		"credits": 7.5,
+		"level": "A",
+		"periods": [
+			{
+				"Start": 4,
+				"End": 4
+			}
+		]
+	},
+	{
+		"course_code": "EDAP20",
+		"course_name_sv": "Intelligenta autonoma system",
+		"course_name_en": "Intelligent Autonomous Systems",
+		"credits": 7.5,
+		"level": "A",
+		"periods": [
+			{
+				"Start": 3,
+				"End": 3
+			}
+		]
+	},
+	{
+		"course_code": "EDAP30",
+		"course_name_sv": "Avancerad tillämpad maskininlärning",
+		"course_name_en": "Advanced Applied Machine Learning ",
+		"credits": 7.5,
+		"level": "A",
+		"periods": [
+			{
+				"Start": 1,
+				"End": 2
+			}
+		]
+	},
+	{
+		"course_code": "ETSN05",
+		"course_name_sv": "Programvaruutveckling för stora system",
+		"course_name_en": "Software Development for Large Systems",
+		"credits": 7.5,
+		"level": "A",
+		"periods": [
+			{
+				"Start": 1,
+				"End": 2
+			}
+		]
+	},
+	{
+		"course_code": "ETSN15",
+		"course_name_sv": "Kravhantering",
+		"course_name_en": "Requirements Engineering",
+		"credits": 7.5,
+		"level": "A",
+		"periods": [
+			{
+				"Start": 2,
+				"End": 2
+			}
+		]
+	},
+	{
+		"course_code": "ETSN20",
+		"course_name_sv": "Programvarutestning",
+		"course_name_en": "Software Testing",
+		"credits": 7.5,
+		"level": "A",
+		"periods": [
+			{
+				"Start": 2,
+				"End": 3
+			}
+		]
+	},
+	{
+		"course_code": "FMAB75",
+		"course_name_sv": "Diskret matematik",
+		"course_name_en": "Discrete Mathematics",
+		"credits": 7.5,
+		"level": "G1",
+		"periods": [
+			{
+				"Start": 3,
+				"End": 3
+			}
+		]
+	},
+	{
+		"course_code": "FMAN10",
+		"course_name_sv": "Algebraiska strukturer",
+		"course_name_en": "Algebraic Structures",
+		"credits": 7.5,
+		"level": "A",
+		"periods": [
+			{
+				"Start": 3,
+				"End": 4
+			}
+		]
+	},
+	{
+		"course_code": "FMAN45",
+		"course_name_sv": "Maskininlärning",
+		"course_name_en": "Machine Learning",
+		"credits": 7.5,
+		"level": "A",
+		"periods": [
+			{
+				"Start": 2,
+				"End": 2
+			}
+		]
+	},
+	{
+		"course_code": "FMAP05",
+		"course_name_sv": "Linjär och kombinatorisk optimering",
+		"course_name_en": "Linear and Combinatorial Optimization",
+		"credits": 7.5,
+		"level": "A",
+		"periods": [
+			{
+				"Start": 1,
+				"End": 2
+			}
+		]
+	},
+	{
+		"course_code": "FMNN05",
+		"course_name_sv": "Simuleringsverktyg",
+		"course_name_en": "Simulation Tools",
+		"credits": 7.5,
+		"level": "A",
+		"periods": [
+			{
+				"Start": 1,
+				"End": 2
+			}
+		]
+	},
+	{
+		"course_code": "FMNN25",
+		"course_name_sv": "Avancerad kurs i numeriska algoritmer med Python/SciPy",
+		"course_name_en": "Advanced Course in Numerical Algorithms with Python/SciPy",
+		"credits": 7.5,
+		"level": "A",
+		"periods": [
+			{
+				"Start": 1,
+				"End": 2
+			}
+		]
+	},
+	{
+		"course_code": "FRTN01",
+		"course_name_sv": "Realtidssystem",
+		"course_name_en": "Real-Time Systems",
+		"credits": 10,
+		"level": "A",
+		"periods": [
+			{
+				"Start": 1,
+				"End": 2
+			}
+		]
+	}
+]
