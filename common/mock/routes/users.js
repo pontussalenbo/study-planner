@@ -1,7 +1,5 @@
 const express = require('express');
-const { promisify } = require('util');
-const db = require('../db');
-const data = require('../../data/courses_D.json');
+const data = require('../datasets/get_course_by_master_year_programme_response.json');
 
 const router = express.Router();
 
@@ -12,17 +10,13 @@ function findCoursePeriods(course) {
         const periodStart = Math.min(...periods);
         const periodEnd = Math.max(...periods);
 
-        return { periodStart, periodEnd };
+        return { Start: periodStart, End: periodEnd };
     });
 }
 
 /* GET users listing. */
-router.get('/courses', async (req, res, next) => {
-    const courses = data.slice(0, 20);
-    // eslint-disable-next-line max-len
-    const coursePeriods = courses.map((course) => ({ ...course, periods: findCoursePeriods(course) }));
-
-    res.json({ courses: coursePeriods });
+router.get('/courses', async (req, res) => {
+    res.json({ courses: data });
 });
 
 module.exports = router;
