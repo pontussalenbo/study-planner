@@ -1,5 +1,4 @@
-﻿#pragma warning disable IDE0060
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 
 namespace StudyPlannerAPI.Extensions;
 

@@ -2,6 +2,6 @@
 
 public interface IMasterRequirementValidator
 {
-    Task<IDictionary<string, MasterValidationResult>?> ValidateCourseSelection(string programme, string year,
-        List<string> selectedCourses, List<string> masterCodes);
+    Task<IDictionary<string, MasterValidationResult>?> ValidateCourseSelection(string programme, string classYear,
+        string academicYear, List<string> selectedCourses, List<string> masterCodes);
 }
