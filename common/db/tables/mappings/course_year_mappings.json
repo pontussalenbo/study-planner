@@ -1,5 +1,5 @@
 {
     "programme_code": "programmeCode",
     "course_code": "courseCode",
-    "class_year": "class"
+    "academic_year": "academicYearId"
 }
