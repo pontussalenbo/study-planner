@@ -1,7 +1,7 @@
-export interface CourseData {
-    courseCode: string;
-    credits: number;
-    cycle: string;
-    name_en: string;
-    periods?: Record<string, number>[];
+declare namespace CourseData {
+  export type COURSE_NAME = 'course_name_sv' | 'course_name_en';
+
+  export interface DataWithLocale extends Omit<API.CourseData, COURSE_NAME> {
+    course_name: string;
+  }
 }
