@@ -1,12 +1,3 @@
-[
-	{
-		"specialisationCode": "pv",
-		"specialisation_sv": "Programvara",
-		"specialisation_en": "Software"
-	},
-	{
-		"specialisationCode": "se",
-		"specialisation_sv": "Software engineering",
-		"specialisation_en": "Software Engineering"
-	}
-]
+version https://git-lfs.github.com/spec/v1
+oid sha256:7381cecb65e4be6d087aae999ec7849b49a197031b916cac0414c1049fd4ae1e
+size 242
