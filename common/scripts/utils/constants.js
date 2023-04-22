@@ -9,7 +9,8 @@ const DB_TABLES = [
     'masters',
     'programme_master',
     'master_course',
-    'course_class'
+    'course_class',
+    'course_year'
 ];
 
 const FILE_PATHS = {
