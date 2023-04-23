@@ -21,6 +21,7 @@ public class App
         builder.Services.AddScoped<IDbConnection, SQLiteConnection>();
         builder.Services.AddScoped<IMasterRequirementValidator, MasterRequirementValidator>();
         builder.Services.AddScoped<ICourseInfoManager, CourseInfoManager>();
+        builder.Services.AddScoped<ILinkShareManager, LinkShareManager>();
 
         var app = builder.Build();
 

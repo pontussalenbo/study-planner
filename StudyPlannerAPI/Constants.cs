@@ -4,6 +4,7 @@ public class Constants
 {
     public const string ROUTE_MASTER_CHECK = "studyplanner/masters";
     public const string ROUTE_COURSE_DATA = "studyplanner/courses";
+    public const string ROUTE_LINK_SHARE = "studyplanner/links";
 
     public const string CONNECTION_STRING = "ConnectionString";
 
