@@ -1,28 +1,39 @@
-// hooks/useFetchCourses.ts
-import { useEffect, useState } from 'react';
-import getUniqueListBy from 'utils/getUniqueList';
-import type { CourseData } from 'views/MainPage';
+// hooks/useFetch.ts
+import { useState, useEffect } from 'react';
 
-interface Resp {
-    courses: CourseData[];
+interface FetchState<T> {
+  data: T | null;
+  loading: boolean;
+  error: Error | null;
 }
 
-export const useFetchCourses = (): CourseData[] => {
-    const [courses, setCourses] = useState<CourseData[]>([]);
+export function useFetch<T>(url: string, options?: RequestInit): FetchState<T> {
+  const [data, setData] = useState<T | null>(null);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [error, setError] = useState<Error | null>(null);
 
-    useEffect(() => {
-        const fetchData = async (): Promise<CourseData[]> => {
-            const res = await fetch('http://localhost:3000/db/courses');
-            // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-            const resp: Resp = await res.json();
-            const { courses } = resp;
-            return getUniqueListBy<CourseData>(courses, 'courseCode');
-        };
+  useEffect(() => {
+    const fetchData = async () => {
+      setLoading(true);
 
-        void fetchData().then(data => setCourses(data));
-    }, []);
+      try {
+        const response = await fetch(url, options);
 
-    return courses;
-};
+        if (!response.ok) {
+          throw new Error(`Error: ${response.status}`);
+        }
 
-export default useFetchCourses;
+        const parsedData = await response.json();
+        setData(parsedData);
+      } catch (err) {
+        setError(err as Error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchData();
+  }, [url, options]);
+
+  return { data, loading, error };
+}
