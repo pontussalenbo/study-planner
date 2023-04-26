@@ -68,6 +68,12 @@ module.exports = {
       }
     },
     {
+      files: ['src/**/*.ts'],
+      rules: {
+        'indent': ['error', 4, { 'SwitchCase': 1 }],
+      }
+    },
+    {
       'files': ['**/__tests__/**/*.ts?(x)'],
       'extends': ['plugin:testing-library/react'],
       'rules': {

@@ -80,6 +80,12 @@ export default defineConfig(({ mode }) => ({
           }
         })
       ]),
-    visualizer()
+    visualizer({
+      template: 'treemap', // or sunburst
+      open: true,
+      gzipSize: true,
+      brotliSize: true,
+      filename: 'build/analyze.html'
+    })
   ]
 }));
