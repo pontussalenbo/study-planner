@@ -4,4 +4,9 @@ declare namespace CourseData {
   export interface DataWithLocale extends Omit<API.CourseData, COURSE_NAME> {
     course_name: string;
   }
+
+  interface SelectedCourse extends DataWithLocale {
+    selectedYear: number;
+    selectedPeriod: API.Period | null;
+  }
 }
