@@ -8,13 +8,13 @@ export const breakpoints = {
 
 export const device = {
     /** xs-breakpoint */
-    xs: `(min-width: ${breakpoints.xs})`,
+    xs: `(min-width: ${breakpoints.xs}px)`,
     /** sm-breakpoint */
-    sm: `(min-width: ${breakpoints.sm})`,
+    sm: `(min-width: ${breakpoints.sm}px)`,
     /** md-breakpoint */
-    md: `(min-width: ${breakpoints.md})`,
+    md: `(min-width: ${breakpoints.md}px)`,
     /** lg-breakpoint */
-    lg: `(min-width: ${breakpoints.lg})`,
+    lg: `(min-width: ${breakpoints.lg}px)`,
     /** xl-breakpoint */
-    xl: `(min-width: ${breakpoints.xl})`
+    xl: `(min-width: ${breakpoints.xl}px)`
 };
