@@ -16,6 +16,10 @@ declare namespace API {
     periods: Period[];
   }
 
+  export interface Response {
+    courses: API.CourseData[];
+  }
+
   export interface MasterStatus {
     [key: Master]: {
       G1Credits: number;
@@ -23,9 +27,5 @@ declare namespace API {
       AdvancedCredits: number;
       RequirementsFulfilled: boolean;
     };
-  }
-
-  export interface Response {
-    courses: API.CourseData[];
   }
 }
