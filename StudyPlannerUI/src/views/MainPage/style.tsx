@@ -1,12 +1,14 @@
 import styled from 'styled-components';
 
 export const Container = styled.div`
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
 `;
 
 export const Wrapper = styled.div`
-    width: 90%;
+  width: 100%;
+  margin: 0 2rem;
+  margin-top: 5rem;
 `;
