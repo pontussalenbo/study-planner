@@ -1,50 +1,54 @@
-import Table from 'components/Table/Table';
-import { TableCell, TableRow } from 'components/Table/Table.style';
-import type { SelectedCourse } from 'interfaces/SelectedCourse';
-import { ColoredTableRow } from './style';
-
-type SelectedCourses = Record<number, SelectedCourse[]>;
-
-interface CreditsTableProps {
-    courses: SelectedCourses;
-}
+import {
+  StyledCell,
+  StyledHeader,
+  StyledTable,
+  StyledTableContainer
+} from './Table.style';
 
 const MOCK = [
-    {
-        code: 'mai',
-        name: 'maskinintelligens',
-        G1: 15,
-        G2: 15,
-        A: 15
-    },
-    {
-        code: 'pv',
-        name: 'programavara',
-        G1: 15,
-        G2: 15,
-        A: 15
-    }
+  {
+    code: 'mai',
+    name: 'maskinintelligens',
+    G1: 15,
+    G2: 15,
+    A: 15
+  },
+  {
+    code: 'pv',
+    name: 'programvara',
+    G1: 15,
+    G2: 15,
+    A: 15
+  }
 ];
 
-const THRESHOLD = 60;
-
-function CreditsTable({ courses }: CreditsTableProps): JSX.Element {
-    return (
-        <Table headers={['Spec', 'G1', 'G2', 'A', 'Total']}>
-            {MOCK.map(course => (
-                <ColoredTableRow
-                    fullfilled={course.G1 + course.G2 + course.A > THRESHOLD}
-                    key={course.code}
-                >
-                    <TableCell>{course.name}</TableCell>
-                    <TableCell>{course.G1}</TableCell>
-                    <TableCell>{course.G2}</TableCell>
-                    <TableCell>{course.A}</TableCell>
-                    <TableCell>{course.G1 + course.G2 + course.A}</TableCell>
-                </ColoredTableRow>
-            ))}
-        </Table>
-    );
+function CreditsTable(): JSX.Element {
+  return (
+    <StyledTableContainer>
+      <StyledTable>
+        <thead>
+          <tr>
+            <StyledHeader>Specialization</StyledHeader>
+            <StyledHeader>G1</StyledHeader>
+            <StyledHeader>G2</StyledHeader>
+            <StyledHeader>A</StyledHeader>
+            <StyledHeader>Total</StyledHeader>
+          </tr>
+        </thead>
+        <tbody>
+          {MOCK.map(course => (
+            <tr key={course.code}>
+              <StyledCell>{course.name}</StyledCell>
+              <StyledCell>{course.G1}</StyledCell>
+              <StyledCell>{course.G2}</StyledCell>
+              <StyledCell>{course.A}</StyledCell>
+              <StyledCell>{course.G1 + course.G2 + course.A}</StyledCell>
+            </tr>
+          ))}
+        </tbody>
+      </StyledTable>
+    </StyledTableContainer>
+  );
 }
 
 export default CreditsTable;
