@@ -1,66 +1,52 @@
-import { XAxis, YAxis, CartesianGrid, ResponsiveContainer, BarChart, Bar } from 'recharts';
-import type { SelectedCourse } from 'interfaces/SelectedCourse';
+import { memo } from 'react';
+import { Bar } from 'recharts';
+import { BarChart } from 'recharts';
+import { CartesianGrid } from 'recharts';
+import { ResponsiveContainer } from 'recharts';
+import { XAxis } from 'recharts';
+import { YAxis } from 'recharts';
 
 interface ICourseProps {
-    courses: SelectedCourse[];
+  courses: CourseData.SelectedCourse[];
 }
 
 function HorizontalBarChart({ courses }: ICourseProps): JSX.Element {
-    return (
-        <ResponsiveContainer width='50%' height={300}>
-            <BarChart
-                layout='vertical'
-                width={600}
-                height={300}
-                data={courses}
-                margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
-            >
-                <CartesianGrid stroke='#ccc' />
-                <XAxis
-                    domain={[1, 4]}
-                    tickCount={5}
-                    ticks={[1, 2, 3, 4]}
-                    tickFormatter={t => `lp ${t as string}`}
-                    label={{
-                        value: 'Periods',
-                        position: 'insideBottom',
-                        offset: 0
-                    }}
-                    type='number'
-                />
-                <YAxis
-                    label={{
-                        value: 'Courses',
-                        position: 'insideLeft',
-                        offset: 0,
-                        angle: -90
-                    }}
-                    width={100}
-                    type='category'
-                    dataKey='courseCode'
-                />
-                <Bar barSize={30} dataKey='periods' fill='green' />
-            </BarChart>
-        </ResponsiveContainer>
-    );
-}
+  const chartData = courses.map(course => {
+    // If there is a selected period, use that, otherwise use the first period (and only one)
+    const start = course.selectedPeriod?.Start || course.periods[0].Start;
+    const end = (course.selectedPeriod?.End ?? course.periods[0].End) + 1;
 
-export default HorizontalBarChart;
+    return {
+      name: course.course_code,
+      period: [start, end]
+    };
+  });
+  chartData.sort((a, b) => a.period[0] - b.period[0]);
 
-/*
-    <LineChart
+  if (!chartData.length) return <></>;
+
+  return (
+    <ResponsiveContainer width='100%' height={300}>
+      <BarChart
         layout='vertical'
         width={600}
         height={300}
-        data={data}
-        margin={{ top: 20, right: 30, left: 20, bottom: 5 }}
-    >
-        <XAxis type='number' domain={[0, 'dataMax + 1000']} />
-        <YAxis dataKey='name' type='category' />
-        <CartesianGrid strokeDasharray='3 3' />
-        <Tooltip />
-        <Legend />
-        <Line dataKey='pv' stroke='#8884d8' />
-        <Line dataKey='uv' stroke='#82ca9d' />
-    </LineChart>
-    */
+        data={chartData}
+        margin={{ top: 5, right: 30, left: -10, bottom: 5 }}
+      >
+        <CartesianGrid stroke='#ccc' />
+        <XAxis
+          domain={[1, 5]}
+          tickCount={5}
+          ticks={[1, 2, 3, 4]}
+          tickFormatter={(t: unknown) => `lp ${t as string}`}
+          type='number'
+        />
+        <YAxis width={100} type='category' dataKey='name' />
+        <Bar barSize={30} dataKey='period' fill='green' />
+      </BarChart>
+    </ResponsiveContainer>
+  );
+}
+
+export default memo(HorizontalBarChart);
