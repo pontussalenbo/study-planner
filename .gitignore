@@ -20,14 +20,13 @@ dist-ssr
 *.suo
 *.ntvs*
 *.njsproj
-*.sln
 *.sw?
 
 
 # Visual studio
-*.csproj
+.csproj
 *.csproj.user
-*.sln**
+*.sln.DotSettings.user
 *.sln.docstates
 **/.vs/*
 **/obj/*
