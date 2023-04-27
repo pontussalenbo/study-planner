@@ -23,8 +23,6 @@ body {
   font-family: sans-serif;
   font-size: 1rem;
   line-height: 1;
-  background: ${({ theme }) => theme.body};
-  color: ${({ theme }) => theme.text};
 }
 h1,
 h2,
