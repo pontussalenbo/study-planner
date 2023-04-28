@@ -12,7 +12,7 @@ public class DatabaseManager : IDatabaseManager
         this.connection.ConnectionString = configuration[Constants.CONNECTION_STRING];
     }
 
-    public async Task<IList<T>> GetList<T>(string query, params object[] parameters)
+    public async Task<IList<T>> ExecuteQuery<T>(string query, params object[] parameters)
     {
         var data = new List<T>();
         var command = connection.CreateCommand();
@@ -52,6 +52,27 @@ public class DatabaseManager : IDatabaseManager
             return data;
         });
 
+        return data;
+    }
+
+    public T? ExecuteScalar<T>(string query, params object[] parameters)
+    {
+        var command = connection.CreateCommand();
+        command.CommandText = query;
+        for (var i = 0; i < parameters.Length; i++)
+        {
+            var parameter = command.CreateParameter();
+            parameter.ParameterName = $"@p{i}";
+            parameter.Value = parameters[i];
+            command.Parameters.Add(parameter);
+        }
+
+        command.Prepare();
+        connection.Open();
+        var result = command.ExecuteScalar();
+        var data = (T?)Convert.ChangeType(result, typeof(T));
+
+        connection.Close();
         return data;
     }
 }

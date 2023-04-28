@@ -13,4 +13,11 @@ public class Constants
     public const string G2_CREDITS = "G2";
 
     public const string JSON_CONTENT_TYPE = "application/json";
+
+    public const string GENERAL = "general";
+
+    public const int REQUIRED_A_CREDITS_TOTAL = 45;
+    public const int REQUIRED_A_CREDITS_MASTER = 30;
+    public const int REQUIRED_CREDITS_TOTAL = 90;
+    public const int REQUIRED_CREDITS_MASTER = 45;
 }

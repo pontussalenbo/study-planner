@@ -1,10 +1,10 @@
-﻿using StudyPlannerAPI.Database.DTO;
+﻿using Microsoft.AspNetCore.Mvc;
 
 namespace StudyPlannerAPI.Model;
 
 public interface ICourseInfoManager
 {
-    Task<IList<CourseInfoDTO>> GetCourses(string programme, string classYear, string academicYear);
+    Task<IActionResult> GetCourses(string programme, string year);
 
-    Task<IList<CourseInfoDTO>> GetMasterCourses(string master, string programme, string classYear, string academicYear);
+    Task<IActionResult> GetMasterCourses(string master, string programme, string year);
 }

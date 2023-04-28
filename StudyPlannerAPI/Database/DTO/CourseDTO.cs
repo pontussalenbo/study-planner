@@ -2,7 +2,7 @@
 namespace StudyPlannerAPI.Database.DTO;
 
 [Serializable]
-public class CourseInfoDTO
+public class CourseDTO
 {
     public string course_code { get; set; } = string.Empty;
     public string course_name_sv { get; set; } = string.Empty;
@@ -14,12 +14,7 @@ public class CourseInfoDTO
 
     public override bool Equals(object? obj)
     {
-        if (obj is not CourseInfoDTO dto)
-        {
-            return false;
-        }
-
-        return course_code == dto.course_code;
+        return obj is not CourseDTO dto || course_code == dto.course_code;
     }
 
     public override int GetHashCode()

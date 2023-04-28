@@ -22,15 +22,14 @@ public class CourseController : ControllerBase
     [Consumes(Constants.JSON_CONTENT_TYPE)]
     public async Task<IActionResult> GetCourses([FromBody] CourseParams courseParams)
     {
-        if (courseParams.Programme == null || !((courseParams.ClassYear == null) ^ (courseParams.AcademicYear == null)))
+        if (courseParams.Programme == null || courseParams.Year == null)
         {
             return
                 new StatusCodeResult(StatusCodes.Status400BadRequest); // Require programme and class xor academic year
         }
 
         var result = await this.PerformEndpointAction(
-            async () => await courseInfoManager.GetCourses(courseParams.Programme, courseParams.ClassYear ?? "",
-                courseParams.AcademicYear ?? ""),
+            async () => await courseInfoManager.GetCourses(courseParams.Programme, courseParams.Year ?? string.Empty),
             logger);
         return result;
     }
@@ -40,15 +39,14 @@ public class CourseController : ControllerBase
     [Consumes(Constants.JSON_CONTENT_TYPE)]
     public async Task<IActionResult> GetMasterCourses([FromBody] CourseParams courseParams)
     {
-        if (courseParams.Master == null || courseParams.Programme == null ||
-            !((courseParams.ClassYear == null) ^ (courseParams.AcademicYear == null)))
+        if (courseParams.Master == null || courseParams.Programme == null || courseParams.Year == null)
         {
             return new StatusCodeResult(StatusCodes.Status400BadRequest); // Require master and programme
         }
 
         var result = await this.PerformEndpointAction(
             async () => await courseInfoManager.GetMasterCourses(courseParams.Master, courseParams.Programme,
-                courseParams.ClassYear ?? string.Empty, courseParams.AcademicYear ?? string.Empty), logger);
+                courseParams.Year ?? string.Empty), logger);
         return result;
     }
 }

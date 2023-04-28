@@ -1,16 +1,17 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 
+#pragma warning disable IDE0060
+
 namespace StudyPlannerAPI.Extensions;
 
 public static class ControllerExtensions
 {
-    public static async Task<IActionResult> PerformEndpointAction<T>(this ControllerBase controllerBase,
-        Func<Task<T>> action, ILogger logger)
+    public static async Task<IActionResult> PerformEndpointAction(this ControllerBase controllerBase,
+        Func<Task<IActionResult>> action, ILogger logger)
     {
         try
         {
-            var result = await action();
-            return new JsonResult(result);
+            return await action();
         }
         catch (Exception e)
         {

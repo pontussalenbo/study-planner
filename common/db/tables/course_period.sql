@@ -8,5 +8,5 @@ CREATE TABLE course_period (
     period_start INTEGER,
     period_end INTEGER,
     PRIMARY KEY (course_code, class_year, academic_year, period_start, period_end),
-    FOREIGN KEY (course_code) REFERENCES courses_info(course_code)
+    FOREIGN KEY (course_code) REFERENCES courses(course_code)
 );

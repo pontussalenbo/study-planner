@@ -2,5 +2,7 @@
 
 public interface IDatabaseManager
 {
-    Task<IList<T>> GetList<T>(string query, params object[] param);
+    Task<IList<T>> ExecuteQuery<T>(string query, params object[] param);
+
+    T? ExecuteScalar<T>(string query, params object[] param);
 }
