@@ -23,16 +23,15 @@ public class MasterCheckController : ControllerBase
     [Consumes(Constants.JSON_CONTENT_TYPE)]
     public async Task<IActionResult> CheckMasterRequirements([FromBody] MasterCheckParams masterCheckParams)
     {
-        if (masterCheckParams.Programme == null
-            || masterCheckParams.SelectedCourses.Count == 0 ||
-            !((masterCheckParams.ClassYear == null) ^ (masterCheckParams.AcademicYear == null)))
+        if (masterCheckParams.Programme == null || masterCheckParams.SelectedCourses.Count == 0 ||
+            masterCheckParams.Year == null)
         {
             return new StatusCodeResult(StatusCodes.Status400BadRequest);
         }
 
         var result = await this.PerformEndpointAction(
             async () => await masterRequirementValidator.ValidateCourseSelection(masterCheckParams.Programme,
-                masterCheckParams.ClassYear ?? string.Empty, masterCheckParams.AcademicYear ?? string.Empty,
+                masterCheckParams.Year ?? string.Empty,
                 masterCheckParams.SelectedCourses, masterCheckParams.MasterCodes), logger);
         return result;
     }

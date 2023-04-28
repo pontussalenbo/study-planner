@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using StudyPlannerAPI.Controllers.Params;
+using StudyPlannerAPI.Extensions;
 using StudyPlannerAPI.Model;
 
 namespace StudyPlannerAPI.Controllers;
@@ -18,15 +19,30 @@ public class LinkShareController : ControllerBase
     }
 
     [HttpPost]
-    public Task<IActionResult> GetUniqueShareLink([FromBody] LinkShareParams linkShareParams)
+    public async Task<IActionResult> GetUniqueShareLink([FromBody] LinkShareParams linkShareParams)
     {
-        throw new NotImplementedException();
+        if (linkShareParams.Programme == null || linkShareParams.Year == null ||
+            linkShareParams.MasterCodes.Count == 0 ||
+            linkShareParams.SelectedCourses.Count == 0)
+        {
+            return new StatusCodeResult(StatusCodes.Status400BadRequest);
+        }
+
+        return await this.PerformEndpointAction(async () =>
+            await linkShareManager.GetUniqueBlobFromPlan(linkShareParams.Programme, linkShareParams.Year,
+                linkShareParams.MasterCodes,
+                linkShareParams.SelectedCourses, linkShareParams.StudyPlanName ?? "My epic study plan"), logger);
     }
 
-
-    [HttpPost]
-    public Task<IActionResult> GetCourseSelectionFromLink([FromBody] LinkShareParams linkShareParams)
+    [HttpGet]
+    public async Task<IActionResult> GetStudyPlanFromUniqueBlob([FromQuery] LinkShareParams linkShareParams)
     {
-        throw new NotImplementedException();
+        if (linkShareParams.UniqueBlob == null)
+        {
+            return new StatusCodeResult(StatusCodes.Status400BadRequest);
+        }
+
+        return await this.PerformEndpointAction(
+            async () => await linkShareManager.GetPlanFromUniqueBlob(linkShareParams.UniqueBlob), logger);
     }
 }
