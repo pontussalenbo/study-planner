@@ -11,6 +11,9 @@ import Table from './components/Table';
 import { dataParser } from './dataParser';
 import { BASE_URL } from 'utils/URL';
 import ScrollArrow from './components/ScrollArrow';
+import { Section } from 'components/Section';
+import { CreditsWrapper } from './components/styles';
+import { Heading2 } from 'components/Typography/Heading2';
 
 type SelectedCourses = Record<4 | 5, CourseData.SelectedCourse[]>;
 
@@ -86,48 +89,42 @@ function MainPage(): JSX.Element {
   return (
     <Container>
       <Wrapper>
-        <section id='courses'>
+        <Section id='courses'>
           <Row>
-            <Col md={8} lg={8}>
+            <Col lg={8}>
               <Table courses={courses} handleAddCourse={handleAddCourse} />
             </Col>
-            <Col lg={4}>
-              <CreditsTable />
+            <Col md={6} lg={4}>
+              <CreditsWrapper>
+                <CreditsTable />
+              </CreditsWrapper>
             </Col>
           </Row>
-        </section>
-        <section id='selectedCourses'>
+        </Section>
+        <Section id='selectedCourses'>
           <Row>
-            <Col lg={6}>
+            <Col md={6}>
+              <Heading2>Fourth Year</Heading2>
               <SelectedCoursesTable
                 courses={selectedCourses[4]}
                 year={4}
                 onClickRemove={handleRemoveCourse}
                 onChangeYear={handleChangeYear}
               />
+              <HorizontalBarChart courses={selectedCourses[4]} />
             </Col>
-            <Col lg={6}>
+            <Col md={6}>
+              <Heading2>Fifth Year</Heading2>
               <SelectedCoursesTable
                 courses={selectedCourses[5]}
                 year={5}
                 onClickRemove={handleRemoveCourse}
                 onChangeYear={handleChangeYear}
               />
-            </Col>
-          </Row>
-        </section>
-        <section id='timeplans'>
-          <Row>
-            <Col xs={12} md={6} lg={6}>
-              <h3>Fourth Year</h3>
-              <HorizontalBarChart courses={selectedCourses[4]} />
-            </Col>
-            <Col xs={12} md={6} lg={6}>
-              <h3>Fifth Year</h3>
               <HorizontalBarChart courses={selectedCourses[5]} />
             </Col>
           </Row>
-        </section>
+        </Section>
       </Wrapper>
       <ScrollArrow />
     </Container>
