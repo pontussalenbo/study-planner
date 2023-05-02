@@ -12,6 +12,8 @@ const DB_TABLES = [
     'course_year',
 ];
 
+const DB_FILE_NAME = "study-planner.db";
+
 const FILE_PATHS = {
     DB_TABLES: 'db/tables',
     DB_TABLES_MAPPINGS: 'db/tables/mappings',
@@ -29,6 +31,7 @@ module.exports = {
     START_YEAR,
     END_YEAR,
     CLASSES,
+    DB_FILE_NAME,
 };
 
 module.exports.default = module.exports;

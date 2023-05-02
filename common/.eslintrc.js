@@ -15,5 +15,7 @@ module.exports = {
         indent: ['error', 4],
         'linebreak-style': 'off',
         'no-console': 'off',
+        'no-unused-vars': 'off',
+        'comma-dangle': 'off'
     },
 };

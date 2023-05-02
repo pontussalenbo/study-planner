@@ -4,7 +4,8 @@
 	"description": "",
 	"main": "index.js",
 	"scripts": {
-		"db-cli": "node ./scripts/cli.js"
+		"db-cli": "node ./scripts/cli.js",
+		"update:db": "node ./scripts/ftp.js"
 	},
 	"author": "",
 	"license": "ISC",
@@ -32,6 +33,8 @@
 		"axios": "^1.2.6",
 		"inquirer": "^8.2.5",
 		"node-fetch": "^3.3.0",
-		"shelljs": "^0.8.5"
+		"shelljs": "^0.8.5",
+		"dotenv": "^16.0.3",
+		"basic-ftp": "^5.0.2"
 	}
 }
