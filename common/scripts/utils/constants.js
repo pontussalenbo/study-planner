@@ -2,13 +2,13 @@ const generateArrayOfYears = require('./getYears');
 const programmes = require('../../data/programmes.json');
 
 const DB_TABLES = [
-    'courses_info',
-    'programme_course',
+    'courses',
+    'course_programme',
     'course_period',
     'programmes',
     'masters',
     'programme_master',
-    'master_course',
+    'course_master',
     'course_class',
     'course_year'
 ];

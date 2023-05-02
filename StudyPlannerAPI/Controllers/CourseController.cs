@@ -25,7 +25,7 @@ public class CourseController : ControllerBase
         if (courseParams.Programme == null || courseParams.Year == null)
         {
             return
-                new StatusCodeResult(StatusCodes.Status400BadRequest); // Require programme and class xor academic year
+                new StatusCodeResult(StatusCodes.Status400BadRequest);
         }
 
         var result = await this.PerformEndpointAction(
@@ -41,7 +41,7 @@ public class CourseController : ControllerBase
     {
         if (courseParams.Master == null || courseParams.Programme == null || courseParams.Year == null)
         {
-            return new StatusCodeResult(StatusCodes.Status400BadRequest); // Require master and programme
+            return new StatusCodeResult(StatusCodes.Status400BadRequest);
         }
 
         var result = await this.PerformEndpointAction(
