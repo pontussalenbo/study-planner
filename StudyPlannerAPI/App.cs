@@ -22,6 +22,7 @@ public class App
         builder.Services.AddScoped<IMasterRequirementValidator, MasterRequirementValidator>();
         builder.Services.AddScoped<ICourseInfoManager, CourseInfoManager>();
         builder.Services.AddScoped<ILinkShareManager, LinkShareManager>();
+        builder.Services.AddScoped<IGeneralInfoManager, GeneralInfoManager>();
 
         var app = builder.Build();
 
