@@ -28,8 +28,9 @@ async function main({ programmeCode, classes }) {
     const x = programmeCode.map(async (programme) => {
         // Promise<[][]>
         const y = classes.map(async (kull) => {
-            await new Promise(resolve => setTimeout(resolve, 1000));
-            console.log('Retrieving course data for programme: ' + programme + ' and class: ' + kull + '...');
+            // eslint-disable-next-line no-promise-executor-return
+            await new Promise((resolve) => setTimeout(resolve, 1000));
+            console.log(`Retrieving course data for programme: ${programme} and class: ${kull}...`);
             const courses = await getCourses({ programmeCode: programme, kull });
             // []
             const coursesWithCLass = courses.map((course) => ({

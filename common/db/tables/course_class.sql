@@ -5,7 +5,7 @@ CREATE TABLE course_class (
     programme_code TEXT,
     course_code TEXT,
     class_year TEXT,
-    PRIMARY KEY (programme_code, course_code),
+    PRIMARY KEY (programme_code, course_code, class_year),
     FOREIGN KEY (programme_code) REFERENCES programmes(programme_code),
     FOREIGN KEY (course_code) REFERENCES courses(course_code)
 );

@@ -17,7 +17,7 @@ const generalQuestions = [
     const { db } = await inquirer.prompt(generalQuestions);
     db.forEach(async (tableName) => {
         const keyMappings = await getKeyMapfromSQLTable(tableName);
-        const mappings = await mapPropToType(tableName, keyMappings);
-        genSqlStmt({ mappings, tableName });
+        const jsonKeys = await mapPropToType(tableName, keyMappings);
+        genSqlStmt({ jsonKeys, tableName });
     });
 })();
