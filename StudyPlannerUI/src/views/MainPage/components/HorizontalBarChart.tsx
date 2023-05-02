@@ -1,14 +1,22 @@
 import { memo } from 'react';
-import { Bar } from 'recharts';
-import { BarChart } from 'recharts';
-import { CartesianGrid } from 'recharts';
-import { ResponsiveContainer } from 'recharts';
-import { XAxis } from 'recharts';
-import { YAxis } from 'recharts';
+import {
+  Bar,
+  BarChart,
+  CartesianGrid,
+  ResponsiveContainer,
+  XAxis,
+  YAxis
+} from 'recharts';
+import styled from 'styled-components';
 
 interface ICourseProps {
   courses: CourseData.SelectedCourse[];
 }
+
+const Wrapper = styled.div`
+  margin-top: 2rem;
+  width: 100%;
+`;
 
 function HorizontalBarChart({ courses }: ICourseProps): JSX.Element {
   const chartData = courses.map(course => {
@@ -26,26 +34,28 @@ function HorizontalBarChart({ courses }: ICourseProps): JSX.Element {
   if (!chartData.length) return <></>;
 
   return (
-    <ResponsiveContainer width='100%' height={300}>
-      <BarChart
-        layout='vertical'
-        width={600}
-        height={300}
-        data={chartData}
-        margin={{ top: 5, right: 30, left: -10, bottom: 5 }}
-      >
-        <CartesianGrid stroke='#ccc' />
-        <XAxis
-          domain={[1, 5]}
-          tickCount={5}
-          ticks={[1, 2, 3, 4]}
-          tickFormatter={(t: unknown) => `lp ${t as string}`}
-          type='number'
-        />
-        <YAxis width={100} type='category' dataKey='name' />
-        <Bar barSize={30} dataKey='period' fill='green' />
-      </BarChart>
-    </ResponsiveContainer>
+    <Wrapper>
+      <ResponsiveContainer width='100%' height={300}>
+        <BarChart
+          layout='vertical'
+          width={600}
+          height={300}
+          data={chartData}
+          margin={{ top: 5, right: 30, left: -10, bottom: 5 }}
+        >
+          <CartesianGrid stroke='#ccc' />
+          <XAxis
+            domain={[1, 5]}
+            tickCount={5}
+            ticks={[1, 2, 3, 4]}
+            tickFormatter={(t: unknown) => `lp ${t as string}`}
+            type='number'
+          />
+          <YAxis width={100} type='category' dataKey='name' />
+          <Bar barSize={30} dataKey='period' fill='green' />
+        </BarChart>
+      </ResponsiveContainer>
+    </Wrapper>
   );
 }
 

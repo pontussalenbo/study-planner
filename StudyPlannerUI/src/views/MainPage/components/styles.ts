@@ -10,4 +10,8 @@ export const ColoredTableRow = styled(TableRow)<IColoredTableRow>`
   color: black;
 `;
 
-export const placeholder = 1;
+export const CreditsWrapper = styled.div`
+  @media (max-width: 992px) {
+    margin-top: 2rem;
+  }
+`;
