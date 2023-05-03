@@ -1,32 +1,31 @@
-import { useMemo, useState } from 'react';
+import { useState } from 'react';
 
 import Col from 'components/Flex/Col.style';
 import Row from 'components/Flex/Row.style';
-import { useFetch } from 'hooks/useFetchCourses';
+import { Section } from 'components/Section';
+import { Heading2 } from 'components/Typography/Heading2';
 import CreditsTable from './components/CreditsTable';
 import HorizontalBarChart from './components/HorizontalBarChart';
-import SelectedCoursesTable from './components/SelectedCourses';
-import { Container, Wrapper } from './style';
-import Table from './components/Table';
-import { dataParser } from './dataParser';
-import { BASE_URL } from 'utils/URL';
 import ScrollArrow from './components/ScrollArrow';
-import { Section } from 'components/Section';
+import SelectedCoursesTable from './components/SelectedCourses';
+import Table from './components/Table';
 import { CreditsWrapper } from './components/styles';
-import { Heading2 } from 'components/Typography/Heading2';
+import { Container, Wrapper } from './style';
+import { dataParser } from './dataParser';
+import { StyledButton } from 'components/Button';
+import { fetchData } from 'utils/fetch';
 
 type SelectedCourses = Record<4 | 5, CourseData.SelectedCourse[]>;
 
 function MainPage(): JSX.Element {
-  const { data, loading, error } = useFetch<API.Response>(BASE_URL + '/db/courses') || [];
+  // const { data, loading, error } = useFetch<API.Response>(BASE_URL + COURSES_URL) || [];
   const [selectedCourses, setSelectedCourses] = useState<SelectedCourses>({
     4: [],
     5: []
   });
 
-  const courses = useMemo(() => {
-    return dataParser(data, 'course_name_en') || [];
-  }, [data]);
+  // TODO: Any typings
+  const [courses, setCourses] = useState<any>([]);
 
   const handleAddCourse = (
     course: CourseData.SelectedCourse,
@@ -50,6 +49,13 @@ function MainPage(): JSX.Element {
         };
       });
     }
+  };
+
+  const handleGetCourses = (data?: any) => {
+    //TODO: apply filters when fetching data
+    fetchData({ Programme: 'D', Year: 'H19' }).then(resp =>
+      setCourses(dataParser(resp, 'course_name_en'))
+    );
   };
 
   const handleRemoveCourse = (courseName: string, year: 4 | 5) => {
@@ -78,17 +84,10 @@ function MainPage(): JSX.Element {
     });
   };
 
-  if (loading) {
-    return <div>Loading...</div>;
-  }
-
-  if (error) {
-    return <div>Error: {error.message}</div>;
-  }
-
   return (
     <Container>
       <Wrapper>
+        <StyledButton onClick={() => handleGetCourses()}>Get Courses</StyledButton>
         <Section id='courses'>
           <Row>
             <Col lg={8}>

@@ -28,6 +28,10 @@ const CourseTableRow: React.FC<CourseTableRowProps> = ({ course, handleAddCourse
     handleAddCourse(selectedCourse, 4, selectedPeriod);
   };
 
+  const endPeriod = (period: API.Period) => {
+    return period.end > period.start ? period.end : null;
+  };
+
   return (
     <tr>
       <StyledCell>{course.course_code}</StyledCell>
@@ -44,15 +48,51 @@ const CourseTableRow: React.FC<CourseTableRowProps> = ({ course, handleAddCourse
             <option style={{ minWidth: 'max-content', width: '100%' }} value='' disabled>
               Select
             </option>
+            {course.periods.map((period, index) => {
+              const end = endPeriod(period);
+              const displayPeriod = end ? `${period.start} \u2192 ${end}` : period.start;
+
+              return (
+                <option style={{ minWidth: 'max-content' }} key={index} value={index}>
+                  {displayPeriod}
+                </option>
+              );
+            })}
+          </select>
+        ) : (
+          <span>
+            {(() => {
+              const end = endPeriod(course.periods[0]);
+              const displayPeriod = end
+                ? `${course.periods[0].start} \u2192 ${end}`
+                : course.periods[0].start;
+              return displayPeriod;
+            })()}
+          </span>
+        )}
+        {/*
+        {course.periods.length > 1 ? (
+          <select
+            style={{ minWidth: 'max-content', width: '100%' }}
+            defaultValue=''
+            onChange={handlePeriodChange}
+          >
+            <option style={{ minWidth: 'max-content', width: '100%' }} value='' disabled>
+              Select
+            </option>
             {course.periods.map((period, index) => (
               <option style={{ minWidth: 'max-content' }} key={index} value={index}>
-                {period.Start} &rarr; {period.End}
+                {period.start} {endPeriod(period) && `\u2192 ${endPeriod(period)}`}
               </option>
             ))}
           </select>
         ) : (
-          <span>{course.periods[0].Start}</span>
+          <span>
+            {course.periods[0].start}{' '}
+            {endPeriod(course.periods[0]) && `\u2192 ${endPeriod(course.periods[0])}`}
+          </span>
         )}
+        */}
       </StyledCell>
       <StyledCell>
         <StyledButton

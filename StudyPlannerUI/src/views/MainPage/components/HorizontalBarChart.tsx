@@ -21,8 +21,8 @@ const Wrapper = styled.div`
 function HorizontalBarChart({ courses }: ICourseProps): JSX.Element {
   const chartData = courses.map(course => {
     // If there is a selected period, use that, otherwise use the first period (and only one)
-    const start = course.selectedPeriod?.Start || course.periods[0].Start;
-    const end = (course.selectedPeriod?.End ?? course.periods[0].End) + 1;
+    const start = course.selectedPeriod?.start || course.periods[0].start;
+    const end = (course.selectedPeriod?.end ?? course.periods[0].end) + 1;
 
     return {
       name: course.course_code,

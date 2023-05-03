@@ -4,8 +4,8 @@
 declare namespace API {
   export type Master = 'pg' | 'sv' | 'si';
   export interface Period {
-    Start: number;
-    End: number;
+    start: number;
+    end: number;
   }
   export interface CourseData {
     course_code: string;
