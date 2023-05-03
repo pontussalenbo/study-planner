@@ -67,7 +67,7 @@ module.exports = {
     {
       files: ['src/**/*.ts'],
       rules: {
-        'indent': ['error', 4, { 'SwitchCase': 1 }],
+        'indent': ['error', 2, { 'SwitchCase': 1 }],
       }
     },
     {
