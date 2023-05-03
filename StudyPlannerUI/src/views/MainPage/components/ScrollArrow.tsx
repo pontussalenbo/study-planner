@@ -26,7 +26,7 @@ const Circle = styled.div`
 `;
 
 const ArrowIcon = styled.svg<{ isPointingDown: boolean }>`
-  transform: ${props => (props.isPointingDown ? 'rotate(180deg)' : 'rotate(0deg)')};
+  transform: ${props => (props.isPointingDown ? 'rotate(-180deg)' : 'rotate(0deg)')};
   transition: transform 0.3s ease;
   fill: #586069;
 `;
