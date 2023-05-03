@@ -9,6 +9,10 @@ env:
 on:
   push:
     branches: [ "master" ]
+  pull_request:
+    types: [opened, synchronize, reopened, closed, labeled]
+    branches:
+      - master
   workflow_dispatch:
 
 permissions:
@@ -16,7 +20,7 @@ permissions:
 
 jobs:
   build:
-    if: contains(github.event.pull_request.title, '[api]')
+    if: github.event_name == 'push' || (github.event_name == 'pull_request' && github.event.action != 'closed' && github.event.label.name == 'api') 
     runs-on: ubuntu-latest
 
     steps:
