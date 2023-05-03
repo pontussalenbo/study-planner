@@ -24,7 +24,7 @@ public class App
         builder.Services.AddScoped<ILinkShareManager, LinkShareManager>();
         builder.Services.AddScoped<IGeneralInfoManager, GeneralInfoManager>();
         builder.Services.AddScoped<IHealthCheckManager, HealthCheckManager>();
-
+        builder.Services.AddCors();
         var app = builder.Build();
 
         // Configure the HTTP request pipeline.
@@ -33,6 +33,9 @@ public class App
             app.UseSwagger();
             app.UseSwaggerUI();
         }
+
+        app.UseCors(x => x.AllowAnyHeader().AllowAnyMethod()
+            .WithOrigins("http://localhost:5173", "https://gentle-coast-037526f03.3.azurestaticapps.net"));
 
         app.UseHttpsRedirection();
         app.UseAuthorization();
