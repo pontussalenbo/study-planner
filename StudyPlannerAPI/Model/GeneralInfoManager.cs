@@ -39,4 +39,13 @@ public class GeneralInfoManager : IGeneralInfoManager
 
         return new JsonResult(result);
     }
+
+    public async Task<IActionResult> GetMasters(string programme)
+    {
+        const string query =
+            $"SELECT {Columns.MASTER_CODE}, master_name_en, master_name_sv FROM {Tables.PROGRAMME_MASTER} JOIN {Tables.MASTERS} USING({Columns.MASTER_CODE}) WHERE programme_code = @p0";
+        var result = await databaseManager.ExecuteQuery<MasterDTO>(query, programme);
+
+        return new JsonResult(result);
+    }
 }
