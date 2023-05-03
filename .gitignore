@@ -33,7 +33,7 @@ dist-ssr
 **/bin/*
 !**/bin/www
 
-common/db/data/
+common/**/data/
 .eslintcache
 coverage
 **/.env
