@@ -57,7 +57,6 @@ public class DatabaseManager : IDatabaseManager
 
     public T? ExecuteScalar<T>(string query, params object[] parameters)
     {
-        Console.WriteLine(connection.ConnectionString);
         var command = connection.CreateCommand();
         command.CommandText = query;
         for (var i = 0; i < parameters.Length; i++)
