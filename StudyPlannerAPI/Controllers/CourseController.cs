@@ -28,25 +28,31 @@ public class CourseController : ControllerBase
                 new StatusCodeResult(StatusCodes.Status400BadRequest);
         }
 
-        var result = await this.PerformEndpointAction(
-            async () => await courseInfoManager.GetCourses(courseParams.Programme, courseParams.Year ?? string.Empty),
-            logger);
-        return result;
-    }
-
-    [HttpPost]
-    [Route("master")]
-    [Consumes(Constants.JSON_CONTENT_TYPE)]
-    public async Task<IActionResult> GetMasterCourses([FromBody] CourseParams courseParams)
-    {
-        if (courseParams.Master == null || courseParams.Programme == null || courseParams.Year == null)
+        if (courseParams.Master == null)
         {
-            return new StatusCodeResult(StatusCodes.Status400BadRequest);
+            return await this.PerformEndpointAction(
+                async () => await courseInfoManager.GetCourses(courseParams.Programme,
+                    courseParams.Year ?? string.Empty),
+                logger);
         }
 
-        var result = await this.PerformEndpointAction(
+        return await this.PerformEndpointAction(
             async () => await courseInfoManager.GetMasterCourses(courseParams.Master, courseParams.Programme,
                 courseParams.Year ?? string.Empty), logger);
-        return result;
     }
+
+    //[HttpPost]
+    //[Route("master")]
+    //[Consumes(Constants.JSON_CONTENT_TYPE)]
+    //public async Task<IActionResult> GetMasterCourses([FromBody] CourseParams courseParams)
+    //{
+    //    if (courseParams.Master == null || courseParams.Programme == null || courseParams.Year == null)
+    //    {
+    //        return new StatusCodeResult(StatusCodes.Status400BadRequest);
+    //    }
+
+    //    return await this.PerformEndpointAction(
+    //        async () => await courseInfoManager.GetMasterCourses(courseParams.Master, courseParams.Programme,
+    //            courseParams.Year ?? string.Empty), logger);
+    //}
 }

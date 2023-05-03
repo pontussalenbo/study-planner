@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using StudyPlannerAPI.Controllers.Params;
 using StudyPlannerAPI.Extensions;
 using StudyPlannerAPI.Model;
 
@@ -26,7 +27,7 @@ public class GeneralController : ControllerBase
     }
 
     [HttpGet]
-    [Route("academicYear")]
+    [Route("academic_years")]
     public async Task<IActionResult> GetAcademicYears()
     {
         var result = await this.PerformEndpointAction(async () => await generalInfoManager.GetAcademicYears(), logger);
@@ -34,10 +35,25 @@ public class GeneralController : ControllerBase
     }
 
     [HttpGet]
-    [Route("classYear")]
+    [Route("class_years")]
     public async Task<IActionResult> GetClassYears()
     {
         var result = await this.PerformEndpointAction(async () => await generalInfoManager.GetClassYears(), logger);
+        return result;
+    }
+
+    [HttpGet]
+    [Route("masters")]
+    public async Task<IActionResult> GetMastersByProgramme([FromQuery] CourseParams courseParams)
+    {
+        if (courseParams.Programme == null)
+        {
+            return new StatusCodeResult(StatusCodes.Status400BadRequest);
+        }
+
+        var result =
+            await this.PerformEndpointAction(async () => await generalInfoManager.GetMasters(courseParams.Programme),
+                logger);
         return result;
     }
 }

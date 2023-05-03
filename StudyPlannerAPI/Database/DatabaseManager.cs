@@ -9,7 +9,7 @@ public class DatabaseManager : IDatabaseManager
     public DatabaseManager(IDbConnection connection, IConfiguration configuration)
     {
         this.connection = connection;
-        this.connection.ConnectionString = configuration[Constants.CONNECTION_STRING];
+        SetConnectionString(configuration[Constants.CONNECTION_STRING]);
     }
 
     public async Task<IList<T>> ExecuteQuery<T>(string query, params object[] parameters)
@@ -74,5 +74,24 @@ public class DatabaseManager : IDatabaseManager
 
         connection.Close();
         return data;
+    }
+
+    public void SetConnectionString(string connectionString)
+    {
+        connection.ConnectionString = $"{Constants.CONNECTION_STRING_PREFIX}{connectionString}";
+    }
+
+    public bool CheckConnection(string connectionString)
+    {
+        if (!File.Exists(connectionString))
+        {
+            return false;
+        }
+
+        SetConnectionString(connectionString);
+        connection.Open();
+        var result = connection.State == ConnectionState.Open;
+        connection.Close();
+        return result;
     }
 }

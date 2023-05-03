@@ -6,8 +6,11 @@ public class Constants
     public const string ROUTE_COURSE_DATA = "studyplanner/courses";
     public const string ROUTE_LINK_SHARE = "studyplanner/links";
     public const string ROUTE_GENERAL_INFO = "studyplanner/general";
+    public const string ROUTE_HEALTH_CHECK = "studyplanner/index";
 
     public const string CONNECTION_STRING = "ConnectionString";
+    public const string CONNECTION_STRING_LINKS = "ConnectionStringLinks";
+    public const string CONNECTION_STRING_PREFIX = "Data Source=";
 
     public const string A_CREDITS = "A";
     public const string G1_CREDITS = "G1";

@@ -23,6 +23,7 @@ public class App
         builder.Services.AddScoped<ICourseInfoManager, CourseInfoManager>();
         builder.Services.AddScoped<ILinkShareManager, LinkShareManager>();
         builder.Services.AddScoped<IGeneralInfoManager, GeneralInfoManager>();
+        builder.Services.AddScoped<IHealthCheckManager, HealthCheckManager>();
 
         var app = builder.Build();
 

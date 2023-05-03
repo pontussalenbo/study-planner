@@ -17,4 +17,5 @@ public static class Columns
     public const string YEAR = "year";
     public const string STUDY_PLAN_ID = "study_plan_id";
     public const string STUDY_PLAN_NAME = "study_plan_name";
+    public const string STUDY_YEAR = "study_year";
 }

@@ -37,3 +37,5 @@ common/db/data/
 .eslintcache
 coverage
 **/.env
+**/*.db
+courses.json
