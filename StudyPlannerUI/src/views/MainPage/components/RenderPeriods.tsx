@@ -25,8 +25,8 @@ export default function renderPeriods(
           Please select
         </option>
         {periods.map((period, index) => (
-          <option key={index} value={`${period.Start},${period.End}`}>
-            {period.Start} {period.End - period.Start > 0 ? ` -> ${period.End}` : ''}
+          <option key={index} value={`${period.start},${period.end}`}>
+            {period.start} {period.end - period.start > 0 ? ` -> ${period.end}` : ''}
           </option>
         ))}
       </select>
@@ -36,7 +36,7 @@ export default function renderPeriods(
   const period = periods[0];
   return (
     <span>
-      {period.Start} {period.End - period.Start > 0 ? ` -> ${period.End}` : ''}
+      {period.start} {period.end - period.start > 0 ? ` -> ${period.end}` : ''}
     </span>
   );
 }
