@@ -1,4 +1,4 @@
-name: Azure Static Web Apps CI/CD
+name: Deploy React Application to Azure
 
 env:
   NPM_CONFIG_LEGACY_PEER_DEPS: true
@@ -8,13 +8,13 @@ on:
     branches:
       - master
   pull_request:
-    types: [opened, synchronize, reopened, closed]
+    types: [opened, synchronize, reopened, closed, labeled]
     branches:
       - master
 
 jobs:
   build_and_deploy_job:
-    if: github.event_name == 'push' || (github.event_name == 'pull_request' && github.event.action != 'closed') && contains(github.event.pull_request.title, '[app]') 
+    if: github.event_name == 'push' || (github.event_name == 'pull_request' && github.event.action != 'closed' && github.event.label.name == 'app') 
     runs-on: ubuntu-latest
     name: Build and Deploy Job
     steps:
