@@ -42,6 +42,10 @@ public class App
 
         app.MapControllers();
 
+        app.UseFileServer();
+        app.UseDefaultFiles();
+        app.UseStaticFiles();
+
         app.Run();
     }
 }
