@@ -2,5 +2,5 @@
 
 public class UniqueBlobDTO
 {
-    public string StudyPlanId { get; set; } = string.Empty;
+    public string? StudyPlanId { get; set; } = string.Empty;
 }

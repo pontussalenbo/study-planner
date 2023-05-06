@@ -40,19 +40,4 @@ public class CourseController : ControllerBase
             async () => await courseInfoManager.GetMasterCourses(courseParams.Master, courseParams.Programme,
                 courseParams.Year ?? string.Empty), logger);
     }
-
-    //[HttpPost]
-    //[Route("master")]
-    //[Consumes(Constants.JSON_CONTENT_TYPE)]
-    //public async Task<IActionResult> GetMasterCourses([FromBody] CourseParams courseParams)
-    //{
-    //    if (courseParams.Master == null || courseParams.Programme == null || courseParams.Year == null)
-    //    {
-    //        return new StatusCodeResult(StatusCodes.Status400BadRequest);
-    //    }
-
-    //    return await this.PerformEndpointAction(
-    //        async () => await courseInfoManager.GetMasterCourses(courseParams.Master, courseParams.Programme,
-    //            courseParams.Year ?? string.Empty), logger);
-    //}
 }

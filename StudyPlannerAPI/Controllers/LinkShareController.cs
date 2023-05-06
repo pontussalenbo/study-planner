@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using StudyPlannerAPI.Controllers.Params;
+using StudyPlannerAPI.Database.DTO;
 using StudyPlannerAPI.Extensions;
 using StudyPlannerAPI.Model;
 
@@ -35,14 +36,14 @@ public class LinkShareController : ControllerBase
     }
 
     [HttpGet]
-    public async Task<IActionResult> GetStudyPlanFromUniqueBlob([FromQuery] LinkShareParams linkShareParams)
+    public async Task<IActionResult> GetStudyPlanFromUniqueBlob([FromQuery] UniqueBlobDTO uniqueBlobDTO)
     {
-        if (linkShareParams.UniqueBlob == null)
+        if (uniqueBlobDTO.StudyPlanId == null)
         {
             return new StatusCodeResult(StatusCodes.Status400BadRequest);
         }
 
         return await this.PerformEndpointAction(
-            async () => await linkShareManager.GetPlanFromUniqueBlob(linkShareParams.UniqueBlob), logger);
+            async () => await linkShareManager.GetPlanFromUniqueBlob(uniqueBlobDTO.StudyPlanId), logger);
     }
 }
