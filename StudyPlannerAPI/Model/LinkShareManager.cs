@@ -45,19 +45,18 @@ public class LinkShareManager : ILinkShareManager
                WHERE {Columns.STUDY_PLAN_ID} = @p0");
         query = queryBuilder.ToString();
         var masterCodes =
-            (await databaseManager.ExecuteQuery<MasterCodeDTO>(query, parameters.ToArray())).Select(
-                dto => dto.master_code).ToList();
+            (await databaseManager.ExecuteQuery<MasterCodeDTO>(query, parameters.ToArray()))
+            .Select(dto => dto.master_code).ToList();
 
         // Get courses
         queryBuilder.Clear();
         queryBuilder.AppendLine(
-            @$"SELECT {Columns.COURSE_CODE}, {Columns.STUDY_YEAR}
+            @$"SELECT {Columns.COURSE_CODE}, {Columns.STUDY_YEAR}, {Columns.PERIOD_START}, {Columns.PERIOD_END}
                FROM {Tables.STUDY_PLAN_COURSE}
                WHERE {Columns.STUDY_PLAN_ID} = @p0");
         query = queryBuilder.ToString();
         var courses =
-            (await databaseManager.ExecuteQuery<SelectedCourseDTO>(query, parameters.ToArray()))
-            .ToList();
+            (await databaseManager.ExecuteQuery<SelectedCourseDTO>(query, parameters.ToArray())).ToList();
 
         var result = new LinkShareDTO
         {
@@ -115,23 +114,18 @@ public class LinkShareManager : ILinkShareManager
         queryBuilder.Clear();
         parameters.Clear();
         queryBuilder.AppendLine(
-            $"INSERT INTO {Tables.STUDY_PLAN_COURSE}({Columns.STUDY_PLAN_ID}, {Columns.COURSE_CODE}, {Columns.STUDY_YEAR}) VALUES");
-        //queryBuilder.AppendLine($"(\"{studyPlanId}\", @p0, @p1)");
-        //parameters.Add(selectedCourses[0].course_code); // Should never fail
-        //parameters.Add(selectedCourses[0].study_year); // Should never fail
-        //for (var i = 2; i < selectedCourses.Count; i += 2)
-        //{
-        //    queryBuilder.AppendLine($",(\"{studyPlanId}\", @p{i}, @p{i + 1})");
-        //    parameters.Add(selectedCourses[i]);
-        //}
+            $"INSERT INTO {Tables.STUDY_PLAN_COURSE}({Columns.STUDY_PLAN_ID}, {Columns.COURSE_CODE}, {Columns.STUDY_YEAR}, {Columns.PERIOD_START}, {Columns.PERIOD_END}) VALUES");
 
         var paramCount = 0;
-        foreach (var selectedCourse in selectedCourses)
+        foreach (var course in selectedCourses)
         {
             var prefix = paramCount != 0 ? "," : string.Empty;
-            queryBuilder.AppendLine($"{prefix}(\"{studyPlanId}\", @p{paramCount++}, @p{paramCount++})");
-            parameters.Add(selectedCourse.course_code);
-            parameters.Add(selectedCourse.study_year);
+            queryBuilder.AppendLine(
+                $"{prefix}(\"{studyPlanId}\", @p{paramCount++}, @p{paramCount++}, @p{paramCount++}, @p{paramCount++})");
+            parameters.Add(course.course_code);
+            parameters.Add(course.study_year);
+            parameters.Add(course.period_start);
+            parameters.Add(course.period_end);
         }
 
         query = queryBuilder.ToString();
