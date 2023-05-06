@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Study-planner status</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        function checkStatus() {
+            $.ajax({
+                url: "/studyplanner/health",
+                type: "GET",
+                success: function (data) {
+                    $("#status").text("healthy");
+                },
+                error: function (jqXHR, textStatus, errorThrown) {
+                    $("#status").text(textStatus);
+                }
+            });
+        }
+    </script>
+</head>
+
+<body>
+    <h1>Study-planner status</h1>
+    <p>Status: <span id="status">Unknown</span></p>
+    <button onclick="checkStatus()">Check Status</button>
+</body>
+
+</html>
