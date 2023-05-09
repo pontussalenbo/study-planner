@@ -97,15 +97,14 @@ function MainPage(): JSX.Element {
   return (
     <Container>
       <Wrapper>
-        <Row>
-          <Col sm={12} lg={6}>
-            <FilterBar
-              filters={filters}
-              onFilterChange={handleFilterChange}
-              onGetCourses={handleGetCourses}
-            />
-          </Col>
-        </Row>
+        <div style={{ display: 'flex', width: 'max-content' }}>
+          <FilterBar
+            filters={filters}
+            onFilterChange={handleFilterChange}
+            onGetCourses={handleGetCourses}
+          />
+        </div>
+
         <Section id='courses'>
           <Row>
             <Col lg={8}>

@@ -1,13 +1,11 @@
 // FilterBar.tsx
-import { StyledButton } from 'components/Button';
 import React from 'react';
-import { Event as ChangeEvent } from 'interfaces/Event.d';
-import useFetch from 'hooks/useFetch';
-import { BASE_URL } from 'utils/URL';
-import styled from 'styled-components';
-import Tooltip from 'components/ToolTip';
 import { Select } from 'components/Select';
-import { GetButton } from 'components/Select/style';
+import Tooltip from 'components/ToolTip';
+import useFetch from 'hooks/useFetch';
+import { Event as ChangeEvent } from 'interfaces/Event.d';
+import { BASE_URL } from 'utils/URL';
+import { GetButton, SelectWrapper } from './style';
 
 type FilterBarProps = {
   filters: Record<string, string>;
@@ -16,12 +14,6 @@ type FilterBarProps = {
 };
 
 type Filter = 'Year' | 'Class';
-
-const SelectWrapper = styled.div`
-  display: flex;
-  gap: 1rem;
-  margin-bottom: 1rem;
-`;
 
 export const FilterBar: React.FC<FilterBarProps> = ({
   filters,
@@ -55,21 +47,19 @@ export const FilterBar: React.FC<FilterBarProps> = ({
         onChange={handleChange}
       >
         <option value='' disabled>
-          programme
+          Select
         </option>
       </Select>
       <Select
-        label='Year/Class'
+        label='Filter by'
         options={['Class', 'Year']}
         defaultValue=''
         name='Year'
         onChange={e => fetchFilterValues(e.target.value as Filter)}
       >
         <option value='' disabled>
-          select
+          Select
         </option>
-        <option>Class</option>
-        <option>Year</option>
       </Select>
       <Tooltip
         text='Please select a filter'
@@ -85,7 +75,7 @@ export const FilterBar: React.FC<FilterBarProps> = ({
           disabled={!filterValues.length}
         >
           <option value='' disabled>
-            select
+            Select
           </option>
         </Select>
       </Tooltip>
