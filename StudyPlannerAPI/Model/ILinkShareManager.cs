@@ -6,8 +6,7 @@ namespace StudyPlannerAPI.Model;
 public interface ILinkShareManager
 {
     Task<IActionResult> GetUniqueBlobFromPlan(string programme, string year, List<string> masters,
-        List<SelectedCourseDTO> selectedCourses,
-        string studyPlanName);
+        List<SelectedCourseDTO> selectedCourses, string studyPlanName);
 
     Task<IActionResult> GetPlanFromUniqueBlob(string uniqueBlob);
 }

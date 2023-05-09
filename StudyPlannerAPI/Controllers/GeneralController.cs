@@ -22,24 +22,21 @@ public class GeneralController : ControllerBase
     [Route("programmes")]
     public async Task<IActionResult> GetProgrammes()
     {
-        var result = await this.PerformEndpointAction(generalInfoManager.GetProgrammes, logger);
-        return result;
+        return await this.PerformEndpointAction(generalInfoManager.GetProgrammes, logger);
     }
 
     [HttpGet]
     [Route("academic_years")]
     public async Task<IActionResult> GetAcademicYears()
     {
-        var result = await this.PerformEndpointAction(generalInfoManager.GetAcademicYears, logger);
-        return result;
+        return await this.PerformEndpointAction(generalInfoManager.GetAcademicYears, logger);
     }
 
     [HttpGet]
     [Route("class_years")]
     public async Task<IActionResult> GetClassYears()
     {
-        var result = await this.PerformEndpointAction(generalInfoManager.GetClassYears, logger);
-        return result;
+        return await this.PerformEndpointAction(generalInfoManager.GetClassYears, logger);
     }
 
     [HttpGet]
@@ -51,11 +48,7 @@ public class GeneralController : ControllerBase
             return new StatusCodeResult(StatusCodes.Status400BadRequest);
         }
 
-        var result =
-            await this.PerformEndpointAction(
-                async () => await generalInfoManager.GetMasters(courseParams.Programme,
-                    courseParams.Year ?? string.Empty),
-                logger);
-        return result;
+        return await this.PerformEndpointAction(async () => await generalInfoManager.GetMasters(courseParams.Programme),
+            logger);
     }
 }

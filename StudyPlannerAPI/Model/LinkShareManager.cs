@@ -2,19 +2,27 @@
 using Microsoft.AspNetCore.Mvc;
 using StudyPlannerAPI.Database;
 using StudyPlannerAPI.Database.DTO;
+using StudyPlannerAPI.Database.Util;
 
 namespace StudyPlannerAPI.Model;
 
 public class LinkShareManager : ILinkShareManager
 {
-    private readonly IDatabaseManager databaseManager;
+    private readonly IDatabaseMutationManager databaseMutationManager;
+    private readonly IDatabaseQueryManager databaseQueryManager;
     private readonly ILogger<LinkShareManager> logger;
 
-    public LinkShareManager(IDatabaseManager databaseManager, ILogger<LinkShareManager> logger,
+    public LinkShareManager(IDatabaseQueryManager databaseQueryManager,
+        IDatabaseMutationManager databaseMutationManager, ILogger<LinkShareManager> logger,
         IConfiguration configuration)
     {
-        this.databaseManager = databaseManager;
-        this.databaseManager.SetConnectionString(configuration[Constants.CONNECTION_STRING_LINKS]);
+        this.databaseQueryManager = (IDatabaseQueryManager)DatabaseUtil.ConfigureDatabaseManager(databaseQueryManager,
+            configuration, Constants.CONNECTION_STRING_LINKS);
+
+        this.databaseMutationManager = (IDatabaseMutationManager)DatabaseUtil.ConfigureDatabaseManager(
+            databaseMutationManager, configuration,
+            Constants.CONNECTION_STRING_LINKS);
+
         this.logger = logger;
     }
 
@@ -29,13 +37,13 @@ public class LinkShareManager : ILinkShareManager
                FROM {Tables.STUDY_PLAN}
                WHERE {Columns.STUDY_PLAN_ID} = @p0");
         var query = queryBuilder.ToString();
-        var studyPlanDTOList = await databaseManager.ExecuteQuery<StudyPlanDTO>(query, parameters.ToArray());
+        var studyPlanDTOList = await databaseQueryManager.ExecuteQuery<StudyPlanDTO>(query, parameters.ToArray());
         if (studyPlanDTOList.Count == 0)
         {
             return new StatusCodeResult(StatusCodes.Status400BadRequest);
         }
 
-        var studyPlanDTO = studyPlanDTOList[0];
+        var studyPlanDTO = studyPlanDTOList.First();
 
         // Get masters
         queryBuilder.Clear();
@@ -45,7 +53,7 @@ public class LinkShareManager : ILinkShareManager
                WHERE {Columns.STUDY_PLAN_ID} = @p0");
         query = queryBuilder.ToString();
         var masterCodes =
-            (await databaseManager.ExecuteQuery<MasterCodeDTO>(query, parameters.ToArray()))
+            (await databaseQueryManager.ExecuteQuery<MasterCodeDTO>(query, parameters.ToArray()))
             .Select(dto => dto.master_code).ToList();
 
         // Get courses
@@ -56,7 +64,7 @@ public class LinkShareManager : ILinkShareManager
                WHERE {Columns.STUDY_PLAN_ID} = @p0");
         query = queryBuilder.ToString();
         var courses =
-            (await databaseManager.ExecuteQuery<SelectedCourseDTO>(query, parameters.ToArray())).ToList();
+            (await databaseQueryManager.ExecuteQuery<SelectedCourseDTO>(query, parameters.ToArray())).ToList();
 
         var result = new LinkShareDTO
         {
@@ -86,8 +94,9 @@ public class LinkShareManager : ILinkShareManager
             programme
         };
         var query = queryBuilder.ToString();
-        var studyPlanId = await Task.Run(() => databaseManager.ExecuteScalar<string>(query, parameters.ToArray())) ??
-                          string.Empty;
+        var studyPlanId =
+            await Task.Run(() => databaseMutationManager.ExecuteScalar<string>(query, parameters.ToArray())) ??
+            string.Empty;
 
         if (studyPlanId == string.Empty)
         {
@@ -108,7 +117,7 @@ public class LinkShareManager : ILinkShareManager
         }
 
         query = queryBuilder.ToString();
-        _ = await Task.Run(() => databaseManager.ExecuteScalar<dynamic>(query, parameters.ToArray()));
+        await Task.Run(() => databaseMutationManager.ExecuteScalar<dynamic>(query, parameters.ToArray()));
 
         // Add courses
         queryBuilder.Clear();
@@ -129,7 +138,7 @@ public class LinkShareManager : ILinkShareManager
         }
 
         query = queryBuilder.ToString();
-        _ = await Task.Run(() => databaseManager.ExecuteScalar<dynamic>(query, parameters.ToArray()));
+        await Task.Run(() => databaseMutationManager.ExecuteScalar<dynamic>(query, parameters.ToArray()));
 
         var result = new UniqueBlobDTO { StudyPlanId = studyPlanId };
         return new JsonResult(result);

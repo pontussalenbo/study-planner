@@ -2,6 +2,8 @@
 
 public class Constants
 {
+    public const string GENTLE_COAST = "https://gentle-coast-037526f03.3.azurestaticapps.net";
+
     public const string ROUTE_MASTER_CHECK = "studyplanner/masters";
     public const string ROUTE_COURSE_DATA = "studyplanner/courses";
     public const string ROUTE_LINK_SHARE = "studyplanner/links";

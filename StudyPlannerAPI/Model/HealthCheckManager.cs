@@ -1,24 +1,35 @@
 ﻿using StudyPlannerAPI.Database;
+using StudyPlannerAPI.Database.Util;
 
 namespace StudyPlannerAPI.Model;
 
 public class HealthCheckManager : IHealthCheckManager
 {
     private readonly IConfiguration configuration;
-    private readonly IDatabaseManager databaseManager;
+    private readonly IDatabaseQueryManager databaseQueryManager;
+    private readonly ILogger<HealthCheckManager> logger;
 
-    public HealthCheckManager(IDatabaseManager databaseManager, IConfiguration configuration)
+    public HealthCheckManager(IDatabaseQueryManager databaseQueryManager, IConfiguration configuration,
+        ILogger<HealthCheckManager> logger)
     {
-        this.databaseManager = databaseManager;
+        this.databaseQueryManager =
+            (IDatabaseQueryManager)DatabaseUtil.ConfigureDatabaseManager(databaseQueryManager, configuration,
+                Constants.CONNECTION_STRING);
         this.configuration = configuration;
+        this.logger = logger;
     }
 
-    public bool IsHealthy =>
-        CheckDatabaseConnection(configuration[Constants.CONNECTION_STRING]) &&
-        CheckDatabaseConnection(configuration[Constants.CONNECTION_STRING_LINKS]);
+    public bool IsHealthy => CheckHealth();
 
-    public bool CheckDatabaseConnection(string connectionString)
+    private bool CheckHealth()
     {
-        return databaseManager.CheckConnection(connectionString);
+        _ = DatabaseUtil.ConfigureDatabaseManager(databaseQueryManager, configuration, Constants.CONNECTION_STRING);
+        var connectionResult = databaseQueryManager.ValidateConnection();
+
+        _ = DatabaseUtil.ConfigureDatabaseManager(databaseQueryManager, configuration,
+            Constants.CONNECTION_STRING_LINKS);
+        connectionResult = connectionResult && databaseQueryManager.ValidateConnection();
+
+        return connectionResult;
     }
 }

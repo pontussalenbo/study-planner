@@ -14,16 +14,9 @@ public class App
         // Add services to the container.
         builder.Services.AddControllers()
             .AddJsonOptions(options => { options.JsonSerializerOptions.PropertyNamingPolicy = null; });
-        // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
         builder.Services.AddEndpointsApiExplorer();
         builder.Services.AddSwaggerGen();
-        builder.Services.AddScoped<IDatabaseManager, DatabaseManager>();
-        builder.Services.AddScoped<IDbConnection, SQLiteConnection>();
-        builder.Services.AddScoped<IMasterRequirementValidator, MasterRequirementValidator>();
-        builder.Services.AddScoped<ICourseInfoManager, CourseInfoManager>();
-        builder.Services.AddScoped<ILinkShareManager, LinkShareManager>();
-        builder.Services.AddScoped<IGeneralInfoManager, GeneralInfoManager>();
-        builder.Services.AddScoped<IHealthCheckManager, HealthCheckManager>();
+        AddDependencies(builder.Services);
         builder.Services.AddCors();
         var app = builder.Build();
 
@@ -35,7 +28,7 @@ public class App
         }
 
         app.UseCors(x => x.AllowAnyHeader().AllowAnyMethod()
-            .WithOrigins("http://localhost:5173", "https://gentle-coast-037526f03.3.azurestaticapps.net"));
+            .WithOrigins("http://localhost:5173", "http://127.0.0.1:5173", Constants.GENTLE_COAST));
 
         app.UseHttpsRedirection();
         app.UseAuthorization();
@@ -47,5 +40,17 @@ public class App
         app.UseStaticFiles();
 
         app.Run();
+    }
+
+    public static void AddDependencies(IServiceCollection services)
+    {
+        services.AddScoped<IDatabaseQueryManager, DatabaseQueryManager>();
+        services.AddScoped<IDatabaseMutationManager, DatabaseMutationManager>();
+        services.AddScoped<IDbConnection, SQLiteConnection>();
+        services.AddScoped<IMasterRequirementValidator, MasterRequirementValidator>();
+        services.AddScoped<ICourseInfoManager, CourseInfoManager>();
+        services.AddScoped<ILinkShareManager, LinkShareManager>();
+        services.AddScoped<IGeneralInfoManager, GeneralInfoManager>();
+        services.AddScoped<IHealthCheckManager, HealthCheckManager>();
     }
 }
