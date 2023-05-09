@@ -20,8 +20,7 @@ type SelectedCourses = Record<4 | 5, CourseData.SelectedCourse[]>;
 function MainPage(): JSX.Element {
   const [filters, setFilters] = useState({
     Programme: '',
-    Year: '',
-    Class: ''
+    Year: ''
   });
 
   const [selectedCourses, setSelectedCourses] = useState<SelectedCourses>({
@@ -56,11 +55,7 @@ function MainPage(): JSX.Element {
   };
 
   const handleGetCourses = () => {
-    const filter = {
-      Programme: filters.Programme,
-      Year: filters.Year || filters.Class
-    };
-    fetchData(filter).then(resp => setCourses(dataParser(resp, 'course_name_en')));
+    fetchData(filters).then(resp => setCourses(dataParser(resp, 'course_name_en')));
   };
 
   const handleRemoveCourse = (courseName: string, year: 4 | 5) => {
