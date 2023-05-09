@@ -24,4 +24,5 @@ public class Constants
     public const int REQUIRED_A_CREDITS_MASTER = 30;
     public const int REQUIRED_CREDITS_TOTAL = 90;
     public const int REQUIRED_CREDITS_MASTER = 45;
+    public const string DUMMY = "DELETE_ME";
 }
