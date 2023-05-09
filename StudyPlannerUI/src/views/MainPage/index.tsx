@@ -12,20 +12,24 @@ import Table from './components/Table';
 import { CreditsWrapper } from './components/styles';
 import { Container, Wrapper } from './style';
 import { dataParser } from './dataParser';
-import { StyledButton } from 'components/Button';
 import { fetchData } from 'utils/fetch';
+import { FilterBar } from './components/FilterBar';
 
 type SelectedCourses = Record<4 | 5, CourseData.SelectedCourse[]>;
 
 function MainPage(): JSX.Element {
-  // const { data, loading, error } = useFetch<API.Response>(BASE_URL + COURSES_URL) || [];
+  const [filters, setFilters] = useState({
+    Programme: '',
+    Year: '',
+    Class: ''
+  });
+
   const [selectedCourses, setSelectedCourses] = useState<SelectedCourses>({
     4: [],
     5: []
   });
 
-  // TODO: Any typings
-  const [courses, setCourses] = useState<any>([]);
+  const [courses, setCourses] = useState<CourseData.DataWithLocale[]>([]);
 
   const handleAddCourse = (
     course: CourseData.SelectedCourse,
@@ -51,11 +55,12 @@ function MainPage(): JSX.Element {
     }
   };
 
-  const handleGetCourses = (data?: any) => {
-    //TODO: apply filters when fetching data
-    fetchData({ Programme: 'D', Year: 'H19' }).then(resp =>
-      setCourses(dataParser(resp, 'course_name_en'))
-    );
+  const handleGetCourses = () => {
+    const filter = {
+      Programme: filters.Programme,
+      Year: filters.Year || filters.Class
+    };
+    fetchData(filter).then(resp => setCourses(dataParser(resp, 'course_name_en')));
   };
 
   const handleRemoveCourse = (courseName: string, year: 4 | 5) => {
@@ -84,10 +89,28 @@ function MainPage(): JSX.Element {
     });
   };
 
+  const handleFilterChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const { name, value } = e.target;
+    setFilters(prev => {
+      return {
+        ...prev,
+        [name]: value
+      };
+    });
+  };
+
   return (
     <Container>
       <Wrapper>
-        <StyledButton onClick={() => handleGetCourses()}>Get Courses</StyledButton>
+        <Row>
+          <Col sm={12} lg={6}>
+            <FilterBar
+              filters={filters}
+              onFilterChange={handleFilterChange}
+              onGetCourses={handleGetCourses}
+            />
+          </Col>
+        </Row>
         <Section id='courses'>
           <Row>
             <Col lg={8}>
