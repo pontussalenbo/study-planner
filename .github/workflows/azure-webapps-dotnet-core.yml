@@ -44,6 +44,9 @@ jobs:
       - name: Build with dotnet
         run: dotnet build ${{env.ROOT_DIR}} --configuration Release
 
+      - name: dotnet publish
+        run: dotnet publish ${{env.ROOT_DIR}} -c Release -o ${{env.DOTNET_ROOT}}/myapp
+
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v3
         with:
@@ -65,9 +68,6 @@ jobs:
         uses: actions/download-artifact@v3
         with:
           name: .net-app
-
-      - name: dotnet publish
-        run: dotnet publish ${{env.ROOT_DIR}} -c Release -o ${{env.DOTNET_ROOT}}/myapp
 
       - name: Deploy to Azure Web App
         id: deploy-to-webapp
