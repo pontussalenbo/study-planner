@@ -1,16 +1,16 @@
 name: Build and deploy API to Azure
 
 env:
-  AZURE_WEBAPP_NAME: study-planner-api    # set this to the name of your Azure Web App
-  AZURE_WEBAPP_PACKAGE_PATH: '.'      # set this to the path to your web app project, defaults to the repository root
-  DOTNET_VERSION: '7.0.*'                 # set this to the .NET Core version to use
-  ROOT_DIR: './StudyPlannerAPI'
+  AZURE_WEBAPP_NAME: study-planner-api # set this to the name of your Azure Web App
+  AZURE_WEBAPP_PACKAGE_PATH: "." # set this to the path to your web app project, defaults to the repository root
+  DOTNET_VERSION: "7.0.*" # set this to the .NET Core version to use
+  ROOT_DIR: "./StudyPlannerAPI"
 
 on:
   push:
     paths:
-      - 'StudyPlannerAPI/**'
-    branches: [ "master" ]
+      - "StudyPlannerAPI/**"
+    branches: ["master"]
   pull_request:
     types: [opened, synchronize, reopened, closed, labeled]
     branches:
@@ -22,7 +22,7 @@ permissions:
 
 jobs:
   build:
-    if: github.event_name == 'push' || (github.event_name == 'pull_request' && github.event.action != 'closed' && github.event.label.name == 'api') 
+    if: github.event_name == 'push' || (github.event_name == 'pull_request' && github.event.action != 'closed' && github.event.label.name == 'api')
     runs-on: ubuntu-latest
 
     steps:
@@ -44,7 +44,11 @@ jobs:
       - name: Build with dotnet
         run: dotnet build ${{env.ROOT_DIR}} --configuration Release
 
-
+      - name: Upload artifact for deployment job
+        uses: actions/upload-artifact@v3
+        with:
+          name: .net-app
+          path: ${{env.DOTNET_ROOT}}/myapp
 
   deploy:
     if: github.event_name == 'push'
@@ -53,23 +57,17 @@ jobs:
     runs-on: ubuntu-latest
     needs: build
     environment:
-      name: 'Development'
+      name: "Development"
       url: ${{ steps.deploy-to-webapp.outputs.webapp-url }}
 
     steps:
-      - name: dotnet publish
-        run: dotnet publish ${{env.ROOT_DIR}} -c Release -o ${{env.DOTNET_ROOT}}/myapp
-
-      - name: Upload artifact for deployment job
-        uses: actions/upload-artifact@v3
-        with:
-          name: .net-app
-          path: ${{env.DOTNET_ROOT}}/myapp
-
       - name: Download artifact from build job
         uses: actions/download-artifact@v3
         with:
           name: .net-app
+
+      - name: dotnet publish
+        run: dotnet publish ${{env.ROOT_DIR}} -c Release -o ${{env.DOTNET_ROOT}}/myapp
 
       - name: Deploy to Azure Web App
         id: deploy-to-webapp
