@@ -2,16 +2,20 @@
 using Microsoft.AspNetCore.Mvc;
 using StudyPlannerAPI.Database;
 using StudyPlannerAPI.Database.DTO;
+using StudyPlannerAPI.Database.Util;
+using StudyPlannerAPI.Model.Util;
 
 namespace StudyPlannerAPI.Model;
 
 public class CourseInfoManager : ICourseInfoManager
 {
-    private readonly IDatabaseManager databaseManager;
+    private readonly IDatabaseQueryManager databaseQueryManager;
 
-    public CourseInfoManager(IDatabaseManager databaseManager)
+    public CourseInfoManager(IDatabaseQueryManager databaseQueryManager, IConfiguration configuration)
     {
-        this.databaseManager = databaseManager;
+        this.databaseQueryManager =
+            (IDatabaseQueryManager)DatabaseUtil.ConfigureDatabaseManager(databaseQueryManager, configuration,
+                Constants.CONNECTION_STRING);
     }
 
     public async Task<IActionResult> GetMasterCourses(string master, string programme, string year)
@@ -39,7 +43,7 @@ public class CourseInfoManager : ICourseInfoManager
 
         queryBuilder.AppendLine(condStmtBuilder.ToString());
         var query = queryBuilder.ToString();
-        var result = await databaseManager.ExecuteQuery<CourseDTO>(query, parameters.ToArray());
+        var result = await databaseQueryManager.ExecuteQuery<CourseDTO>(query, parameters.ToArray());
         result = await AppendCoursePeriods(result, programme, year);
         return new JsonResult(result);
     }
@@ -74,7 +78,7 @@ public class CourseInfoManager : ICourseInfoManager
 
 
         var query = queryBuilder.ToString();
-        var result = await databaseManager.ExecuteQuery<CourseDTO>(query, parameters.ToArray());
+        var result = await databaseQueryManager.ExecuteQuery<CourseDTO>(query, parameters.ToArray());
         result = await AppendCoursePeriods(result, programme, year);
         return new JsonResult(result);
     }
@@ -113,7 +117,7 @@ public class CourseInfoManager : ICourseInfoManager
 
         queryBuilder.AppendLine(condStmtBuilder.ToString());
         var query = queryBuilder.ToString();
-        var coursePeriods = await databaseManager.ExecuteQuery<CoursePeriodDTO>(query, parameters.ToArray());
+        var coursePeriods = await databaseQueryManager.ExecuteQuery<CoursePeriodDTO>(query, parameters.ToArray());
 
         foreach (var course in courses)
         {

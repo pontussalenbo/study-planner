@@ -1,7 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 
-#pragma warning disable IDE0060
-
 namespace StudyPlannerAPI.Extensions;
 
 public static class ControllerExtensions

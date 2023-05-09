@@ -1,11 +1,26 @@
-﻿namespace StudyPlannerAPI.Database;
+﻿using System.Data;
+
+namespace StudyPlannerAPI.Database;
 
 public interface IDatabaseManager
 {
-    Task<IList<T>> ExecuteQuery<T>(string query, params object[] param);
+    IDbConnection Connection { get; }
 
-    T? ExecuteScalar<T>(string query, params object[] param);
+    void SetConnectionString(string connectionString)
+    {
+        Connection.ConnectionString = $"{Constants.CONNECTION_STRING_PREFIX}{connectionString}";
+    }
 
-    void SetConnectionString(string connectionString);
-    bool CheckConnection(string connectionString);
+    bool ValidateConnection()
+    {
+        if (!File.Exists(Connection.ConnectionString))
+        {
+            return false;
+        }
+
+        Connection.Open();
+        var result = Connection.State == ConnectionState.Open;
+        Connection.Close();
+        return result;
+    }
 }

@@ -3,6 +3,7 @@ using StudyPlannerAPI.Controllers.Params;
 using StudyPlannerAPI.Database.DTO;
 using StudyPlannerAPI.Extensions;
 using StudyPlannerAPI.Model;
+using StudyPlannerAPI.Model.Util;
 
 namespace StudyPlannerAPI.Controllers;
 
@@ -22,9 +23,11 @@ public class LinkShareController : ControllerBase
     [HttpPost]
     public async Task<IActionResult> GetUniqueShareLink([FromBody] LinkShareParams linkShareParams)
     {
-        if (linkShareParams.Programme == null || linkShareParams.Year == null ||
-            linkShareParams.MasterCodes.Count == 0 ||
-            linkShareParams.SelectedCourses.Count == 0)
+        if (linkShareParams.Programme == null
+            || linkShareParams.Year == null
+            || !ModelUtil.ValidateYearPattern(linkShareParams.Year)
+            || linkShareParams.MasterCodes.Count == 0
+            || linkShareParams.SelectedCourses.Count == 0)
         {
             return new StatusCodeResult(StatusCodes.Status400BadRequest);
         }

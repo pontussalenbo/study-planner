@@ -2,6 +2,7 @@
 using StudyPlannerAPI.Controllers.Params;
 using StudyPlannerAPI.Extensions;
 using StudyPlannerAPI.Model;
+using StudyPlannerAPI.Model.Util;
 
 namespace StudyPlannerAPI.Controllers;
 
@@ -23,16 +24,17 @@ public class MasterCheckController : ControllerBase
     [Consumes(Constants.JSON_CONTENT_TYPE)]
     public async Task<IActionResult> CheckMasterRequirements([FromBody] MasterCheckParams masterCheckParams)
     {
-        if (masterCheckParams.Programme == null || masterCheckParams.SelectedCourses.Count == 0 ||
-            masterCheckParams.Year == null)
+        if (masterCheckParams.Programme == null
+            || masterCheckParams.SelectedCourses.Count == 0
+            || masterCheckParams.Year == null
+            || !ModelUtil.ValidateYearPattern(masterCheckParams.Year))
         {
             return new StatusCodeResult(StatusCodes.Status400BadRequest);
         }
 
-        var result = await this.PerformEndpointAction(
+        return await this.PerformEndpointAction(
             async () => await masterRequirementValidator.ValidateCourseSelection(masterCheckParams.Programme,
                 masterCheckParams.Year ?? string.Empty,
                 masterCheckParams.SelectedCourses, masterCheckParams.MasterCodes), logger);
-        return result;
     }
 }

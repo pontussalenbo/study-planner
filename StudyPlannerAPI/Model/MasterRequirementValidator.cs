@@ -2,17 +2,23 @@
 using Microsoft.AspNetCore.Mvc;
 using StudyPlannerAPI.Database;
 using StudyPlannerAPI.Database.DTO;
+using StudyPlannerAPI.Database.Util;
+using StudyPlannerAPI.Model.Util;
 
 namespace StudyPlannerAPI.Model;
 
 public class MasterRequirementValidator : IMasterRequirementValidator
 {
-    private readonly IDatabaseManager databaseManager;
+    private readonly IDatabaseQueryManager databaseQueryManager;
+
     private readonly ILogger<MasterRequirementValidator> logger;
 
-    public MasterRequirementValidator(IDatabaseManager databaseManager, ILogger<MasterRequirementValidator> logger)
+    public MasterRequirementValidator(IDatabaseQueryManager databaseQueryManager, IConfiguration configuration,
+        ILogger<MasterRequirementValidator> logger)
     {
-        this.databaseManager = databaseManager;
+        this.databaseQueryManager =
+            (IDatabaseQueryManager)DatabaseUtil.ConfigureDatabaseManager(databaseQueryManager, configuration,
+                Constants.CONNECTION_STRING);
         this.logger = logger;
     }
 
@@ -55,11 +61,15 @@ public class MasterRequirementValidator : IMasterRequirementValidator
     {
         var queryBuilder = new StringBuilder();
         var condStmtBuilder = new StringBuilder();
-        var parameters = new List<string>
-        {
-            programme,
-            year
-        };
+
+        queryBuilder.AppendLine($"SELECT DISTINCT({Columns.COURSE_CODE}), {Columns.CREDITS}, {Columns.LEVEL}");
+
+        var condTable = ModelUtil.YearPatternToTable(year);
+        var condColumn = ModelUtil.YearPatternToColumn(year);
+
+        queryBuilder.AppendLine($"FROM {condTable}");
+        condStmtBuilder.AppendLine($"WHERE {condColumn} = @p{parameters.Count}");
+        parameters.Add(year);
 
         queryBuilder.AppendLine(
             @$"SELECT DISTINCT({Columns.COURSE_CODE}), {Columns.CREDITS}, {Columns.LEVEL}
@@ -91,7 +101,7 @@ public class MasterRequirementValidator : IMasterRequirementValidator
         queryBuilder.AppendLine(condStmtBuilder.ToString());
         var query = queryBuilder.ToString();
         var queryResult =
-            await databaseManager.ExecuteQuery<CourseDTO>(query, parameters.ToArray());
+            await databaseQueryManager.ExecuteQuery<CourseDTO>(query, parameters.ToArray());
 
         var advancedCredits = queryResult.Where(c => c.level == Constants.A_CREDITS).Sum(c => c.credits);
         var g1Credits = queryResult.Where(c => c.level == Constants.G1_CREDITS).Sum(c => c.credits);

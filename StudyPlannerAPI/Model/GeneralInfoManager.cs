@@ -1,23 +1,26 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using StudyPlannerAPI.Database;
 using StudyPlannerAPI.Database.DTO;
+using StudyPlannerAPI.Database.Util;
 
 namespace StudyPlannerAPI.Model;
 
 public class GeneralInfoManager : IGeneralInfoManager
 {
-    private readonly IDatabaseManager databaseManager;
+    private readonly IDatabaseQueryManager databaseQueryManager;
 
-    public GeneralInfoManager(IDatabaseManager databaseManager)
+    public GeneralInfoManager(IDatabaseQueryManager databaseQueryManager, IConfiguration configuration)
     {
-        this.databaseManager = databaseManager;
+        this.databaseQueryManager =
+            (IDatabaseQueryManager)DatabaseUtil.ConfigureDatabaseManager(databaseQueryManager, configuration,
+                Constants.CONNECTION_STRING);
     }
 
     public async Task<IActionResult> GetProgrammes()
     {
         const string query =
             $"SELECT {Columns.PROGRAMME_CODE} FROM {Tables.PROGRAMMES} ORDER BY {Columns.PROGRAMME_CODE}";
-        var result = (await databaseManager.ExecuteQuery<ProgrammeCodeDTO>(query)).Select(pc => pc.programme_code);
+        var result = (await databaseQueryManager.ExecuteQuery<ProgrammeCodeDTO>(query)).Select(pc => pc.programme_code);
 
         return new JsonResult(result);
     }
