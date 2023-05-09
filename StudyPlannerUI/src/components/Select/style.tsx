@@ -1,4 +1,3 @@
-import { StyledButton } from 'components/Button';
 import styled from 'styled-components';
 
 export const SelectWrapper = styled.div`
@@ -13,19 +12,14 @@ export const SelectWrapper = styled.div`
 export const Label = styled.label`
   grid-area: label;
   font-weight: bold;
-  font-size: 0.8em;
+  font-size: 1em;
 `;
 
 export const Select = styled.select`
   grid-area: select;
-  padding: 8px;
+  padding: 2px;
   border-radius: 4px;
   border: 1px solid #ccc;
-`;
-
-export const GetButton = styled(StyledButton)`
-  display: block;
-  height: max-content;
-  padding: 15px;
-  margin-top: auto;
+  min-width: max-content;
+  width: 100px;
 `;
