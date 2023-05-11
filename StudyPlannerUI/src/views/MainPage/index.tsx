@@ -112,7 +112,10 @@ function MainPage(): JSX.Element {
             </Col>
             <Col md={6} lg={4}>
               <CreditsWrapper>
-                <CreditsTable />
+                <CreditsTable
+                  filters={filters}
+                  courses={[...selectedCourses[4], ...selectedCourses[5]]}
+                />
               </CreditsWrapper>
             </Col>
           </Row>
