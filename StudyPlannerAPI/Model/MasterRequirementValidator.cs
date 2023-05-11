@@ -34,11 +34,11 @@ public class MasterRequirementValidator : IMasterRequirementValidator
             masterCodes.Add(Constants.GENERAL);
         }
 
-        var result = new Dictionary<string, MasterValidationResult>();
+        var result = new List<MasterValidationResult>();
         foreach (var masterCode in masterCodes)
         {
             var validationResult = await ValidateMaster(masterCode, year, selectedCourses);
-            result.Add(masterCode, validationResult);
+            result.Add(validationResult);
         }
 
         return new JsonResult(result);
@@ -86,6 +86,7 @@ public class MasterRequirementValidator : IMasterRequirementValidator
         var totalCredits = queryResult.Sum(c => c.credits);
         var result = new MasterValidationResult
         {
+            Master = masterCode,
             AdvancedCredits = advancedCredits,
             G1Credits = g1Credits,
             G2Credits = g2Credits,
