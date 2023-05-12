@@ -1,8 +1,8 @@
 /* eslint-disable @typescript-eslint/explicit-function-return-type */
 import { createGlobalStyle } from 'styled-components';
+import { Theme } from './Theme';
 
-const GlobalStyles = createGlobalStyle`
-
+const GlobalStyles = createGlobalStyle<{ theme: Theme }>`
 /* Box sizing rules */
 *,
 *::before,
