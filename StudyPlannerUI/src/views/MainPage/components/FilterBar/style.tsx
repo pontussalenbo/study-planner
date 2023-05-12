@@ -3,9 +3,9 @@ import styled from 'styled-components';
 
 export const GetButton = styled(StyledButton)`
   height: max-content;
-  padding: 8px;
-  margin-top: auto;
+  padding: 8px 12px;
   border-radius: 4px;
+  margin-top: auto;
   margin-left: auto;
 `;
 

@@ -14,6 +14,7 @@ import { Container, Wrapper } from './style';
 import { dataParser } from './dataParser';
 import { fetchData } from 'utils/fetch';
 import { FilterBar } from './components/FilterBar';
+import SearchBar from './components/FilterBar/SearchBar';
 
 type SelectedCourses = Record<4 | 5, CourseData.SelectedCourse[]>;
 
@@ -106,6 +107,7 @@ function MainPage(): JSX.Element {
         </div>
 
         <Section id='courses'>
+          <SearchBar />
           <Row>
             <Col lg={8}>
               <Table courses={courses} handleAddCourse={handleAddCourse} />

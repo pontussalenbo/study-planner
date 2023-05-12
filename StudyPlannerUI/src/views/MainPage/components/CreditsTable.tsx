@@ -3,7 +3,8 @@ import {
   StyledCell,
   StyledHeader,
   StyledTable,
-  StyledTableContainer
+  StyledTableContainer,
+  TableBody
 } from './Table.style';
 import { BASE_URL } from 'utils/URL';
 import { useEffect, useState } from 'react';
@@ -90,7 +91,7 @@ function CreditsTable({ courses, filters }: ICreditsTable): JSX.Element {
               <StyledHeader>Total</StyledHeader>
             </tr>
           </thead>
-          <tbody>
+          <TableBody>
             {masters.map(master => {
               const x = stats.find(stat => stat.Master === master.master_code) ?? null;
               const totalCredits = x ? x.G1Credits + x.G2Credits + x.AdvancedCredits : 0;
@@ -107,7 +108,7 @@ function CreditsTable({ courses, filters }: ICreditsTable): JSX.Element {
                 </tr>
               );
             })}
-          </tbody>
+          </TableBody>
         </StyledTable>
       </StyledTableContainer>
     </>

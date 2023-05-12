@@ -48,10 +48,11 @@ function HorizontalBarChart({ courses }: ICourseProps): JSX.Element {
             domain={[1, 5]}
             tickCount={5}
             ticks={[1, 2, 3, 4]}
+            tick={{ fill: 'white' }}
             tickFormatter={(t: unknown) => `lp ${t as string}`}
             type='number'
           />
-          <YAxis width={100} type='category' dataKey='name' />
+          <YAxis width={100} tick={{ fill: 'white' }} type='category' dataKey='name' />
           <Bar barSize={30} dataKey='period' fill='green' />
         </BarChart>
       </ResponsiveContainer>
