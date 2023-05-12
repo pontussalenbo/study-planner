@@ -20,11 +20,11 @@ export const StyledTable = styled.table`
 `;
 // Add this CSS within the Table component
 export const StyledHeader = styled.th`
-  border: 1px solid ${props => props.theme.tableBorder};
+  border: 1px solid ${({ theme }) => theme.tableBorder};
   padding: 8px;
   text-align: left;
-  background-color: ${props => props.theme.header};
-  color: ${props => props.theme.text};
+  background-color: ${({ theme }) => theme.header};
+  color: ${({ theme }) => theme.text};
 `;
 
 export const StyledCell = styled.td`
@@ -34,6 +34,6 @@ export const StyledCell = styled.td`
 
 export const TableBody = styled.tbody`
   tr:nth-child(odd) {
-    background-color: ${props => props.theme.secondary};
+    background-color: ${({ theme }) => theme.secondary};
   }
 `;
