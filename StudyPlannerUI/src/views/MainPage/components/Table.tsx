@@ -1,6 +1,11 @@
 import { useState } from 'react';
 import CourseTableRow from './TableRow';
-import { StyledHeader, StyledTable, StyledTableContainer } from './Table.style';
+import {
+  StyledHeader,
+  StyledTable,
+  StyledTableContainer,
+  TableBody
+} from './Table.style';
 import Pagination from 'components/Pagination/Pagination';
 import useTable from 'hooks/useTable';
 
@@ -36,7 +41,7 @@ function Table({ courses, handleAddCourse }: CourseTableRowProps) {
               <StyledHeader>Action</StyledHeader>
             </tr>
           </thead>
-          <tbody>
+          <TableBody>
             {slice.map(course => (
               <CourseTableRow
                 key={course.course_code}
@@ -44,7 +49,7 @@ function Table({ courses, handleAddCourse }: CourseTableRowProps) {
                 handleAddCourse={handleAddCourse}
               />
             ))}
-          </tbody>
+          </TableBody>
         </StyledTable>
       </StyledTableContainer>
       <Pagination

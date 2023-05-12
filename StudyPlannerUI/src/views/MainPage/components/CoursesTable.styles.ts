@@ -23,7 +23,6 @@ export const StyledHeader = styled.th`
   border: 1px solid #ccc;
   padding: 8px;
   text-align: left;
-  background-color: #f2f2f2;
 
   @media ${device.sm} {
     font-size: 0.9rem;

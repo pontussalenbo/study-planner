@@ -12,7 +12,6 @@ export const TableRowHeader = styled.thead`
 `;
 
 export const TableHeader = styled.th`
-  background-color: #f1f1f1;
   font-weight: 500;
   text-align: left;
   font-size: 1rem;

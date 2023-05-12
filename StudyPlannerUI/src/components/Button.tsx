@@ -5,13 +5,15 @@ interface StyledButtonProps {
 }
 
 export const StyledButton = styled.button<StyledButtonProps>`
-  background-color: #007bff;
+  background-color: ${({ theme }) => theme.button};
   border-color: #007bff;
+  padding: 8px 12px;
+  border-radius: 4px;
   color: white;
   font-size: 0.8rem;
   padding: 6px 12px;
   &:hover {
-    background-color: #0069d9;
+    background-color: ${({ theme }) => theme.buttonHover};
     border-color: #0062cc;
   }
   ${({ disabled }) =>

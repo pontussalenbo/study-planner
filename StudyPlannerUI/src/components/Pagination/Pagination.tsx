@@ -4,7 +4,8 @@ import {
   ArrowLeft,
   ArrowRight,
   PaginationItem,
-  PaginationItemDots
+  PaginationItemDots,
+  PageNumber
 } from './styles';
 
 interface IPaginationProps {
@@ -57,9 +58,9 @@ function Pagination(props: IPaginationProps): JSX.Element | null {
             selected={pageNumber === currentPage}
             onClick={() => onPageChange(pageNumber as number)}
           >
-            <a href='/#' onClick={e => e.preventDefault()}>
+            <PageNumber href='/#' onClick={e => e.preventDefault()}>
               {pageNumber}
-            </a>
+            </PageNumber>
           </PaginationItem>
         );
       })}

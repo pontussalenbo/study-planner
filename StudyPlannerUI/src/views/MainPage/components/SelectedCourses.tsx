@@ -3,7 +3,8 @@ import {
   StyledCell,
   StyledHeader,
   StyledTable,
-  StyledTableContainer
+  StyledTableContainer,
+  TableBody
 } from './Table.style';
 import styled from 'styled-components';
 interface CreditsTableProps {
@@ -34,7 +35,7 @@ function SelectedCoursesTable({
             <StyledHeader>Action</StyledHeader>
           </tr>
         </thead>
-        <tbody>
+        <TableBody>
           {courses.map(course => (
             <tr key={course.course_code}>
               <StyledCell>{course.course_code}</StyledCell>
@@ -42,9 +43,10 @@ function SelectedCoursesTable({
               <StyledCell style={{ fontSize: '1.5rem' }}>
                 <button
                   style={{
-                    border: '1px solid black',
+                    border: '1px solid white',
                     borderRadius: '5px',
-                    padding: '0 5px'
+                    padding: '0 5px',
+                    color: 'white'
                   }}
                   onClick={() => onChangeYear(course.course_code, year === 4 ? 5 : 4)}
                 >
@@ -56,12 +58,12 @@ function SelectedCoursesTable({
                   type='button'
                   onClick={() => onClickRemove(course.course_code, year)}
                 >
-                  Remove
+                  <span style={{ marginRight: '4px' }}>&#8722;</span> Remove
                 </AlertButton>
               </StyledCell>
             </tr>
           ))}
-        </tbody>
+        </TableBody>
       </TestTable>
     </StyledTableContainer>
   );

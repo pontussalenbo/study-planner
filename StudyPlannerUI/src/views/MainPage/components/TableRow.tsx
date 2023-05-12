@@ -100,7 +100,7 @@ const CourseTableRow: React.FC<CourseTableRowProps> = ({ course, handleAddCourse
           disabled={!selectedPeriod && course.periods.length > 1}
           onClick={handleButtonClick}
         >
-          Add
+          &#43; Select
         </StyledButton>
       </StyledCell>
     </tr>
