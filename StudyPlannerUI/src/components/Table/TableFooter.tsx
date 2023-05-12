@@ -1,6 +1,5 @@
 import { useEffect } from 'react';
 
-import styles from './TableFooter.module.css';
 import { TableFooterWrapper, Button } from './TableFooter.styles';
 
 interface ITableFooterProps {

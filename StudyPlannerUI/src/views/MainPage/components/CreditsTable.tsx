@@ -9,23 +9,6 @@ import {
 import { BASE_URL } from 'utils/URL';
 import { useEffect, useState } from 'react';
 
-const MOCK = [
-  {
-    code: 'mai',
-    name: 'maskinintelligens',
-    G1: 15,
-    G2: 15,
-    A: 15
-  },
-  {
-    code: 'pv',
-    name: 'programvara',
-    G1: 15,
-    G2: 15,
-    A: 15
-  }
-];
-
 interface ICreditsTable {
   courses: CourseData.SelectedCourse[];
   filters: {

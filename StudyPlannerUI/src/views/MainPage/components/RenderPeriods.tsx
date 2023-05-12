@@ -6,7 +6,7 @@
  */
 export default function renderPeriods(
   data: { periods: API.Period[]; row: CourseData.DataWithLocale },
-  onChange: (...args: any) => void
+  onChange: (...args: unknown[]) => void
 ) {
   const { periods, row } = data;
   if (!periods || periods.length === 0) return null;
