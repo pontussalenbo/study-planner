@@ -10,6 +10,11 @@ import {
 } from 'recharts';
 import { Wrapper } from './styles';
 
+const Wrapper = styled.div`
+  margin-top: 2rem;
+  width: 100%;
+`;
+
 interface HorizontalBarChartProps {
   year: 4 | 5;
 }
@@ -17,7 +22,7 @@ interface HorizontalBarChartProps {
 function HorizontalBarChart({ year }: HorizontalBarChartProps): JSX.Element {
   const { courses } = useContext(MyContext) as CtxType;
 
-  const chartData = courses[year].map(course => {
+  const chartData = courses(year).map(course => {
     // If there is a selected period, use that, otherwise use the first period (and only one)
     const start = course.selectedPeriod?.start || course.periods[0].start;
     const end = (course.selectedPeriod?.end ?? course.periods[0].end) + 1;
