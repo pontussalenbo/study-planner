@@ -7,10 +7,10 @@ import {
   TableBody
 } from './Table.style';
 import { BASE_URL } from 'utils/URL';
-import { useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
+import { CtxType, MyContext } from 'hooks/CourseContext';
 
 interface ICreditsTable {
-  courses: CourseData.SelectedCourse[];
   filters: {
     Programme: string;
     Year: string;
@@ -31,12 +31,16 @@ interface MasterResp {
   RequirementsFulfilled: boolean;
 }
 
-function CreditsTable({ courses, filters }: ICreditsTable): JSX.Element {
+function CreditsTable({ filters }: ICreditsTable): JSX.Element {
   const [masters, setMasters] = useState<IMaster[]>([]);
   const [stats, setStats] = useState<MasterResp[]>([]);
 
+  const { courses } = useContext(MyContext) as CtxType;
+
   useEffect(() => {
-    if (!filters.Programme) return;
+    if (!filters.Programme) {
+      return;
+    }
 
     fetch(BASE_URL + '/general/masters' + '?programme=' + filters.Programme)
       .then(resp => resp.json())
@@ -44,7 +48,8 @@ function CreditsTable({ courses, filters }: ICreditsTable): JSX.Element {
   }, [filters.Programme]);
 
   const handleUpdate = () => {
-    const selectedCourses = courses.map(course => course.course_code);
+    const selectedCourses = courses().map(course => course.course_code);
+
     fetch(BASE_URL + '/masters', {
       body: JSON.stringify({ ...filters, selectedCourses }),
       headers: {

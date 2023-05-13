@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { memo, useContext, useState } from 'react';
 import CourseTableRow from './TableRow';
 import {
   StyledHeader,
@@ -8,18 +8,16 @@ import {
 } from './Table.style';
 import Pagination from 'components/Pagination/Pagination';
 import useTable from 'hooks/useTable';
+import { MyContext, CtxType } from 'hooks/CourseContext';
 
 interface CourseTableRowProps {
   courses: CourseData.DataWithLocale[];
-  handleAddCourse: (
-    course: CourseData.SelectedCourse,
-    year: 4 | 5,
-    period: API.Period | null
-  ) => void;
 }
 
-function Table({ courses, handleAddCourse }: CourseTableRowProps) {
+function Table({ courses }: CourseTableRowProps) {
   const [page, setPage] = useState(1);
+
+  const { addCourse } = useContext(MyContext) as CtxType;
 
   const { slice } = useTable<CourseData.DataWithLocale>(courses, page, 7);
 
@@ -38,7 +36,7 @@ function Table({ courses, handleAddCourse }: CourseTableRowProps) {
               <StyledHeader>Credits</StyledHeader>
               <StyledHeader>Level</StyledHeader>
               <StyledHeader>Periods</StyledHeader>
-              <StyledHeader>Action</StyledHeader>
+              <StyledHeader style={{ textAlign: 'center' }}>Action</StyledHeader>
             </tr>
           </thead>
           <TableBody>
@@ -46,7 +44,7 @@ function Table({ courses, handleAddCourse }: CourseTableRowProps) {
               <CourseTableRow
                 key={course.course_code}
                 course={course}
-                handleAddCourse={handleAddCourse}
+                handleAddCourse={addCourse}
               />
             ))}
           </TableBody>
@@ -62,4 +60,4 @@ function Table({ courses, handleAddCourse }: CourseTableRowProps) {
   );
 }
 
-export default Table;
+export default memo(Table);

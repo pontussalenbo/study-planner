@@ -7,23 +7,18 @@ import {
   TableBody
 } from './Table.style';
 import styled from 'styled-components';
+import { MyContext, CtxType } from 'hooks/CourseContext';
+import { useContext } from 'react';
 interface CreditsTableProps {
-  courses: CourseData.DataWithLocale[];
   year: 4 | 5;
-  onClickRemove: (courseCode: string, year: 4 | 5) => void;
-  onChangeYear: (courseCode: string, year: 4 | 5) => void;
 }
 
 const TestTable = styled(StyledTable)`
   font-size: 0.7em;
 `;
 
-function SelectedCoursesTable({
-  courses,
-  year,
-  onClickRemove,
-  onChangeYear
-}: CreditsTableProps): JSX.Element {
+function SelectedCoursesTable({ year }: CreditsTableProps): JSX.Element {
+  const { courses, removeCourse, changeYear } = useContext(MyContext) as CtxType;
   return (
     <StyledTableContainer>
       <TestTable>
@@ -36,7 +31,7 @@ function SelectedCoursesTable({
           </tr>
         </thead>
         <TableBody>
-          {courses.map(course => (
+          {courses(year).map(course => (
             <tr key={course.course_code}>
               <StyledCell>{course.course_code}</StyledCell>
               <StyledCell>{course.course_name}</StyledCell>
@@ -48,7 +43,7 @@ function SelectedCoursesTable({
                     padding: '0 5px',
                     color: 'white'
                   }}
-                  onClick={() => onChangeYear(course.course_code, year === 4 ? 5 : 4)}
+                  onClick={() => changeYear(course.course_code, year === 4 ? 5 : 4)}
                 >
                   {year === 4 ? '\u2192' : '\u2190'}
                 </button>
@@ -56,7 +51,7 @@ function SelectedCoursesTable({
               <StyledCell>
                 <AlertButton
                   type='button'
-                  onClick={() => onClickRemove(course.course_code, year)}
+                  onClick={() => removeCourse(course.course_code, year)}
                 >
                   <span style={{ marginRight: '4px' }}>&#8722;</span> Remove
                 </AlertButton>

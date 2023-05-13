@@ -1,4 +1,4 @@
-import React, { FC, useState } from 'react';
+import React, { useState } from 'react';
 import styled from 'styled-components';
 
 // Define your styled components
@@ -7,40 +7,44 @@ const SearchBarContainer = styled.div`
   margin-bottom: 20px;
 `;
 
-const SearchInput = styled.input`
+interface SearchInputProps {
+  error: boolean;
+}
+
+const SearchInput = styled.input<SearchInputProps>`
+  outline: ${({ error, theme }) =>
+    error ? '1px solid red' : `1px solid ${theme.primary}`}};
+
+  border: ${({ error, theme }) =>
+    error ? '1px solid red' : `1px solid ${theme.primary}`}};
+  border-radius: 4px;
   width: 330px;
   height: 30px;
   padding: 5px;
 `;
 
-// Define the types of your state
-interface SearchState {
-  searchTerm: string;
+interface SearchBarProps {
+  setSearch: any;
+  matches: boolean;
 }
 
 // Your component
-const SearchBar: FC = () => {
-  const [search, setSearch] = useState<SearchState>({ searchTerm: '' });
+const SearchBar: React.FC<SearchBarProps> = ({ setSearch, matches }: SearchBarProps) => {
+  const [query, setQuery] = useState('');
 
   const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setSearch({ searchTerm: event.target.value });
-  };
-
-  const handleSearchSubmit = (event: React.FormEvent) => {
-    event.preventDefault();
-    console.log(search.searchTerm); // Replace this with your search logic
+    setQuery(event.target.value);
+    setSearch(event.target.value);
   };
 
   return (
     <SearchBarContainer>
-      <form onSubmit={handleSearchSubmit}>
-        <SearchInput
-          type='text'
-          value={search.searchTerm}
-          onChange={handleSearchChange}
-          placeholder='Search Course name or code...'
-        />
-      </form>
+      <SearchInput
+        error={!matches && query.length > 0}
+        type='text'
+        onChange={handleSearchChange}
+        placeholder='Search Course name or code'
+      />
     </SearchBarContainer>
   );
 };

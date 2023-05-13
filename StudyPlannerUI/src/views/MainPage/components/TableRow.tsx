@@ -1,6 +1,7 @@
-import { useState } from 'react';
+import { useContext, useState } from 'react';
 import { StyledCell } from './Table.style';
-import { StyledButton } from 'components/Button';
+import { AlertButton, StyledButton } from 'components/Button';
+import { MyContext, CtxType } from 'hooks/CourseContext';
 
 interface CourseTableRowProps {
   course: CourseData.DataWithLocale;
@@ -13,6 +14,8 @@ interface CourseTableRowProps {
 
 const CourseTableRow: React.FC<CourseTableRowProps> = ({ course, handleAddCourse }) => {
   const [selectedPeriod, setSelectedPeriod] = useState<API.Period | null>(null);
+  const [selected, setSelected] = useState(false);
+  const { removeCourse } = useContext(MyContext) as CtxType;
 
   const handlePeriodChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
     const periodIndex = parseInt(event.target.value);
@@ -25,7 +28,13 @@ const CourseTableRow: React.FC<CourseTableRowProps> = ({ course, handleAddCourse
       selectedPeriod,
       selectedYear: 4
     };
+    setSelected(true);
     handleAddCourse(selectedCourse, 4, selectedPeriod);
+  };
+
+  const handleRemoveClick = () => {
+    removeCourse(course.course_code, 4);
+    setSelected(false);
   };
 
   const endPeriod = (period: API.Period) => {
@@ -41,11 +50,11 @@ const CourseTableRow: React.FC<CourseTableRowProps> = ({ course, handleAddCourse
       <StyledCell>
         {course.periods.length > 1 ? (
           <select
-            style={{ minWidth: 'max-content', width: '100%' }}
+            style={{ minWidth: 'max-content' }}
             defaultValue=''
             onChange={handlePeriodChange}
           >
-            <option style={{ minWidth: 'max-content', width: '100%' }} value='' disabled>
+            <option style={{ minWidth: 'max-content' }} value='' disabled>
               Select
             </option>
             {course.periods.map((period, index) => {
@@ -70,38 +79,19 @@ const CourseTableRow: React.FC<CourseTableRowProps> = ({ course, handleAddCourse
             })()}
           </span>
         )}
-        {/*
-        {course.periods.length > 1 ? (
-          <select
-            style={{ minWidth: 'max-content', width: '100%' }}
-            defaultValue=''
-            onChange={handlePeriodChange}
-          >
-            <option style={{ minWidth: 'max-content', width: '100%' }} value='' disabled>
-              Select
-            </option>
-            {course.periods.map((period, index) => (
-              <option style={{ minWidth: 'max-content' }} key={index} value={index}>
-                {period.start} {endPeriod(period) && `\u2192 ${endPeriod(period)}`}
-              </option>
-            ))}
-          </select>
-        ) : (
-          <span>
-            {course.periods[0].start}{' '}
-            {endPeriod(course.periods[0]) && `\u2192 ${endPeriod(course.periods[0])}`}
-          </span>
-        )}
-        */}
       </StyledCell>
       <StyledCell>
-        <StyledButton
-          style={{ display: 'block', margin: '0 auto' }}
-          disabled={!selectedPeriod && course.periods.length > 1}
-          onClick={handleButtonClick}
-        >
-          &#43; Select
-        </StyledButton>
+        {selected ? (
+          <AlertButton onClick={handleRemoveClick}>&#45; Remove</AlertButton>
+        ) : (
+          <StyledButton
+            style={{ display: 'block', margin: '0 auto' }}
+            disabled={!selectedPeriod && course.periods.length > 1}
+            onClick={handleButtonClick}
+          >
+            &#43; Select
+          </StyledButton>
+        )}
       </StyledCell>
     </tr>
   );
