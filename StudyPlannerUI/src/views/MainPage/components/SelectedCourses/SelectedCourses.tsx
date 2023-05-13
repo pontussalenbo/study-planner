@@ -9,8 +9,7 @@ import {
 } from '../Table/Table.style';
 import styled from 'styled-components';
 import { MyContext, CtxType } from 'hooks/CourseContext';
-import { useContext, useMemo } from 'react';
-import { ArrowButton, ButtonIcon, RemoveButton } from './styles';
+import { useContext } from 'react';
 interface CreditsTableProps {
   year: 4 | 5;
 }
@@ -21,7 +20,6 @@ const TestTable = styled(StyledTable)`
 
 function SelectedCoursesTable({ year }: CreditsTableProps): JSX.Element {
   const { courses, removeCourse, changeYear } = useContext(MyContext) as CtxType;
-  const yearCourses = useMemo(() => courses[year], [courses, year]);
   return (
     <StyledTableContainer>
       <TestTable>
@@ -34,12 +32,18 @@ function SelectedCoursesTable({ year }: CreditsTableProps): JSX.Element {
           </tr>
         </thead>
         <TableBody>
-          {yearCourses.map(course => (
+          {courses(year).map(course => (
             <tr key={course.course_code}>
               <StyledCell>{course.course_code}</StyledCell>
               <StyledCell>{course.course_name}</StyledCell>
-              <StyledCell>
-                <ArrowButton
+              <StyledCell style={{ fontSize: '1.5rem' }}>
+                <button
+                  style={{
+                    border: '1px solid white',
+                    borderRadius: '5px',
+                    padding: '0 5px',
+                    color: 'white'
+                  }}
                   onClick={() => changeYear(course.course_code, year === 4 ? 5 : 4)}
                 >
                   {year === 4 ? '\u2192' : '\u2190'}

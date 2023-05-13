@@ -6,14 +6,14 @@ import {
   TableBody
 } from '../Table/Table.style';
 import { BASE_URL } from 'utils/URL';
-import { memo, useContext, useMemo, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { CtxType, MyContext } from 'hooks/CourseContext';
-import { StatsButton, StatsWrapper } from './styles';
-import Tooltip from 'components/Tooltip';
 
-interface Filters {
-  Programme: string;
-  Year: string;
+interface ICreditsTable {
+  filters: {
+    Programme: string;
+    Year: string;
+  };
 }
 
 interface IMaster {
@@ -30,15 +30,16 @@ interface MasterResp {
   RequirementsFulfilled: boolean;
 }
 
-interface ICreditsTable {
-  filters: Filters;
-}
-
 function CreditsTable({ filters }: ICreditsTable): JSX.Element {
   const [masters, setMasters] = useState<IMaster[]>([]);
   const [stats, setStats] = useState<MasterResp[]>([]);
 
   const { courses } = useContext(MyContext) as CtxType;
+
+  useEffect(() => {
+    if (!filters.Programme) {
+      return;
+    }
 
   const selectedCourses = useMemo(() => [...courses[4], ...courses[5]], [courses]);
 
@@ -48,8 +49,9 @@ function CreditsTable({ filters }: ICreditsTable): JSX.Element {
       .then(data => setMasters(data));
   };
 
-  const getMasterStats = async () => {
-    const courseCodes = selectedCourses.map(course => course.course_code);
+  const handleUpdate = () => {
+    const selectedCourses = courses().map(course => course.course_code);
+
     fetch(BASE_URL + '/masters', {
       body: JSON.stringify({ ...filters, selectedCourses: courseCodes }),
       headers: {
