@@ -14,7 +14,7 @@ export const StyledButton = styled.button<StyledButtonProps>`
   font-size: 0.8rem;
   padding: 6px 12px;
   &:hover {
-    filter: brightness(1.2);
+    filter: brightness(1.1);
     border-color: #0062cc;
   }
   ${({ disabled }) =>
@@ -25,6 +25,7 @@ export const AlertButton = styled(StyledButton)`
   background-color: #dc3545;
   border-color: #dc3545;
   &:hover {
+    filter: brightness(1.1);
     border-color: #bd2130;
   }
   font-size: 1em;

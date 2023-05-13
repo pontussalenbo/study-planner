@@ -1,34 +1,40 @@
-import { Select } from 'components/Select';
-import { TransformFn } from 'interfaces/TransformFn';
-import React, { useEffect, useState } from 'react';
-import { GET, POST } from 'utils/fetch';
-import { dataParser } from 'views/MainPage/dataParser';
-import { SearchBarContainer, SearchInput } from './style';
+import React, { useState } from 'react';
+import styled from 'styled-components';
+
+// Define your styled components
+const SearchBarContainer = styled.div`
+  display: flex;
+  margin-bottom: 20px;
+`;
+
+interface SearchInputProps {
+  error: boolean;
+}
+
+const SearchInput = styled.input<SearchInputProps>`
+  outline: ${({ error, theme }) =>
+    error ? '1px solid red' : `1px solid ${theme.primary}`}};
+
+  border: ${({ error, theme }) =>
+    error ? '1px solid red' : `1px solid ${theme.primary}`}};
+  border-radius: 4px;
+  width: 330px;
+  height: 30px;
+  padding: 5px;
+`;
 
 interface SearchBarProps {
+  setSearch: any;
   matches: boolean;
-  setSearch?: (search: string) => void;
-  filter: (transformFn: TransformFn) => void | Promise<void>;
 }
 
 // Your component
-const SearchBar: React.FC<SearchBarProps> = ({ matches, filter }: SearchBarProps) => {
+const SearchBar: React.FC<SearchBarProps> = ({ setSearch, matches }: SearchBarProps) => {
   const [query, setQuery] = useState('');
-  const [masters, setMasters] = useState<API.Masters[]>([]);
-
-  useEffect(() => {
-    //TODO: replace with real filter
-    const params = new URLSearchParams({ Programme: 'D', Year: 'H19' });
-    GET('/general/masters', params).then(data => setMasters(data));
-  }, []);
 
   const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setQuery(event.target.value);
-    handleFilter(event.target.value);
-  };
-
-  const handleMasterChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
-    handleMasterFilter(event.target.value);
+    setSearch(event.target.value);
   };
 
   const handleFilter = (query: string) => {
@@ -58,16 +64,6 @@ const SearchBar: React.FC<SearchBarProps> = ({ matches, filter }: SearchBarProps
         onChange={handleSearchChange}
         placeholder='Search Course name or code'
       />
-      <Select defaultValue='' label='By Master' onChange={handleMasterChange}>
-        <option value='' disabled>
-          Select (Optional)
-        </option>
-        {masters.map(master => (
-          <option key={master.master_code} value={master.master_code}>
-            {master.master_code}
-          </option>
-        ))}
-      </Select>
     </SearchBarContainer>
   );
 };
