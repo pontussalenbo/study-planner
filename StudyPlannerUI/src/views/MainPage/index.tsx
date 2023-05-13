@@ -1,98 +1,59 @@
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 
 import Col from 'components/Flex/Col.style';
 import Row from 'components/Flex/Row.style';
 import { Section } from 'components/Section';
 import { Heading2 } from 'components/Typography/Heading2';
+import { fetchData } from 'utils/fetch';
 import CreditsTable from './components/CreditsTable';
+import { FilterBar } from './components/FilterBar';
+import SearchBar from './components/FilterBar/SearchBar';
 import HorizontalBarChart from './components/HorizontalBarChart';
 import ScrollArrow from './components/ScrollArrow';
 import SelectedCoursesTable from './components/SelectedCourses';
 import Table from './components/Table';
 import { CreditsWrapper } from './components/styles';
-import { Container, Wrapper } from './style';
 import { dataParser } from './dataParser';
-import { fetchData } from 'utils/fetch';
-import { FilterBar } from './components/FilterBar';
-import SearchBar from './components/FilterBar/SearchBar';
-
-type SelectedCourses = Record<4 | 5, CourseData.SelectedCourse[]>;
+import { Container, Wrapper } from './style';
 
 function MainPage(): JSX.Element {
   const [filters, setFilters] = useState({
     Programme: '',
     Year: ''
   });
-
-  const [selectedCourses, setSelectedCourses] = useState<SelectedCourses>({
-    4: [],
-    5: []
-  });
-
   const [courses, setCourses] = useState<CourseData.DataWithLocale[]>([]);
+  const [filteredCourses, setFilteredCourses] = useState<CourseData.DataWithLocale[]>([]);
 
-  const handleAddCourse = (
-    course: CourseData.SelectedCourse,
-    year: 4 | 5,
-    period: API.Period | null
-  ) => {
-    const isCourseSelected =
-      selectedCourses[4].some(c => c.course_code === course.course_code) ||
-      selectedCourses[5].some(c => c.course_code === course.course_code);
-
-    if (!isCourseSelected) {
-      const updatedCourse = {
-        ...course,
-        selectedPeriod: period
-      };
-
-      setSelectedCourses(prev => {
-        return {
-          ...prev,
-          [year]: [...prev[year], updatedCourse]
-        };
-      });
+  const displayCourses = useMemo(() => {
+    if (!filteredCourses.length) {
+      return courses;
     }
-  };
+    return filteredCourses;
+  }, [courses, filteredCourses]);
+
+  const matches = useMemo(() => {
+    return filteredCourses.length > 0;
+  }, [filteredCourses]);
 
   const handleGetCourses = () => {
     fetchData(filters).then(resp => setCourses(dataParser(resp, 'course_name_en')));
   };
 
-  const handleRemoveCourse = (courseName: string, year: 4 | 5) => {
-    setSelectedCourses(prev => {
-      return {
-        ...prev,
-        [year]: prev[year].filter(c => c.course_code !== courseName)
-      };
-    });
-  };
-
-  const handleChangeYear = (courseName: string, year: 4 | 5) => {
-    const prevYear = year === 4 ? 5 : 4;
-    setSelectedCourses(prev => {
-      const course = prev[prevYear].find(c => c.course_code === courseName);
-      const removed = prev[prevYear].filter(c => c.course_code !== courseName);
-      if (course) {
-        const newCourse = { ...course }; // create a new course object with a different reference
-        return {
-          ...prev,
-          [prevYear]: removed,
-          [year]: [...prev[year], newCourse]
-        };
-      }
-      return prev;
-    });
+  const filterSearch = (search: string) => {
+    const filteredCourses = courses.filter(
+      course =>
+        course.course_name.toLowerCase().includes(search.toLowerCase()) ||
+        course.course_code.toLowerCase().includes(search.toLowerCase())
+    );
+    setFilteredCourses(filteredCourses);
   };
 
   const handleFilterChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const { name, value } = e.target;
-    setFilters(prev => {
-      return {
-        ...prev,
-        [name]: value
-      };
-    });
+    setFilters(prev => ({
+      ...prev,
+      [name]: value
+    }));
   };
 
   return (
@@ -107,17 +68,14 @@ function MainPage(): JSX.Element {
         </div>
 
         <Section id='courses'>
-          <SearchBar />
+          <SearchBar matches={matches} setSearch={filterSearch} />
           <Row>
             <Col lg={8}>
-              <Table courses={courses} handleAddCourse={handleAddCourse} />
+              <Table courses={displayCourses} />
             </Col>
             <Col md={6} lg={4}>
               <CreditsWrapper>
-                <CreditsTable
-                  filters={filters}
-                  courses={[...selectedCourses[4], ...selectedCourses[5]]}
-                />
+                <CreditsTable filters={filters} />
               </CreditsWrapper>
             </Col>
           </Row>
@@ -126,23 +84,13 @@ function MainPage(): JSX.Element {
           <Row>
             <Col md={6}>
               <Heading2>Fourth Year</Heading2>
-              <SelectedCoursesTable
-                courses={selectedCourses[4]}
-                year={4}
-                onClickRemove={handleRemoveCourse}
-                onChangeYear={handleChangeYear}
-              />
-              <HorizontalBarChart courses={selectedCourses[4]} />
+              <SelectedCoursesTable year={4} />
+              <HorizontalBarChart year={4} />
             </Col>
             <Col md={6}>
               <Heading2>Fifth Year</Heading2>
-              <SelectedCoursesTable
-                courses={selectedCourses[5]}
-                year={5}
-                onClickRemove={handleRemoveCourse}
-                onChangeYear={handleChangeYear}
-              />
-              <HorizontalBarChart courses={selectedCourses[5]} />
+              <SelectedCoursesTable year={5} />
+              <HorizontalBarChart year={5} />
             </Col>
           </Row>
         </Section>

@@ -1,4 +1,5 @@
-import { memo } from 'react';
+import { CtxType, MyContext } from 'hooks/CourseContext';
+import { memo, useContext } from 'react';
 import {
   Bar,
   BarChart,
@@ -9,17 +10,19 @@ import {
 } from 'recharts';
 import styled from 'styled-components';
 
-interface ICourseProps {
-  courses: CourseData.SelectedCourse[];
-}
-
 const Wrapper = styled.div`
   margin-top: 2rem;
   width: 100%;
 `;
 
-function HorizontalBarChart({ courses }: ICourseProps): JSX.Element {
-  const chartData = courses.map(course => {
+interface HorizontalBarChartProps {
+  year: 4 | 5;
+}
+
+function HorizontalBarChart({ year }: HorizontalBarChartProps): JSX.Element {
+  const { courses } = useContext(MyContext) as CtxType;
+
+  const chartData = courses(year).map(course => {
     // If there is a selected period, use that, otherwise use the first period (and only one)
     const start = course.selectedPeriod?.start || course.periods[0].start;
     const end = (course.selectedPeriod?.end ?? course.periods[0].end) + 1;
