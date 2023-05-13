@@ -37,7 +37,7 @@ function Table({ courses }: CourseTableRowProps) {
               <StyledHeader>Credits</StyledHeader>
               <StyledHeader>Level</StyledHeader>
               <StyledHeader>Periods</StyledHeader>
-              <CenteredHeader>Action</CenteredHeader>
+              <StyledHeader style={{ textAlign: 'center' }}>Action</StyledHeader>
             </tr>
           </thead>
           <TableBody>
