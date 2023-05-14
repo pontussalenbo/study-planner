@@ -1,11 +1,11 @@
 import { memo, useContext, useState } from 'react';
-import CourseTableRow from './TableRow';
+import CourseTableRow from '../Table/TableRow';
 import {
   StyledHeader,
   StyledTable,
   StyledTableContainer,
   TableBody
-} from './Table.style';
+} from '../Table/Table.style';
 import Pagination from 'components/Pagination/Pagination';
 import useTable from 'hooks/useTable';
 import { MyContext, CtxType } from 'hooks/CourseContext';

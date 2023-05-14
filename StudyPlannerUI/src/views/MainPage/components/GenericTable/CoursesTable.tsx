@@ -9,7 +9,7 @@ import {
   StyledTable,
   StyledHeader,
   StyledCell
-} from './Table.style';
+} from '../Table/Table.style';
 
 interface ExtraColumn<T> {
   header: string;

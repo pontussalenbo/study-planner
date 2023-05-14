@@ -5,16 +5,14 @@ import {
   StyledTable,
   StyledTableContainer,
   TableBody
-} from './Table.style';
+} from '../Table/Table.style';
 import { BASE_URL } from 'utils/URL';
-import { useContext, useEffect, useState } from 'react';
+import { memo, useContext, useState } from 'react';
 import { CtxType, MyContext } from 'hooks/CourseContext';
 
-interface ICreditsTable {
-  filters: {
-    Programme: string;
-    Year: string;
-  };
+interface Filters {
+  Programme: string;
+  Year: string;
 }
 
 interface IMaster {
@@ -31,25 +29,24 @@ interface MasterResp {
   RequirementsFulfilled: boolean;
 }
 
+interface ICreditsTable {
+  filters: Filters;
+}
+
 function CreditsTable({ filters }: ICreditsTable): JSX.Element {
   const [masters, setMasters] = useState<IMaster[]>([]);
   const [stats, setStats] = useState<MasterResp[]>([]);
 
   const { courses } = useContext(MyContext) as CtxType;
 
-  useEffect(() => {
-    if (!filters.Programme) {
-      return;
-    }
-
+  const getMasters = async () => {
     fetch(BASE_URL + '/general/masters' + '?programme=' + filters.Programme)
       .then(resp => resp.json())
       .then(data => setMasters(data));
-  }, [filters.Programme]);
+  };
 
-  const handleUpdate = () => {
+  const getMasterStats = async () => {
     const selectedCourses = courses().map(course => course.course_code);
-
     fetch(BASE_URL + '/masters', {
       body: JSON.stringify({ ...filters, selectedCourses }),
       headers: {
@@ -59,11 +56,31 @@ function CreditsTable({ filters }: ICreditsTable): JSX.Element {
     }).then(resp => resp.json().then(data => setStats(data)));
   };
 
+  const handleUpdate = () => {
+    getMasters().then(() => getMasterStats());
+  };
+
+  const sortMasters = (masters: IMaster[]): IMaster[] => {
+    const sortedMasters = [...masters];
+
+    sortedMasters.sort((a, b) => {
+      if (a.master_name_en === 'General') {
+        return 1; // "General" should be placed at the end
+      } else if (b.master_name_en === 'General') {
+        return -1; // "General" should be placed at the end
+      } else {
+        return a.master_name_en.localeCompare(b.master_name_en); // Sort alphabetically
+      }
+    });
+
+    return sortedMasters;
+  };
+
   return (
     <>
       <StyledButton
         style={{ marginBottom: '5px' }}
-        disabled={courses.length < 4}
+        disabled={courses().length < 4}
         onClick={handleUpdate}
       >
         Get stats
@@ -80,7 +97,7 @@ function CreditsTable({ filters }: ICreditsTable): JSX.Element {
             </tr>
           </thead>
           <TableBody>
-            {masters.map(master => {
+            {sortMasters(masters).map(master => {
               const x = stats.find(stat => stat.Master === master.master_code) ?? null;
               const totalCredits = x ? x.G1Credits + x.G2Credits + x.AdvancedCredits : 0;
               if (!totalCredits) {
@@ -103,4 +120,4 @@ function CreditsTable({ filters }: ICreditsTable): JSX.Element {
   );
 }
 
-export default CreditsTable;
+export default memo(CreditsTable);

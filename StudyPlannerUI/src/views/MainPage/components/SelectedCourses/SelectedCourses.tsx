@@ -5,7 +5,7 @@ import {
   StyledTable,
   StyledTableContainer,
   TableBody
-} from './Table.style';
+} from '../Table/Table.style';
 import styled from 'styled-components';
 import { MyContext, CtxType } from 'hooks/CourseContext';
 import { useContext } from 'react';
