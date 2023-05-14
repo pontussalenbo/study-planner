@@ -1,6 +1,6 @@
 // ScrollArrow.tsx
 import React, { useEffect, useState } from 'react';
-import styled, { css, keyframes } from 'styled-components';
+import styled from 'styled-components';
 
 const ArrowButton = styled.button`
   position: fixed;
@@ -38,18 +38,9 @@ const ScrollArrow = () => {
 
   useEffect(() => {
     const handleScroll = () => {
-      const { scrollTop, scrollHeight, clientHeight } = document.documentElement;
       const element = document.documentElement; // or any other scrollable element you want to check
       const isElementScrollable = element.scrollHeight > element.clientHeight;
       setIsScrollable(isElementScrollable);
-
-      if (scrollTop + clientHeight >= scrollHeight) {
-        setIsPointingDown(false);
-      }
-
-      if (scrollTop === 0) {
-        setIsPointingDown(true);
-      }
     };
 
     window.addEventListener('scroll', handleScroll);
