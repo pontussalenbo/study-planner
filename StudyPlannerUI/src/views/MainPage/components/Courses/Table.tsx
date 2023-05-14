@@ -1,5 +1,5 @@
 import { memo, useContext, useState } from 'react';
-import CourseTableRow from './TableRow';
+import CourseTableRow from '../Table/TableRow';
 import {
   CenteredHeader,
   StyledHeader,
