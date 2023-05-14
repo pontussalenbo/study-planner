@@ -1,10 +1,10 @@
 // ScrollArrow.tsx
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 
 const ArrowButton = styled.button`
   position: fixed;
-  right: 5px;
+  right: 30px;
   bottom: 20px;
   border: none;
   background-color: transparent;
@@ -31,8 +31,23 @@ const ArrowIcon = styled.svg<{ isPointingDown: boolean }>`
   fill: #586069;
 `;
 
-const ScrollArrow: React.FC = () => {
+const ScrollArrow = () => {
+  const [isScrollable, setIsScrollable] = useState(false);
+
   const [isPointingDown, setIsPointingDown] = useState(true);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      const element = document.documentElement; // or any other scrollable element you want to check
+      const isElementScrollable = element.scrollHeight > element.clientHeight;
+      setIsScrollable(isElementScrollable);
+    };
+
+    window.addEventListener('scroll', handleScroll);
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+    };
+  }, []);
 
   const handleClick = () => {
     const targetY = isPointingDown ? document.body.scrollHeight : 0;
@@ -40,7 +55,7 @@ const ScrollArrow: React.FC = () => {
     setIsPointingDown(prev => !prev);
   };
 
-  return (
+  return isScrollable ? (
     <ArrowButton onClick={handleClick}>
       <Circle>
         <ArrowIcon
@@ -53,7 +68,7 @@ const ScrollArrow: React.FC = () => {
         </ArrowIcon>
       </Circle>
     </ArrowButton>
-  );
+  ) : null;
 };
 
 export default ScrollArrow;
