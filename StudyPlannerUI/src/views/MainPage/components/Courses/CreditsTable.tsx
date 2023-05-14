@@ -6,14 +6,12 @@ import {
   TableBody
 } from '../Table/Table.style';
 import { BASE_URL } from 'utils/URL';
-import { useContext, useEffect, useState } from 'react';
+import { memo, useContext, useState } from 'react';
 import { CtxType, MyContext } from 'hooks/CourseContext';
 
-interface ICreditsTable {
-  filters: {
-    Programme: string;
-    Year: string;
-  };
+interface Filters {
+  Programme: string;
+  Year: string;
 }
 
 interface IMaster {
@@ -30,18 +28,15 @@ interface MasterResp {
   RequirementsFulfilled: boolean;
 }
 
+interface ICreditsTable {
+  filters: Filters;
+}
+
 function CreditsTable({ filters }: ICreditsTable): JSX.Element {
   const [masters, setMasters] = useState<IMaster[]>([]);
   const [stats, setStats] = useState<MasterResp[]>([]);
 
   const { courses } = useContext(MyContext) as CtxType;
-
-  useEffect(() => {
-    if (!filters.Programme) {
-      return;
-    }
-
-  const selectedCourses = useMemo(() => [...courses[4], ...courses[5]], [courses]);
 
   const getMasters = async () => {
     fetch(BASE_URL + '/general/masters' + '?programme=' + filters.Programme)
@@ -49,9 +44,8 @@ function CreditsTable({ filters }: ICreditsTable): JSX.Element {
       .then(data => setMasters(data));
   };
 
-  const handleUpdate = () => {
+  const getMasterStats = async () => {
     const selectedCourses = courses().map(course => course.course_code);
-
     fetch(BASE_URL + '/masters', {
       body: JSON.stringify({ ...filters, selectedCourses: courseCodes }),
       headers: {
@@ -81,15 +75,15 @@ function CreditsTable({ filters }: ICreditsTable): JSX.Element {
     return sortedMasters;
   };
 
-  const enoughCourses = useMemo(() => selectedCourses.length >= 4, [courses]);
-
   return (
-    <StatsWrapper>
-      <Tooltip text='Needs atleast 4 courses'>
-        <StatsButton disabled={!enoughCourses} onClick={handleUpdate}>
-          Get stats
-        </StatsButton>
-      </Tooltip>
+    <>
+      <StyledButton
+        style={{ marginBottom: '5px' }}
+        disabled={courses().length < 4}
+        onClick={handleUpdate}
+      >
+        Get stats
+      </StyledButton>
       <StyledTableContainer>
         <StyledTable>
           <thead>
