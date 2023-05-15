@@ -13,17 +13,10 @@ export const FilterContainer = styled.div`
 
 export const StatsWrapper = styled.div`
   @media (${device.lg}) {
-    margin-top: -65px;
+    margin-top: -35px;
   }
 `;
 
 export const Select = styled.select`
   min-width: max-content;
-`;
-
-export const GetStatsBar = styled.div`
-  display: flex;
-  gap: 1rem;
-  align-items: flex-end;
-  margin-bottom: 10px;
 `;
