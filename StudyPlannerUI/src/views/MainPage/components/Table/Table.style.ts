@@ -27,6 +27,10 @@ export const StyledHeader = styled.th`
   color: ${({ theme }) => theme.text};
 `;
 
+export const CenteredHeader = styled(StyledHeader)`
+  text-align: center;
+`;
+
 export const StyledCell = styled.td`
   padding: 8px;
   text-align: left;
