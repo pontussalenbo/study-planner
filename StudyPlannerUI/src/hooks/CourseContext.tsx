@@ -4,7 +4,7 @@ type SelectedCourses = Record<4 | 5, CourseData.SelectedCourse[]>;
 
 export interface CtxType {
   courseCodes: Set<string>;
-  courses: (year?: 4 | 5) => CourseData.SelectedCourse[];
+  courses: SelectedCourses;
   setSelectedCourses: React.Dispatch<React.SetStateAction<SelectedCourses>>;
 
   addCourse: (
@@ -13,7 +13,7 @@ export interface CtxType {
     period: API.Period | null
   ) => void;
 
-  removeCourse: (courseName: string, year: 4 | 5) => void;
+  removeCourse: (courseName: string, year?: 4 | 5) => void;
   changeYear: (courseName: string, year: 4 | 5) => void;
 }
 
@@ -67,14 +67,31 @@ function SelectedCoursesProvider({ children }: IProps) {
     }));
   };
 
-  const removeCourse = (courseName: string, year: 4 | 5) => {
-    courseCodes.delete(courseName);
-    const removed = selectedCourses[year].filter(c => c.course_code !== courseName);
+  const removeCourse = (courseName: string, year?: 4 | 5) => {
+    if (year) {
+      setCourseCodes(prev => {
+        prev.delete(courseName);
+        return new Set(prev);
+      });
+      const removed = selectedCourses[year].filter(c => c.course_code !== courseName);
 
-    setSelectedCourses(prev => ({
-      ...prev,
-      [year]: removed
-    }));
+      setSelectedCourses(prev => ({
+        ...prev,
+        [year]: removed
+      }));
+      return;
+    }
+
+    const removed = courseCodes.delete(courseName);
+    if (removed) {
+      setCourseCodes(prev => new Set(prev));
+
+      setSelectedCourses(prev => ({
+        ...prev,
+        4: prev[4].filter(c => c.course_code !== courseName),
+        5: prev[5].filter(c => c.course_code !== courseName)
+      }));
+    }
   };
 
   const changeYear = (courseName: string, year: 4 | 5) => {
@@ -98,7 +115,7 @@ function SelectedCoursesProvider({ children }: IProps) {
 
   const store = {
     courseCodes,
-    courses,
+    courses: y,
     setSelectedCourses,
     addCourse,
     removeCourse,
