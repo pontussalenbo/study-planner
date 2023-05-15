@@ -1,3 +1,4 @@
+import { StyledButton } from 'components/Button';
 import { TableRow } from 'components/Table/Table.style';
 import styled from 'styled-components';
 
@@ -14,4 +15,13 @@ export const CreditsWrapper = styled.div`
   @media (max-width: 992px) {
     margin-top: 2rem;
   }
+`;
+
+export const ActionButton = styled(StyledButton)`
+  display: block;
+  margin: 0 auto;
+`;
+
+export const RemoveButton = styled(ActionButton)`
+  background: #c83232;
 `;
