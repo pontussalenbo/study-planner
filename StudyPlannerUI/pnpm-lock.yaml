@@ -28,6 +28,7 @@ specifiers:
   eslint-config-prettier: ^8.8.0
   eslint-plugin-import: ^2.27.5
   eslint-plugin-jsx-a11y: ^6.7.1
+  eslint-plugin-no-inline-styles: ^1.0.5
   eslint-plugin-react: ^7.32.2
   eslint-plugin-react-hooks: ^4.6.0
   eslint-plugin-react-prefer-function-component: ^3.1.0
@@ -89,6 +90,7 @@ devDependencies:
   eslint-config-prettier: 8.8.0_eslint@8.40.0
   eslint-plugin-import: 2.27.5_jcpbr5ub3qwt5a44p3yvxqmiam
   eslint-plugin-jsx-a11y: 6.7.1_eslint@8.40.0
+  eslint-plugin-no-inline-styles: 1.0.5
   eslint-plugin-react: 7.32.2_eslint@8.40.0
   eslint-plugin-react-hooks: 4.6.0_eslint@8.40.0
   eslint-plugin-react-prefer-function-component: 3.1.0
@@ -3977,6 +3979,12 @@ packages:
       semver: 6.3.0
     dev: true
 
+  /eslint-plugin-no-inline-styles/1.0.5:
+    resolution: {integrity: sha512-nftOfHV/ag0P0vEPQ3p54HVpGCp6k/E+pHdYnRm2wDK8QhClfmMjrCw+POL5RH/SN1AmTifCTh5VzkeubLgMpA==}
+    dependencies:
+      lodash.get: 4.4.2
+    dev: true
+
   /eslint-plugin-react-hooks/4.6.0_eslint@8.40.0:
     resolution: {integrity: sha512-oFc7Itz9Qxh2x4gNHStv3BqJq54ExXmfC+a1NjAta66IAN87Wu0R/QArgIS9qKzX3dXKPI9H5crl9QchNMY9+g==}
     engines: {node: '>=10'}
@@ -5441,6 +5449,10 @@ packages:
 
   /lodash.debounce/4.0.8:
     resolution: {integrity: sha512-FT1yDzDYEoYWhnSGnpE/4Kj1fLZkDFyqRb7fNt6FdYOSxlUWAtp42Eh6Wb0rGIv/m9Bgo7x4GhQbm5Ys4SG5ow==}
+    dev: true
+
+  /lodash.get/4.4.2:
+    resolution: {integrity: sha512-z+Uw/vLuy6gQe8cfaFWD7p0wVv8fJl3mbzXh33RS+0oW2wvUqiRXiQ69gLWSLpgB5/6sU+r6BlQR0MBILadqTQ==}
     dev: true
 
   /lodash.isfunction/3.0.9:

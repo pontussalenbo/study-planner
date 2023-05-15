@@ -15,7 +15,8 @@ module.exports = {
   },
   plugins: [
     'react',
-    '@typescript-eslint'
+    '@typescript-eslint',
+    'eslint-plugin-no-inline-styles'
   ],
   extends: [
     'eslint:recommended',
@@ -24,6 +25,7 @@ module.exports = {
     'prettier'
   ],
   'rules': {
+    'no-inline-styles/no-inline-styles': 2,
     'react/require-default-props': 'off',
     'indent': [
 		  'error',
