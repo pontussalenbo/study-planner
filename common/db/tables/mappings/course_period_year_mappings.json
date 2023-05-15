@@ -1,0 +1,6 @@
+{
+    "course_code": "courseCode",
+    "academic_year": "academicYearId",
+    "period_start": "periodStart",
+    "period_end": "periodEnd"
+}
