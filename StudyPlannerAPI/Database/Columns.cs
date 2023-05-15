@@ -9,8 +9,6 @@ public static class Columns
     public const string COURSE_NAME_EN = "course_name_en";
 
     public const string PROGRAMME_CODE = "programme_code";
-    public const string PROGRAMME_NAME_SV = "programme_name_sv";
-    public const string PROGRAMME_NAME_EN = "programme_name_en";
 
     public const string MASTER_CODE = "master_code";
     public const string MASTER_NAME_SV = "master_name_sv";
