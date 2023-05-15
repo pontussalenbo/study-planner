@@ -9,6 +9,7 @@ import Table from './Table';
 import { CreditsWrapper } from '../styles';
 import { fetchData } from 'utils/fetch';
 import { dataParser } from 'views/MainPage/dataParser';
+import { FilterContainer } from './styles';
 
 function Courses() {
   const [filters, setFilters] = useState({
@@ -52,13 +53,13 @@ function Courses() {
 
   return (
     <>
-      <div style={{ display: 'flex', width: 'max-content' }}>
+      <FilterContainer>
         <FilterBar
           filters={filters}
           onFilterChange={handleFilterChange}
           onGetCourses={handleGetCourses}
         />
-      </div>
+      </FilterContainer>
 
       <Section id='courses'>
         <SearchBar matches={matches} setSearch={filterSearch} />

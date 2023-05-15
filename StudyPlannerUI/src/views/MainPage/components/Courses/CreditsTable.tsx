@@ -1,4 +1,3 @@
-import { StyledButton } from 'components/Button';
 import {
   StyledCell,
   StyledHeader,
@@ -7,8 +6,10 @@ import {
   TableBody
 } from '../Table/Table.style';
 import { BASE_URL } from 'utils/URL';
-import { memo, useContext, useState } from 'react';
+import { memo, useContext, useMemo, useState } from 'react';
 import { CtxType, MyContext } from 'hooks/CourseContext';
+import { StatsButton, StatsWrapper } from './styles';
+import Tooltip from 'components/Tooltip';
 
 interface Filters {
   Programme: string;
@@ -39,6 +40,8 @@ function CreditsTable({ filters }: ICreditsTable): JSX.Element {
 
   const { courses } = useContext(MyContext) as CtxType;
 
+  const selectedCourses = useMemo(() => [...courses[4], ...courses[5]], [courses]);
+
   const getMasters = async () => {
     fetch(BASE_URL + '/general/masters' + '?programme=' + filters.Programme)
       .then(resp => resp.json())
@@ -46,9 +49,9 @@ function CreditsTable({ filters }: ICreditsTable): JSX.Element {
   };
 
   const getMasterStats = async () => {
-    const selectedCourses = courses().map(course => course.course_code);
+    const courseCodes = selectedCourses.map(course => course.course_code);
     fetch(BASE_URL + '/masters', {
-      body: JSON.stringify({ ...filters, selectedCourses }),
+      body: JSON.stringify({ ...filters, selectedCourses: courseCodes }),
       headers: {
         'Content-Type': 'application/json'
       },
@@ -76,15 +79,15 @@ function CreditsTable({ filters }: ICreditsTable): JSX.Element {
     return sortedMasters;
   };
 
+  const enoughCourses = useMemo(() => selectedCourses.length >= 4, [courses]);
+
   return (
-    <>
-      <StyledButton
-        style={{ marginBottom: '5px' }}
-        disabled={courses().length < 4}
-        onClick={handleUpdate}
-      >
-        Get stats
-      </StyledButton>
+    <StatsWrapper>
+      <Tooltip text='Needs atleast 4 courses'>
+        <StatsButton disabled={!enoughCourses} onClick={handleUpdate}>
+          Get stats
+        </StatsButton>
+      </Tooltip>
       <StyledTableContainer>
         <StyledTable>
           <thead>
@@ -116,7 +119,7 @@ function CreditsTable({ filters }: ICreditsTable): JSX.Element {
           </TableBody>
         </StyledTable>
       </StyledTableContainer>
-    </>
+    </StatsWrapper>
   );
 }
 
