@@ -24,7 +24,7 @@ const SearchInput = styled.input<SearchInputProps>`
 `;
 
 interface SearchBarProps {
-  setSearch: any;
+  setSearch: (search: string) => void;
   matches: boolean;
 }
 
