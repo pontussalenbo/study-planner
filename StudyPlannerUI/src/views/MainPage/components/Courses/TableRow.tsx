@@ -1,7 +1,8 @@
-import { useContext, useState } from 'react';
-import { StyledCell } from './Table.style';
-import { AlertButton, StyledButton } from 'components/Button';
+import { useCallback, useContext, useMemo, useState } from 'react';
+import { StyledCell } from '../Table/Table.style';
 import { MyContext, CtxType } from 'hooks/CourseContext';
+import { ActionButton, RemoveButton } from '../styles';
+import { Select } from './styles';
 
 interface CourseTableRowProps {
   course: CourseData.DataWithLocale;
@@ -14,8 +15,11 @@ interface CourseTableRowProps {
 
 const CourseTableRow: React.FC<CourseTableRowProps> = ({ course, handleAddCourse }) => {
   const [selectedPeriod, setSelectedPeriod] = useState<API.Period | null>(null);
-  const [selected, setSelected] = useState(false);
-  const { removeCourse } = useContext(MyContext) as CtxType;
+  const { courseCodes, removeCourse } = useContext(MyContext) as CtxType;
+
+  const isSelected = useMemo(() => {
+    return courseCodes.has(course.course_code);
+  }, [courseCodes, course.course_code]);
 
   const handlePeriodChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
     const periodIndex = parseInt(event.target.value);
@@ -28,13 +32,11 @@ const CourseTableRow: React.FC<CourseTableRowProps> = ({ course, handleAddCourse
       selectedPeriod,
       selectedYear: 4
     };
-    setSelected(true);
     handleAddCourse(selectedCourse, 4, selectedPeriod);
   };
 
   const handleRemoveClick = () => {
-    removeCourse(course.course_code, 4);
-    setSelected(false);
+    removeCourse(course.course_code);
   };
 
   const endPeriod = (period: API.Period) => {
@@ -49,12 +51,8 @@ const CourseTableRow: React.FC<CourseTableRowProps> = ({ course, handleAddCourse
       <StyledCell>{course.level}</StyledCell>
       <StyledCell>
         {course.periods.length > 1 ? (
-          <select
-            style={{ minWidth: 'max-content' }}
-            defaultValue=''
-            onChange={handlePeriodChange}
-          >
-            <option style={{ minWidth: 'max-content' }} value='' disabled>
+          <Select defaultValue='' onChange={handlePeriodChange}>
+            <option value='' disabled>
               Select
             </option>
             {course.periods.map((period, index) => {
@@ -81,16 +79,15 @@ const CourseTableRow: React.FC<CourseTableRowProps> = ({ course, handleAddCourse
         )}
       </StyledCell>
       <StyledCell>
-        {selected ? (
-          <AlertButton onClick={handleRemoveClick}>&#45; Remove</AlertButton>
+        {isSelected ? (
+          <RemoveButton onClick={handleRemoveClick}>&#45; Remove</RemoveButton>
         ) : (
-          <StyledButton
-            style={{ display: 'block', margin: '0 auto' }}
+          <ActionButton
             disabled={!selectedPeriod && course.periods.length > 1}
             onClick={handleButtonClick}
           >
             &#43; Select
-          </StyledButton>
+          </ActionButton>
         )}
       </StyledCell>
     </tr>
