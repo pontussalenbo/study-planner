@@ -1,5 +1,6 @@
 import { AlertButton } from 'components/Button';
 import {
+  CenteredHeader,
   StyledCell,
   StyledHeader,
   StyledTable,
@@ -8,7 +9,8 @@ import {
 } from '../Table/Table.style';
 import styled from 'styled-components';
 import { MyContext, CtxType } from 'hooks/CourseContext';
-import { useContext } from 'react';
+import { useContext, useMemo } from 'react';
+import { ArrowButton, ButtonIcon, RemoveButton } from './styles';
 interface CreditsTableProps {
   year: 4 | 5;
 }
@@ -19,6 +21,7 @@ const TestTable = styled(StyledTable)`
 
 function SelectedCoursesTable({ year }: CreditsTableProps): JSX.Element {
   const { courses, removeCourse, changeYear } = useContext(MyContext) as CtxType;
+  const yearCourses = useMemo(() => courses[year], [courses, year]);
   return (
     <StyledTableContainer>
       <TestTable>
@@ -27,34 +30,28 @@ function SelectedCoursesTable({ year }: CreditsTableProps): JSX.Element {
             <StyledHeader>Course Code</StyledHeader>
             <StyledHeader>Course Name</StyledHeader>
             <StyledHeader>Year</StyledHeader>
-            <StyledHeader>Action</StyledHeader>
+            <CenteredHeader>Action</CenteredHeader>
           </tr>
         </thead>
         <TableBody>
-          {courses(year).map(course => (
+          {yearCourses.map(course => (
             <tr key={course.course_code}>
               <StyledCell>{course.course_code}</StyledCell>
               <StyledCell>{course.course_name}</StyledCell>
-              <StyledCell style={{ fontSize: '1.5rem' }}>
-                <button
-                  style={{
-                    border: '1px solid white',
-                    borderRadius: '5px',
-                    padding: '0 5px',
-                    color: 'white'
-                  }}
+              <StyledCell>
+                <ArrowButton
                   onClick={() => changeYear(course.course_code, year === 4 ? 5 : 4)}
                 >
                   {year === 4 ? '\u2192' : '\u2190'}
-                </button>
+                </ArrowButton>
               </StyledCell>
               <StyledCell>
-                <AlertButton
+                <RemoveButton
                   type='button'
                   onClick={() => removeCourse(course.course_code, year)}
                 >
-                  <span style={{ marginRight: '4px' }}>&#8722;</span> Remove
-                </AlertButton>
+                  <ButtonIcon>&#8722;</ButtonIcon> Remove
+                </RemoveButton>
               </StyledCell>
             </tr>
           ))}
