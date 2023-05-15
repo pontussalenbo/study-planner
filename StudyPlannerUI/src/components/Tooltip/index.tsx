@@ -4,7 +4,6 @@ import styled from 'styled-components';
 const TooltipContainer = styled.div<{ top: string; left: string }>`
   visibility: hidden;
   position: absolute;
-  margin-top: 10px;
   // top: ${props => props.top};
   // left: ${props => props.left};
   background-color: ${({ theme }) => theme.secondary};
@@ -54,7 +53,9 @@ const Tooltip: React.FC<TooltipProps> = ({ children, text, enabled = true }) => 
   const handleMouseEnter = () => {
     if (childRef.current) {
       const rect = childRef.current.getBoundingClientRect();
-      setPosition({ top: `${rect.y}px`, left: `${rect.width / 2 - 5}px` });
+      console.log(rect);
+
+      setPosition({ top: `${rect.y}px`, left: `${rect.width / 2}px` });
     }
   };
   if (enabled) {
