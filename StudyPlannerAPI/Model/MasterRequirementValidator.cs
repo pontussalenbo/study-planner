@@ -19,14 +19,18 @@ public class MasterRequirementValidator : IMasterRequirementValidator
     public async Task<IActionResult> ValidateCourseSelection(string programme,
         string year, List<string> selectedCourses, List<string> masterCodes)
     {
-        // TODO: fix
         if (masterCodes.Count == 0) // if there are no provided master codes, compute for all
         {
-            const string query =
-                @$"SELECT {Columns.MASTER_CODE}
-                   FROM {Tables.PROGRAMME_MASTER}
-                   WHERE {Columns.PROGRAMME_CODE} = @p0";
-            var queryResult = await databaseManager.ExecuteQuery<MasterCodeDTO>(query, programme);
+            var table = Util.YearPatternToTable(year);
+            var column = Util.YearPatternToColumn(year);
+            var parameters = new List<string>
+            {
+                programme,
+                year
+            };
+            var query =
+                $"SELECT DISTINCT({Columns.MASTER_CODE}) FROM {table} JOIN {Tables.MASTERS} USING({Columns.MASTER_CODE}) WHERE {Columns.PROGRAMME_CODE} = @p0 AND {column} = @p1";
+            var queryResult = await databaseManager.ExecuteQuery<MasterCodeDTO>(query, parameters.ToArray());
             masterCodes = queryResult.Select(dto => dto.master_code).ToList();
         }
 

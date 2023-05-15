@@ -43,10 +43,15 @@ public class GeneralInfoManager : IGeneralInfoManager
     public async Task<IActionResult> GetMasters(string programme, string year)
     {
         var table = Util.YearPatternToTable(year);
-
+        var column = Util.YearPatternToColumn(year);
+        var parameters = new List<string>
+        {
+            programme,
+            year
+        };
         var query =
-            $"SELECT DISTINCT({Columns.MASTER_CODE}), {Columns.MASTER_NAME_EN}, {Columns.MASTER_NAME_SV} FROM {table} JOIN {Tables.MASTERS} USING({Columns.MASTER_CODE}) WHERE programme_code = @p0";
-        var result = await databaseManager.ExecuteQuery<MasterDTO>(query, programme);
+            $"SELECT DISTINCT({Columns.MASTER_CODE}), {Columns.MASTER_NAME_EN}, {Columns.MASTER_NAME_SV} FROM {table} JOIN {Tables.MASTERS} USING({Columns.MASTER_CODE}) WHERE {Columns.PROGRAMME_CODE} = @p0 AND {column} = @p1";
+        var result = await databaseManager.ExecuteQuery<MasterDTO>(query, parameters.ToArray());
 
         return new JsonResult(result);
     }

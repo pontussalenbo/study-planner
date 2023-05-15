@@ -22,7 +22,7 @@ public class GeneralController : ControllerBase
     [Route("programmes")]
     public async Task<IActionResult> GetProgrammes()
     {
-        var result = await this.PerformEndpointAction(async () => await generalInfoManager.GetProgrammes(), logger);
+        var result = await this.PerformEndpointAction(generalInfoManager.GetProgrammes, logger);
         return result;
     }
 
@@ -30,7 +30,7 @@ public class GeneralController : ControllerBase
     [Route("academic_years")]
     public async Task<IActionResult> GetAcademicYears()
     {
-        var result = await this.PerformEndpointAction(async () => await generalInfoManager.GetAcademicYears(), logger);
+        var result = await this.PerformEndpointAction(generalInfoManager.GetAcademicYears, logger);
         return result;
     }
 
@@ -38,7 +38,7 @@ public class GeneralController : ControllerBase
     [Route("class_years")]
     public async Task<IActionResult> GetClassYears()
     {
-        var result = await this.PerformEndpointAction(async () => await generalInfoManager.GetClassYears(), logger);
+        var result = await this.PerformEndpointAction(generalInfoManager.GetClassYears, logger);
         return result;
     }
 
