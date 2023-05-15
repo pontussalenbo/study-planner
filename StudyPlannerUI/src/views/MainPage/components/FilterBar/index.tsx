@@ -1,7 +1,7 @@
 // FilterBar.tsx
 import React from 'react';
 import { Select } from 'components/Select';
-import Tooltip from 'components/ToolTip';
+import Tooltip from 'components/Tooltip';
 import useFetch from 'hooks/useFetch';
 import { Event as ChangeEvent } from 'interfaces/Event.d';
 import { BASE_URL } from 'utils/URL';
@@ -61,11 +61,7 @@ export const FilterBar: React.FC<FilterBarProps> = ({
           Select
         </option>
       </Select>
-      <Tooltip
-        text='Please select a filter'
-        disabled={!filterValues.length}
-        position='bottom'
-      >
+      <Tooltip text='Please select a filter' enabled={!filterValues.length}>
         <Select
           label='Year/Class'
           options={filterValues || []}

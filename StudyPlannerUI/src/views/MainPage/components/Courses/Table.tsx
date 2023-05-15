@@ -1,6 +1,7 @@
 import { memo, useContext, useState } from 'react';
-import CourseTableRow from '../Table/TableRow';
+import CourseTableRow from './TableRow';
 import {
+  CenteredHeader,
   StyledHeader,
   StyledTable,
   StyledTableContainer,
@@ -36,7 +37,7 @@ function Table({ courses }: CourseTableRowProps) {
               <StyledHeader>Credits</StyledHeader>
               <StyledHeader>Level</StyledHeader>
               <StyledHeader>Periods</StyledHeader>
-              <StyledHeader style={{ textAlign: 'center' }}>Action</StyledHeader>
+              <CenteredHeader>Action</CenteredHeader>
             </tr>
           </thead>
           <TableBody>
