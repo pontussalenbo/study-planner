@@ -28,16 +28,9 @@ public class CourseController : ControllerBase
                 new StatusCodeResult(StatusCodes.Status400BadRequest);
         }
 
-        if (courseParams.Master == null)
-        {
-            return await this.PerformEndpointAction(
-                async () => await courseInfoManager.GetCourses(courseParams.Programme,
-                    courseParams.Year ?? string.Empty),
-                logger);
-        }
-
         return await this.PerformEndpointAction(
-            async () => await courseInfoManager.GetMasterCourses(courseParams.Master, courseParams.Programme,
-                courseParams.Year ?? string.Empty), logger);
+            async () => await courseInfoManager.GetCourses(courseParams.Programme,
+                courseParams.Year, courseParams.Master ?? string.Empty),
+            logger);
     }
 }

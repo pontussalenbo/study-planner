@@ -2,17 +2,15 @@ const generateArrayOfYears = require('./getYears');
 
 const DB_TABLES = [
     'courses',
-    'course_programme',
-    'course_period',
+    'programme_master_course_class',
+    'programme_master_course_year',
+    'course_period_class',
+    'course_period_year',
     'programmes',
     'masters',
-    'programme_master',
-    'course_master',
-    'course_class',
-    'course_year',
 ];
 
-const DB_FILE_NAME = "study-planner.db";
+const DB_FILE_NAME = 'study-planner.db';
 
 const FILE_PATHS = {
     DB_TABLES: 'db/tables',

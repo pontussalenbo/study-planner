@@ -148,7 +148,7 @@ function getCoursePeriodSQLStmt(course) {
         // When our index is not 0, we need to create the full sql value statement,
         // but not adding a parenthesis to the end since that will be handed when joining the array
 
-        return `('${courseCode}', '${course.class}', '${course.academicYearId}', ${periodStart}, ${periodEnd}`;
+        return `('${courseCode}', '${course.class}', ${periodStart}, ${periodEnd}`;
     });
     // Join the array and add a parenthesis to the end of each substring
     return stmts.join('),\n      ');

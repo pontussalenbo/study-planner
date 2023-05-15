@@ -19,6 +19,7 @@ public class MasterRequirementValidator : IMasterRequirementValidator
     public async Task<IActionResult> ValidateCourseSelection(string programme,
         string year, List<string> selectedCourses, List<string> masterCodes)
     {
+        // TODO: fix
         if (masterCodes.Count == 0) // if there are no provided master codes, compute for all
         {
             const string query =
@@ -34,41 +35,49 @@ public class MasterRequirementValidator : IMasterRequirementValidator
             masterCodes.Add(Constants.GENERAL);
         }
 
+        masterCodes.Add("summary");
         var result = new List<MasterValidationResult>();
         foreach (var masterCode in masterCodes)
         {
-            var validationResult = await ValidateMaster(masterCode, year, selectedCourses);
+            var validationResult = await ValidateMaster(programme, masterCode, year, selectedCourses);
             result.Add(validationResult);
         }
 
         return new JsonResult(result);
     }
 
-    private async Task<MasterValidationResult> ValidateMaster(string masterCode, string year,
+    private async Task<MasterValidationResult> ValidateMaster(string programme, string masterCode, string year,
         List<string> selectedCourses)
     {
-        var parameters = new List<string>();
         var queryBuilder = new StringBuilder();
         var condStmtBuilder = new StringBuilder();
-
-        queryBuilder.AppendLine($"SELECT DISTINCT({Columns.COURSE_CODE}), {Columns.CREDITS}, {Columns.LEVEL}");
-
-        var condTable = Util.YearPatternToTable(year);
-        var condColumn = Util.YearPatternToColumn(year);
-
-        queryBuilder.AppendLine($"FROM {condTable}");
-        condStmtBuilder.AppendLine($"WHERE {condColumn} = @p{parameters.Count}");
-        parameters.Add(year);
+        var parameters = new List<string>
+        {
+            programme,
+            year
+        };
 
         queryBuilder.AppendLine(
-            @$"JOIN {Tables.COURSE_MASTER} USING({Columns.COURSE_CODE})
-               JOIN {Tables.COURSES} USING({Columns.COURSE_CODE}) ");
-        condStmtBuilder.AppendLine($" AND {Columns.MASTER_CODE} = @p{parameters.Count} AND (");
-        parameters.Add(masterCode);
+            @$"SELECT DISTINCT({Columns.COURSE_CODE}), {Columns.CREDITS}, {Columns.LEVEL}
+               FROM {Tables.PROGRAMME_MASTER_COURSE_CLASS} JOIN {Tables.COURSES} USING({Columns.COURSE_CODE})
+               WHERE {Columns.PROGRAMME_CODE} = @p0 AND {Columns.CLASS_YEAR} = @p1");
 
+        if (masterCode == Constants.SUMMARY)
+        {
+            queryBuilder.AppendLine($"AND ({Columns.ELECTABILITY} = @p2 OR {Columns.ELECTABILITY} = @p3)");
+            parameters.Add(Constants.ELECTIVE);
+            parameters.Add(Constants.EXTERNAL_ELECTIVE);
+        }
+        else
+        {
+            queryBuilder.AppendLine($"AND {Columns.MASTER_CODE} = @p{parameters.Count}");
+            parameters.Add(masterCode);
+        }
+
+        condStmtBuilder.AppendLine(" AND (");
         foreach (var course in selectedCourses)
         {
-            var op = parameters.Count == 2 /*is a magic number!*/ ? string.Empty : "OR";
+            var op = course == selectedCourses.First() ? string.Empty : "OR";
             condStmtBuilder.Append($" {op} {Columns.COURSE_CODE} = @p{parameters.Count}");
             parameters.Add(course);
         }
@@ -77,6 +86,7 @@ public class MasterRequirementValidator : IMasterRequirementValidator
 
         queryBuilder.AppendLine(condStmtBuilder.ToString());
         var query = queryBuilder.ToString();
+        Console.WriteLine(query);
         var queryResult =
             await databaseManager.ExecuteQuery<CourseDTO>(query, parameters.ToArray());
 
@@ -90,7 +100,7 @@ public class MasterRequirementValidator : IMasterRequirementValidator
             AdvancedCredits = advancedCredits,
             G1Credits = g1Credits,
             G2Credits = g2Credits,
-            RequirementsFulfilled = masterCode != Constants.GENERAL
+            RequirementsFulfilled = masterCode != Constants.SUMMARY
                 ? advancedCredits >= Constants.REQUIRED_A_CREDITS_MASTER &&
                   totalCredits >= Constants.REQUIRED_CREDITS_MASTER
                 : advancedCredits >= Constants.REQUIRED_A_CREDITS_TOTAL &&

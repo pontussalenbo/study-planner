@@ -1,0 +1,7 @@
+{
+    "course_code": "courseCode",
+    "master_code": "specialisationCode",
+    "programme_code": "programmeCode",
+    "academic_year": "academicYearId",
+    "electability": "choice"
+}

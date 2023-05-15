@@ -46,13 +46,15 @@ public class GeneralController : ControllerBase
     [Route("masters")]
     public async Task<IActionResult> GetMastersByProgramme([FromQuery] CourseParams courseParams)
     {
-        if (courseParams.Programme == null)
+        if (courseParams.Programme == null || courseParams.Year == null)
         {
             return new StatusCodeResult(StatusCodes.Status400BadRequest);
         }
 
         var result =
-            await this.PerformEndpointAction(async () => await generalInfoManager.GetMasters(courseParams.Programme),
+            await this.PerformEndpointAction(
+                async () => await generalInfoManager.GetMasters(courseParams.Programme,
+                    courseParams.Year ?? string.Empty),
                 logger);
         return result;
     }

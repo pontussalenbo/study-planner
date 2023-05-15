@@ -14,40 +14,6 @@ public class CourseInfoManager : ICourseInfoManager
         this.databaseManager = databaseManager;
     }
 
-    public async Task<IActionResult> GetCourses(string programme, string year)
-    {
-        var queryBuilder = new StringBuilder();
-        var joinStmtBuilder = new StringBuilder();
-        var condStmtBuilder = new StringBuilder();
-        var parameters = new List<string>();
-
-        queryBuilder.AppendLine(
-            @$"SELECT {Columns.COURSE_CODE}, {Columns.COURSE_NAME_SV}, {Columns.COURSE_NAME_EN}, {Columns.CREDITS}, {Columns.LEVEL}
-               FROM {Tables.COURSES}");
-
-        if (programme != string.Empty)
-        {
-            joinStmtBuilder.AppendLine($"JOIN {Tables.COURSE_PROGRAMME} USING ({Columns.COURSE_CODE})");
-            condStmtBuilder.AppendLine($"WHERE {Columns.PROGRAMME_CODE} = @p{parameters.Count}");
-            parameters.Add(programme);
-
-            var joinTable = Util.YearPatternToTable(year);
-            var condColumn = Util.YearPatternToColumn(year);
-
-            joinStmtBuilder.AppendLine($"JOIN {joinTable} USING({Columns.PROGRAMME_CODE}, {Columns.COURSE_CODE})");
-            condStmtBuilder.AppendLine($"AND {condColumn} = @p{parameters.Count}");
-            parameters.Add(year);
-
-            queryBuilder.AppendLine(joinStmtBuilder.ToString());
-            queryBuilder.AppendLine(condStmtBuilder.ToString());
-        }
-
-        var query = queryBuilder.ToString();
-        var result = await databaseManager.ExecuteQuery<CourseDTO>(query, parameters.ToArray());
-        result = await AppendCoursePeriods(result, programme, year);
-        return new JsonResult(result);
-    }
-
     public async Task<IActionResult> GetMasterCourses(string master, string programme, string year)
     {
         var queryBuilder = new StringBuilder();
@@ -78,6 +44,40 @@ public class CourseInfoManager : ICourseInfoManager
         return new JsonResult(result);
     }
 
+    public async Task<IActionResult> GetCourses(string programme, string year, string master)
+    {
+        var queryBuilder = new StringBuilder();
+        var condStmtBuilder = new StringBuilder();
+        var parameters = new List<string>();
+
+        var table = Util.YearPatternToTable(year);
+        var column = Util.YearPatternToColumn(year);
+
+        queryBuilder.AppendLine(
+            @$"SELECT DISTINCT({Columns.COURSE_CODE}), {Columns.COURSE_NAME_SV}, {Columns.COURSE_NAME_EN}, {Columns.CREDITS}, {Columns.LEVEL}
+               FROM {table} JOIN {Tables.COURSES} USING({Columns.COURSE_CODE})");
+
+        condStmtBuilder.AppendLine($"WHERE {Columns.PROGRAMME_CODE} = @p{parameters.Count}");
+        parameters.Add(programme);
+
+        condStmtBuilder.AppendLine($"AND {column} = @p{parameters.Count}");
+        parameters.Add(year);
+
+        if (master != string.Empty)
+        {
+            condStmtBuilder.AppendLine($"AND {Columns.MASTER_CODE} = @p{parameters.Count}");
+            parameters.Add(master);
+        }
+
+        queryBuilder.AppendLine(condStmtBuilder.ToString());
+
+
+        var query = queryBuilder.ToString();
+        var result = await databaseManager.ExecuteQuery<CourseDTO>(query, parameters.ToArray());
+        result = await AppendCoursePeriods(result, programme, year);
+        return new JsonResult(result);
+    }
+
     private async Task<IList<CourseDTO>> AppendCoursePeriods(IList<CourseDTO> courses, string programme,
         string year)
     {
@@ -85,21 +85,20 @@ public class CourseInfoManager : ICourseInfoManager
         var condStmtBuilder = new StringBuilder();
         var parameters = new List<string>();
 
-        queryBuilder.AppendLine(
-            @$"SELECT *
-               FROM {Tables.COURSE_PERIOD}
-                   JOIN {Tables.COURSE_PROGRAMME} USING({Columns.COURSE_CODE})");
-
+        var table = Util.YearPatternToPeriodTable(year);
+        var joinTable = Util.YearPatternToTable(year);
         var condColumn = Util.YearPatternToColumn(year);
+
+        queryBuilder.AppendLine(
+            @$"SELECT {Columns.COURSE_CODE}, {Columns.PERIOD_START}, {Columns.PERIOD_END}
+               FROM {table}
+                   JOIN {joinTable} USING({Columns.COURSE_CODE}, {condColumn})");
 
         condStmtBuilder.AppendLine($"WHERE {condColumn} = @p{parameters.Count}");
         parameters.Add(year);
 
-        if (programme != string.Empty)
-        {
-            condStmtBuilder.AppendLine($"AND {Columns.PROGRAMME_CODE} = @p{parameters.Count}");
-            parameters.Add(programme);
-        }
+        condStmtBuilder.AppendLine($"AND {Columns.PROGRAMME_CODE} = @p{parameters.Count}");
+        parameters.Add(programme);
 
         for (var i = 0; i < courses.Count; i++)
         {

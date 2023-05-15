@@ -19,6 +19,9 @@ public class Constants
     public const string JSON_CONTENT_TYPE = "application/json";
 
     public const string GENERAL = "general";
+    public const string SUMMARY = "summary";
+    public const string ELECTIVE = "elective";
+    public const string EXTERNAL_ELECTIVE = "external_elective";
 
     public const int REQUIRED_A_CREDITS_TOTAL = 45;
     public const int REQUIRED_A_CREDITS_MASTER = 30;
