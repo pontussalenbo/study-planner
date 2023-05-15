@@ -17,8 +17,3 @@ export const RemoveButton = styled(StyledButton)`
   margin: 0 auto;
   background: #c83232;
 `;
-
-export const Wrapper = styled.div`
-  margin-top: 2rem;
-  width: 100%;
-`;
