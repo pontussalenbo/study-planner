@@ -4,4 +4,6 @@
  */
 import type React from 'react';
 
-export type Event<T extends HTMLElement> = React.ChangeEvent<T>;
+declare module 'react' {
+  export type ChangeEvent<T extends HTMLElement> = React.ChangeEvent<T>;
+}
