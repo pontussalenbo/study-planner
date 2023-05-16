@@ -1,15 +1,16 @@
 import Col from 'components/Flex/Col.style';
 import Row from 'components/Flex/Row.style';
 import { Section } from 'components/Section';
-import React, { useMemo, useState } from 'react';
+import React, { useState } from 'react';
 import CreditsTable from './CreditsTable';
 import { FilterBar } from '../FilterBar';
 import SearchBar from '../FilterBar/SearchBar';
 import Table from './Table';
 import { CreditsWrapper } from '../styles';
-import { fetchData } from 'utils/fetch';
+import { POST } from 'utils/fetch';
 import { dataParser } from 'views/MainPage/dataParser';
 import { FilterContainer } from './styles';
+import type { TransformFn } from 'interfaces/TransformFn';
 
 function Courses() {
   const [filters, setFilters] = useState({
@@ -18,29 +19,30 @@ function Courses() {
   });
   const [courses, setCourses] = useState<CourseData.DataWithLocale[]>([]);
   const [filteredCourses, setFilteredCourses] = useState<CourseData.DataWithLocale[]>([]);
+  const [matches, setMatches] = useState(() => filteredCourses.length > 0);
 
-  const displayCourses = useMemo(() => {
-    if (!filteredCourses.length) {
-      return courses;
-    }
-    return filteredCourses;
-  }, [courses, filteredCourses]);
+  const transformCourses = (transformFn: TransformFn) => {
+    const result = transformFn([...courses]);
 
-  const matches = useMemo(() => {
-    return filteredCourses.length > 0;
-  }, [filteredCourses]);
-
-  const handleGetCourses = () => {
-    fetchData(filters).then(resp => setCourses(dataParser(resp, 'course_name_en')));
+    // If result is a Promise, handle it
+    Promise.resolve(result).then(newCourses => {
+      if (newCourses.length > 0) {
+        setFilteredCourses(newCourses);
+        setMatches(true);
+      } else {
+        setFilteredCourses(courses);
+        setMatches(false);
+      }
+    });
   };
 
-  const filterSearch = (search: string) => {
-    const filteredCourses = courses.filter(
-      course =>
-        course.course_name.toLowerCase().includes(search.toLowerCase()) ||
-        course.course_code.toLowerCase().includes(search.toLowerCase())
-    );
-    setFilteredCourses(filteredCourses);
+  const handleGetCourses = () => {
+    POST('/courses', filters).then(resp => {
+      const parsedData = dataParser(resp, 'course_name_en');
+      setCourses(parsedData);
+      setFilteredCourses(parsedData);
+      setMatches(parsedData.length > 0);
+    });
   };
 
   const handleFilterChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
@@ -62,10 +64,10 @@ function Courses() {
       </FilterContainer>
 
       <Section id='courses'>
-        <SearchBar matches={matches} setSearch={filterSearch} />
+        <SearchBar matches={matches} filter={transformCourses} />
         <Row>
           <Col lg={8}>
-            <Table courses={displayCourses} />
+            <Table courses={filteredCourses} />
           </Col>
           <Col md={6} lg={4}>
             <CreditsWrapper>
