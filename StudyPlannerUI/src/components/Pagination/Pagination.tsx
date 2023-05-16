@@ -47,9 +47,9 @@ function Pagination(props: IPaginationProps): JSX.Element | null {
       >
         <ArrowLeft />
       </PaginationItem>
-      {paginationRange.map(pageNumber => {
+      {paginationRange.map((pageNumber, idx) => {
         if (pageNumber === DOTS) {
-          return <PaginationItemDots key={pageNumber}>&#8230;</PaginationItemDots>;
+          return <PaginationItemDots key={`dots_${idx}`}>&#8230;</PaginationItemDots>;
         }
 
         return (
