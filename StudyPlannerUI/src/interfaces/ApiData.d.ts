@@ -2,6 +2,7 @@
  * This file contains the interfaces for the data returned from the API.
  */
 declare namespace API {
+  declare const CREDITS_TOTAL_KEY = 'general';
   export interface Period {
     start: number;
     end: number;
