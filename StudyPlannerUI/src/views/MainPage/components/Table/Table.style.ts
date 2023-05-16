@@ -37,6 +37,9 @@ export const StyledCell = styled.td`
 `;
 
 export const TableBody = styled.tbody`
+  tr:nth-child(even) {
+    background-color: ${({ theme }) => theme.header};
+  }
   tr:nth-child(odd) {
     background-color: ${({ theme }) => theme.secondary};
   }
