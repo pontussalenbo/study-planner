@@ -2,7 +2,7 @@
  * This file contains the interfaces for the data returned from the LTH API.
  */
 declare namespace API {
-  export type Master = 'pg' | 'sv' | 'si';
+  declare const CREDITS_TOTAL_KEY = 'general';
   export interface Period {
     start: number;
     end: number;
@@ -21,11 +21,16 @@ declare namespace API {
   }
 
   export interface MasterStatus {
-    [key: Master]: {
-      G1Credits: number;
-      G2Credits: number;
-      AdvancedCredits: number;
-      RequirementsFulfilled: boolean;
-    };
+    Master: string;
+    AdvancedCredits: number;
+    G1Credits: number;
+    G2Credits: number;
+    RequirementsFulfilled: boolean;
+  }
+
+  export interface Masters {
+    master_code: string;
+    master_name_en: string;
+    master_name_sv: string;
   }
 }
