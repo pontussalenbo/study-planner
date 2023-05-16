@@ -59,11 +59,11 @@ export const PaginationItem = styled.li<{ disabled?: boolean; selected?: boolean
   ${({ selected }) =>
     selected &&
     css`
-      background-color: ${({ theme }) => theme.secondary};
+      background-color: ${({ theme }) => theme.header};
     `}
 
     &:hover {
-    background-color: rgba(0, 0, 0, 0.04);
+    background-color: ${({ theme }) => theme.secondary};
     cursor: pointer;
   }
 `;
