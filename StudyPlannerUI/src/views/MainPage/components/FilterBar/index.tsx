@@ -1,17 +1,17 @@
 // FilterBar.tsx
-import React from 'react';
+import React, { ChangeEvent } from 'react';
 import { Select } from 'components/Select';
 import Tooltip from 'components/Tooltip';
 import useFetch from 'hooks/useFetch';
-import { Event as ChangeEvent } from 'interfaces/Event.d';
 import { BASE_URL } from 'utils/URL';
 import { GetButton, SelectWrapper } from './style';
+import { GET } from 'utils/fetch';
 
-type FilterBarProps = {
+interface FilterBarProps {
   filters: Record<string, string>;
   onFilterChange: (e: ChangeEvent<HTMLSelectElement>) => void;
   onGetCourses: () => void;
-};
+}
 
 type Filter = 'Year' | 'Class';
 
@@ -23,7 +23,7 @@ export const FilterBar: React.FC<FilterBarProps> = ({
   const programmes = useFetch<string[]>(BASE_URL + '/general/programmes') || [];
   const [filterValues, setFilterValues] = React.useState<string[]>([]);
 
-  const handleChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+  const handleChange = (e: ChangeEvent<HTMLSelectElement>) => {
     onFilterChange(e);
   };
 
@@ -32,8 +32,8 @@ export const FilterBar: React.FC<FilterBarProps> = ({
       Class: BASE_URL + '/general/class_years',
       Year: BASE_URL + '/general/academic_years'
     };
-    const res = await fetch(`${urls[filter]}`);
-    const data = await res.json();
+
+    const data = await GET(urls[filter]);
     setFilterValues(data);
   };
 
