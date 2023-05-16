@@ -6,10 +6,12 @@ import {
   TableBody
 } from '../Table/Table.style';
 import { BASE_URL } from 'utils/URL';
-import { memo, useContext, useMemo, useState } from 'react';
+import { memo, useContext, useEffect, useMemo, useState } from 'react';
 import { CtxType, MyContext } from 'hooks/CourseContext';
-import { StatsButton, StatsWrapper } from './styles';
+import { GetStatsBar, StatsButton, StatsWrapper } from './styles';
 import Tooltip from 'components/Tooltip';
+import { Select } from 'components/Select';
+import { StyledButton } from 'components/Button';
 
 interface Filters {
   Programme: string;
@@ -36,14 +38,30 @@ interface ICreditsTable {
 
 function CreditsTable({ filters }: ICreditsTable): JSX.Element {
   const [masters, setMasters] = useState<IMaster[]>([]);
+  const [classes, setClasses] = useState<string[]>([]);
+
+  const [clazz, setClazz] = useState<string>('');
   const [stats, setStats] = useState<MasterResp[]>([]);
+
+  useEffect(() => {
+    fetch(BASE_URL + '/general/class_years')
+      .then(resp => resp.json())
+      .then(data => setClasses(data));
+  }, []);
+
+  useEffect(() => {
+    if (filters.Year.startsWith('H')) {
+      setClazz(filters.Year);
+    }
+  }, [filters]);
 
   const { courses } = useContext(MyContext) as CtxType;
 
   const selectedCourses = useMemo(() => [...courses[4], ...courses[5]], [courses]);
 
   const getMasters = async () => {
-    fetch(BASE_URL + '/general/masters' + '?programme=' + filters.Programme)
+    const query = '?programme=' + filters.Programme + '&year=' + clazz;
+    fetch(BASE_URL + '/general/masters' + query)
       .then(resp => resp.json())
       .then(data => setMasters(data));
   };
@@ -79,15 +97,30 @@ function CreditsTable({ filters }: ICreditsTable): JSX.Element {
     return sortedMasters;
   };
 
+  const sortedMasters = useMemo(() => sortMasters(masters), [masters]);
+
   const enoughCourses = useMemo(() => selectedCourses.length >= 4, [courses]);
 
   return (
     <StatsWrapper>
-      <Tooltip text='Needs atleast 4 courses'>
-        <StatsButton disabled={!enoughCourses} onClick={handleUpdate}>
-          Get stats
-        </StatsButton>
-      </Tooltip>
+      <GetStatsBar>
+        <Tooltip enabled={!enoughCourses} text='Needs atleast 4 courses'>
+          <StyledButton disabled={!enoughCourses || !clazz} onClick={handleUpdate}>
+            Get stats
+          </StyledButton>
+        </Tooltip>
+        <Select value={clazz} onChange={e => setClazz(e.target.value)} label='Class'>
+          <option value='' disabled>
+            Select
+          </option>
+
+          {classes.map(classYear => (
+            <option key={classYear} value={classYear}>
+              {classYear}
+            </option>
+          ))}
+        </Select>
+      </GetStatsBar>
       <StyledTableContainer>
         <StyledTable>
           <thead>
@@ -100,7 +133,7 @@ function CreditsTable({ filters }: ICreditsTable): JSX.Element {
             </tr>
           </thead>
           <TableBody>
-            {sortMasters(masters).map(master => {
+            {sortedMasters.map(master => {
               const x = stats.find(stat => stat.Master === master.master_code) ?? null;
               const totalCredits = x ? x.G1Credits + x.G2Credits + x.AdvancedCredits : 0;
               if (!totalCredits) {
