@@ -1,51 +1,20 @@
 import { Select } from 'components/Select';
 import { TransformFn } from 'interfaces/TransformFn';
 import React, { useEffect, useState } from 'react';
-import styled from 'styled-components';
-import { BASE_URL } from 'utils/URL';
-import { GET } from 'utils/fetch';
+import { GET, POST } from 'utils/fetch';
 import { dataParser } from 'views/MainPage/dataParser';
-
-// Define your styled components
-const SearchBarContainer = styled.div`
-  align-items: flex-end;
-  gap: 1rem;
-  display: flex;
-  margin-bottom: 20px;
-`;
-
-interface SearchInputProps {
-  error: boolean;
-}
-
-const SearchInput = styled.input<SearchInputProps>`
-  outline: ${({ error, theme }) =>
-    error ? '1px solid red' : `1px solid ${theme.primary}`}};
-
-  border: ${({ error, theme }) =>
-    error ? '1px solid red' : `1px solid ${theme.primary}`}};
-  border-radius: 4px;
-  width: 330px;
-  height: 30px;
-  padding: 5px;
-`;
-
-interface IMaster {
-  master_code: string;
-  master_name_en: string;
-  master_name_sv: string;
-}
+import { SearchBarContainer, SearchInput } from './style';
 
 interface SearchBarProps {
-  setSearch?: (search: string) => void;
   matches: boolean;
+  setSearch?: (search: string) => void;
   filter: (transformFn: TransformFn) => void | Promise<void>;
 }
 
 // Your component
 const SearchBar: React.FC<SearchBarProps> = ({ matches, filter }: SearchBarProps) => {
   const [query, setQuery] = useState('');
-  const [masters, setMasters] = useState<IMaster[]>([]);
+  const [masters, setMasters] = useState<API.Masters[]>([]);
 
   useEffect(() => {
     //TODO: replace with real filter
@@ -76,15 +45,8 @@ const SearchBar: React.FC<SearchBarProps> = ({ matches, filter }: SearchBarProps
   const handleMasterFilter = (master: string) => {
     // Define your transformation function here
     const transformFn = async () => {
-      const response = await fetch(BASE_URL + '/courses', {
-        body: JSON.stringify({ Programme: 'D', Year: 'H19', Master: master }),
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        }
-      });
-      const data = await response.json();
-      return dataParser(data, 'course_name_en');
+      const body = { Programme: 'D', Year: 'H19', Master: master };
+      return POST('/courses', body).then(data => dataParser(data, 'course_name_en'));
     };
     filter(transformFn);
   };

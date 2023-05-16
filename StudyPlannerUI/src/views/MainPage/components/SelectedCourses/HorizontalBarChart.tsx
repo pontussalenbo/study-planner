@@ -8,12 +8,7 @@ import {
   XAxis,
   YAxis
 } from 'recharts';
-import styled from 'styled-components';
-
-const Wrapper = styled.div`
-  margin-top: 2rem;
-  width: 100%;
-`;
+import { Wrapper } from './styles';
 
 interface HorizontalBarChartProps {
   year: 4 | 5;

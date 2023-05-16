@@ -16,3 +16,26 @@ export const SelectWrapper = styled.div`
   max-width: 100%;
   flex-wrap: wrap;
 `;
+
+export const SearchBarContainer = styled.div`
+  align-items: flex-end;
+  gap: 1rem;
+  display: flex;
+  margin-bottom: 20px;
+`;
+
+interface SearchInputProps {
+  error: boolean;
+}
+
+export const SearchInput = styled.input<SearchInputProps>`
+  outline: ${({ error, theme }) =>
+    error ? '1px solid red' : `1px solid ${theme.primary}`}};
+
+  border: ${({ error, theme }) =>
+    error ? '1px solid red' : `1px solid ${theme.primary}`}};
+  border-radius: 4px;
+  width: 330px;
+  height: 30px;
+  padding: 5px;
+`;
