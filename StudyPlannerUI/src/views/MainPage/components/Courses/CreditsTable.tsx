@@ -5,31 +5,17 @@ import {
   StyledTableContainer,
   TableBody
 } from '../Table/Table.style';
-import { BASE_URL } from 'utils/URL';
 import { memo, useContext, useEffect, useMemo, useState } from 'react';
 import { CtxType, MyContext } from 'hooks/CourseContext';
-import { GetStatsBar, StatsButton, StatsWrapper } from './styles';
+import { GetStatsBar, StatsWrapper } from './styles';
 import Tooltip from 'components/Tooltip';
 import { Select } from 'components/Select';
 import { StyledButton } from 'components/Button';
+import { GET, POST } from 'utils/fetch';
 
 interface Filters {
   Programme: string;
   Year: string;
-}
-
-interface IMaster {
-  master_code: string;
-  master_name_en: string;
-  master_name_sv: string;
-}
-
-interface MasterResp {
-  Master: string;
-  AdvancedCredits: number;
-  G1Credits: number;
-  G2Credits: number;
-  RequirementsFulfilled: boolean;
 }
 
 interface ICreditsTable {
@@ -37,20 +23,19 @@ interface ICreditsTable {
 }
 
 function CreditsTable({ filters }: ICreditsTable): JSX.Element {
-  const [masters, setMasters] = useState<IMaster[]>([]);
+  const [masters, setMasters] = useState<API.Masters[]>([]);
   const [classes, setClasses] = useState<string[]>([]);
 
   const [clazz, setClazz] = useState<string>('');
-  const [stats, setStats] = useState<MasterResp[]>([]);
+  const [stats, setStats] = useState<API.MasterStatus[]>([]);
 
   useEffect(() => {
-    fetch(BASE_URL + '/general/class_years')
-      .then(resp => resp.json())
-      .then(data => setClasses(data));
+    GET('/general/class_years').then(data => setClasses(data));
   }, []);
 
   useEffect(() => {
-    if (filters.Year.startsWith('H')) {
+    const classSelected = filters.Year.startsWith('H');
+    if (classSelected) {
       setClazz(filters.Year);
     }
   }, [filters]);
@@ -60,34 +45,31 @@ function CreditsTable({ filters }: ICreditsTable): JSX.Element {
   const selectedCourses = useMemo(() => [...courses[4], ...courses[5]], [courses]);
 
   const getMasters = async () => {
-    const query = '?programme=' + filters.Programme + '&year=' + clazz;
-    fetch(BASE_URL + '/general/masters' + query)
-      .then(resp => resp.json())
-      .then(data => setMasters(data));
+    const params = {
+      programme: filters.Programme,
+      year: clazz
+    };
+    const data = await GET('/masters', new URLSearchParams(params));
+    setMasters(data);
   };
 
   const getMasterStats = async () => {
     const courseCodes = selectedCourses.map(course => course.course_code);
-    fetch(BASE_URL + '/masters', {
-      body: JSON.stringify({ ...filters, selectedCourses: courseCodes }),
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      method: 'POST'
-    }).then(resp => resp.json().then(data => setStats(data)));
+    const body = { ...filters, selectedCourses: courseCodes };
+    POST('/masters', body).then(data => setStats(data));
   };
 
   const handleUpdate = () => {
     getMasters().then(() => getMasterStats());
   };
 
-  const sortMasters = (masters: IMaster[]): IMaster[] => {
+  const sortMasters = (masters: API.Masters[]) => {
     const sortedMasters = [...masters];
 
     sortedMasters.sort((a, b) => {
-      if (a.master_name_en === 'General') {
+      if (a.master_name_en === API.CREDITS_TOTAL_KEY) {
         return 1; // "General" should be placed at the end
-      } else if (b.master_name_en === 'General') {
+      } else if (b.master_name_en === API.CREDITS_TOTAL_KEY) {
         return -1; // "General" should be placed at the end
       } else {
         return a.master_name_en.localeCompare(b.master_name_en); // Sort alphabetically
@@ -134,17 +116,20 @@ function CreditsTable({ filters }: ICreditsTable): JSX.Element {
           </thead>
           <TableBody>
             {sortedMasters.map(master => {
-              const x = stats.find(stat => stat.Master === master.master_code) ?? null;
-              const totalCredits = x ? x.G1Credits + x.G2Credits + x.AdvancedCredits : 0;
+              const masterStat =
+                stats.find(stat => stat.Master === master.master_code) ?? null;
+              const totalCredits = masterStat
+                ? masterStat.G1Credits + masterStat.G2Credits + masterStat.AdvancedCredits
+                : 0;
               if (!totalCredits) {
                 return null;
               }
               return (
                 <tr key={master.master_code}>
                   <StyledCell>{master.master_name_en}</StyledCell>
-                  <StyledCell>{x?.G1Credits}</StyledCell>
-                  <StyledCell>{x?.G2Credits}</StyledCell>
-                  <StyledCell>{x?.AdvancedCredits}</StyledCell>
+                  <StyledCell>{masterStat?.G1Credits}</StyledCell>
+                  <StyledCell>{masterStat?.G2Credits}</StyledCell>
+                  <StyledCell>{masterStat?.AdvancedCredits}</StyledCell>
                   <StyledCell>{totalCredits}</StyledCell>
                 </tr>
               );

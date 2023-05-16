@@ -1,7 +1,7 @@
 import Col from 'components/Flex/Col.style';
 import Row from 'components/Flex/Row.style';
 import { Section } from 'components/Section';
-import React, { useState } from 'react';
+import React, { ChangeEvent, useState } from 'react';
 import CreditsTable from './CreditsTable';
 import { FilterBar } from '../FilterBar';
 import SearchBar from '../FilterBar/SearchBar';
@@ -19,7 +19,7 @@ function Courses() {
   });
   const [courses, setCourses] = useState<CourseData.DataWithLocale[]>([]);
   const [filteredCourses, setFilteredCourses] = useState<CourseData.DataWithLocale[]>([]);
-  const [matches, setMatches] = useState(() => filteredCourses.length > 0);
+  const [matches, setMatches] = useState(true);
 
   const transformCourses = (transformFn: TransformFn) => {
     const result = transformFn([...courses]);
@@ -45,7 +45,7 @@ function Courses() {
     });
   };
 
-  const handleFilterChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+  const handleFilterChange = (e: ChangeEvent<HTMLSelectElement>) => {
     const { name, value } = e.target;
     setFilters(prev => ({
       ...prev,

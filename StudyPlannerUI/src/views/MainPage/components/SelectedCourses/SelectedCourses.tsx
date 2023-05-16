@@ -1,4 +1,3 @@
-import { AlertButton } from 'components/Button';
 import {
   CenteredHeader,
   StyledCell,
@@ -7,7 +6,6 @@ import {
   StyledTableContainer,
   TableBody
 } from '../Table/Table.style';
-import styled from 'styled-components';
 import { MyContext, CtxType } from 'hooks/CourseContext';
 import { useContext, useMemo } from 'react';
 import { ArrowButton, ButtonIcon, RemoveButton } from './styles';
@@ -15,16 +13,12 @@ interface CreditsTableProps {
   year: 4 | 5;
 }
 
-const TestTable = styled(StyledTable)`
-  font-size: 0.7em;
-`;
-
 function SelectedCoursesTable({ year }: CreditsTableProps): JSX.Element {
   const { courses, removeCourse, changeYear } = useContext(MyContext) as CtxType;
   const yearCourses = useMemo(() => courses[year], [courses, year]);
   return (
     <StyledTableContainer>
-      <TestTable>
+      <StyledTable>
         <thead>
           <tr>
             <StyledHeader>Course Code</StyledHeader>
@@ -56,7 +50,7 @@ function SelectedCoursesTable({ year }: CreditsTableProps): JSX.Element {
             </tr>
           ))}
         </TableBody>
-      </TestTable>
+      </StyledTable>
     </StyledTableContainer>
   );
 }

@@ -10,11 +10,6 @@ import {
 } from 'recharts';
 import { Wrapper } from './styles';
 
-const Wrapper = styled.div`
-  margin-top: 2rem;
-  width: 100%;
-`;
-
 interface HorizontalBarChartProps {
   year: 4 | 5;
 }
