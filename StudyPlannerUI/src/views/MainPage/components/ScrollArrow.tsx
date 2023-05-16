@@ -1,6 +1,6 @@
 // ScrollArrow.tsx
 import React, { useEffect, useState } from 'react';
-import styled from 'styled-components';
+import styled, { css, keyframes } from 'styled-components';
 
 const ArrowButton = styled.button`
   position: fixed;
@@ -27,7 +27,7 @@ const Circle = styled.div`
 
 const ArrowIcon = styled.svg<{ isPointingDown: boolean }>`
   transform: ${props => (props.isPointingDown ? 'rotate(-180deg)' : 'rotate(0deg)')};
-  transition: transform 0.3s ease;
+  transition: transform 0.5s ease-in-out;
   fill: #586069;
 `;
 
@@ -38,9 +38,18 @@ const ScrollArrow = () => {
 
   useEffect(() => {
     const handleScroll = () => {
+      const { scrollTop, scrollHeight, clientHeight } = document.documentElement;
       const element = document.documentElement; // or any other scrollable element you want to check
       const isElementScrollable = element.scrollHeight > element.clientHeight;
       setIsScrollable(isElementScrollable);
+
+      if (scrollTop + clientHeight >= scrollHeight) {
+        setIsPointingDown(false);
+      }
+
+      if (scrollTop === 0) {
+        setIsPointingDown(true);
+      }
     };
 
     window.addEventListener('scroll', handleScroll);
