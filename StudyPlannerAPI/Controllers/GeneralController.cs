@@ -2,6 +2,7 @@
 using StudyPlannerAPI.Controllers.Params;
 using StudyPlannerAPI.Extensions;
 using StudyPlannerAPI.Model;
+using StudyPlannerAPI.Model.Util;
 
 namespace StudyPlannerAPI.Controllers;
 
@@ -43,12 +44,14 @@ public class GeneralController : ControllerBase
     [Route("masters")]
     public async Task<IActionResult> GetMastersByProgramme([FromQuery] CourseParams courseParams)
     {
-        if (courseParams.Programme == null || courseParams.Year == null)
+        if (courseParams.Programme == null || courseParams.Year == null ||
+            !ModelUtil.IsYearPatternValid(courseParams.Year))
         {
             return new StatusCodeResult(StatusCodes.Status400BadRequest);
         }
 
-        return await this.PerformEndpointAction(async () => await generalInfoManager.GetMasters(courseParams.Programme),
+        return await this.PerformEndpointAction(
+            async () => await generalInfoManager.GetMasters(courseParams.Programme, courseParams.Year ?? string.Empty),
             logger);
     }
 }

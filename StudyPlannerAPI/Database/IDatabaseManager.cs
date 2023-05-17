@@ -13,14 +13,9 @@ public interface IDatabaseManager
 
     bool ValidateConnection()
     {
-        if (!File.Exists(Connection.ConnectionString))
-        {
-            return false;
-        }
-
         Connection.Open();
         var result = Connection.State == ConnectionState.Open;
         Connection.Close();
-        return result;
+        return result && Connection.State == ConnectionState.Closed;
     }
 }

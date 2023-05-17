@@ -18,44 +18,14 @@ public class CourseInfoManager : ICourseInfoManager
                 Constants.CONNECTION_STRING);
     }
 
-    public async Task<IActionResult> GetMasterCourses(string master, string programme, string year)
-    {
-        var queryBuilder = new StringBuilder();
-        var condStmtBuilder = new StringBuilder();
-        var parameters = new List<string>();
-
-        queryBuilder.AppendLine(
-            @$"SELECT {Columns.COURSE_CODE}, {Columns.COURSE_NAME_SV}, {Columns.COURSE_NAME_EN}, {Columns.CREDITS}, {Columns.LEVEL}
-               FROM {Tables.PROGRAMME_MASTER}
-                   JOIN {Tables.COURSE_MASTER} USING({Columns.MASTER_CODE})
-                   JOIN {Tables.COURSES} USING({Columns.COURSE_CODE})");
-
-        condStmtBuilder.AppendLine($"WHERE {Columns.MASTER_CODE} = @p0 AND {Columns.PROGRAMME_CODE} = @p1");
-        parameters.Add(master);
-        parameters.Add(programme);
-
-        var joinTable = Util.YearPatternToTable(year);
-        var condColumn = Util.YearPatternToColumn(year);
-
-        queryBuilder.AppendLine($"JOIN {joinTable} USING({Columns.PROGRAMME_CODE}, {Columns.COURSE_CODE})");
-        condStmtBuilder.AppendLine($"AND {condColumn} = @p{parameters.Count}");
-        parameters.Add(year);
-
-        queryBuilder.AppendLine(condStmtBuilder.ToString());
-        var query = queryBuilder.ToString();
-        var result = await databaseQueryManager.ExecuteQuery<CourseDTO>(query, parameters.ToArray());
-        result = await AppendCoursePeriods(result, programme, year);
-        return new JsonResult(result);
-    }
-
     public async Task<IActionResult> GetCourses(string programme, string year, string master)
     {
         var queryBuilder = new StringBuilder();
         var condStmtBuilder = new StringBuilder();
         var parameters = new List<string>();
 
-        var table = Util.YearPatternToTable(year);
-        var column = Util.YearPatternToColumn(year);
+        var table = ModelUtil.YearPatternToTable(year);
+        var column = ModelUtil.YearPatternToColumn(year);
 
         queryBuilder.AppendLine(
             @$"SELECT DISTINCT({Columns.COURSE_CODE}), {Columns.COURSE_NAME_SV}, {Columns.COURSE_NAME_EN}, {Columns.CREDITS}, {Columns.LEVEL}
@@ -90,9 +60,9 @@ public class CourseInfoManager : ICourseInfoManager
         var condStmtBuilder = new StringBuilder();
         var parameters = new List<string>();
 
-        var table = Util.YearPatternToPeriodTable(year);
-        var joinTable = Util.YearPatternToTable(year);
-        var condColumn = Util.YearPatternToColumn(year);
+        var table = ModelUtil.YearPatternToPeriodTable(year);
+        var joinTable = ModelUtil.YearPatternToTable(year);
+        var condColumn = ModelUtil.YearPatternToColumn(year);
 
         queryBuilder.AppendLine(
             @$"SELECT {Columns.COURSE_CODE}, {Columns.PERIOD_START}, {Columns.PERIOD_END}

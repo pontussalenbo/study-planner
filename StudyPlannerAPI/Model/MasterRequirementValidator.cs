@@ -27,8 +27,8 @@ public class MasterRequirementValidator : IMasterRequirementValidator
     {
         if (masterCodes.Count == 0) // if there are no provided master codes, compute for all
         {
-            var table = Util.YearPatternToTable(year);
-            var column = Util.YearPatternToColumn(year);
+            var table = ModelUtil.YearPatternToTable(year);
+            var column = ModelUtil.YearPatternToColumn(year);
             var parameters = new List<string>
             {
                 programme,

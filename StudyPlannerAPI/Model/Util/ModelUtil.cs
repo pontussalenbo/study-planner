@@ -15,13 +15,13 @@ public static partial class ModelUtil
         var matches = AcademicYearRegex().Matches(year);
         if (matches.Count > 0)
         {
-            return Tables.COURSE_YEAR;
+            return Tables.PROGRAMME_MASTER_COURSE_YEAR;
         }
 
         matches = ClassYearRegex().Matches(year);
         if (matches.Count > 0)
         {
-            return Tables.COURSE_CLASS;
+            return Tables.PROGRAMME_MASTER_COURSE_CLASS;
         }
 
         return string.Empty;
@@ -39,6 +39,23 @@ public static partial class ModelUtil
         if (matches.Count > 0)
         {
             return Columns.CLASS_YEAR;
+        }
+
+        return string.Empty;
+    }
+
+    public static string YearPatternToPeriodTable(string year)
+    {
+        var matches = AcademicYearRegex().Matches(year);
+        if (matches.Count > 0)
+        {
+            return Tables.COURSE_PERIOD_YEAR;
+        }
+
+        matches = ClassYearRegex().Matches(year);
+        if (matches.Count > 0)
+        {
+            return Tables.COURSE_PERIOD_CLASS;
         }
 
         return string.Empty;

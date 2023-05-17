@@ -14,7 +14,7 @@ public class DatabaseMutationManager : IDatabaseMutationManager
 
     public IDbConnection Connection { get; }
 
-    public T? ExecuteScalar<T>(string query, params object[] param)
+    public T ExecuteScalar<T>(string query, params object[] param)
     {
         var command = Connection.CreateCommand();
         command.CommandText = query;
@@ -29,7 +29,7 @@ public class DatabaseMutationManager : IDatabaseMutationManager
         command.Prepare();
         Connection.Open();
         var result = command.ExecuteScalar();
-        var data = (T?)Convert.ChangeType(result, typeof(T));
+        var data = (T)Convert.ChangeType(result, typeof(T));
 
         Connection.Close();
         return data;

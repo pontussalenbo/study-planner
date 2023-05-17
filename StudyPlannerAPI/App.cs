@@ -1,5 +1,8 @@
 using System.Data;
 using System.Data.SQLite;
+using FluentValidation;
+using StudyPlannerAPI.Controllers.Params;
+using StudyPlannerAPI.Controllers.Validation;
 using StudyPlannerAPI.Database;
 using StudyPlannerAPI.Model;
 
@@ -52,5 +55,8 @@ public class App
         services.AddScoped<ILinkShareManager, LinkShareManager>();
         services.AddScoped<IGeneralInfoManager, GeneralInfoManager>();
         services.AddScoped<IHealthCheckManager, HealthCheckManager>();
+        services.AddScoped<IValidator<CourseParams>, CourseParamsValidator>();
+        services.AddScoped<IValidator<MasterCheckParams>, MasterCheckParamsValidator>();
+        services.AddScoped<IValidator<LinkShareParams>, LinkShareParamsValidator>();
     }
 }

@@ -12,7 +12,7 @@ public class CourseDTO
 
     public HashSet<PeriodDTO> periods { get; set; } = new();
 
-    public override bool Equals(object? obj)
+    public override bool Equals(object obj)
     {
         return obj is not CourseDTO dto || course_code == dto.course_code;
     }
