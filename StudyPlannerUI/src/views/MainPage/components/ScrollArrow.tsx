@@ -38,9 +38,18 @@ const ScrollArrow = () => {
 
   useEffect(() => {
     const handleScroll = () => {
+      const { scrollTop, scrollHeight, clientHeight } = document.documentElement;
       const element = document.documentElement; // or any other scrollable element you want to check
       const isElementScrollable = element.scrollHeight > element.clientHeight;
       setIsScrollable(isElementScrollable);
+
+      if (scrollTop + clientHeight >= scrollHeight) {
+        setIsPointingDown(false);
+      }
+
+      if (scrollTop === 0) {
+        setIsPointingDown(true);
+      }
     };
 
     window.addEventListener('scroll', handleScroll);
