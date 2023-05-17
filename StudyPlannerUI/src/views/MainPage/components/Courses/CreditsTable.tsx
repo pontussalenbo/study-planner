@@ -12,6 +12,7 @@ import Tooltip from 'components/Tooltip';
 import { Select } from 'components/Select';
 import { StyledButton } from 'components/Button';
 import { GET, POST } from 'utils/fetch';
+import { CREDITS_TOTAL_KEY, Endpoints } from 'interfaces/API_Constants.d';
 
 interface Filters {
   Programme: string;
@@ -30,7 +31,7 @@ function CreditsTable({ filters }: ICreditsTable): JSX.Element {
   const [stats, setStats] = useState<API.MasterStatus[]>([]);
 
   useEffect(() => {
-    GET('/general/class_years').then(data => setClasses(data));
+    GET(Endpoints.classYears).then(data => setClasses(data));
   }, []);
 
   useEffect(() => {
@@ -49,14 +50,14 @@ function CreditsTable({ filters }: ICreditsTable): JSX.Element {
       programme: filters.Programme,
       year: clazz
     };
-    const data = await GET('/masters', new URLSearchParams(params));
+    const data = await GET(Endpoints.masters, new URLSearchParams(params));
     setMasters(data);
   };
 
   const getMasterStats = async () => {
     const courseCodes = selectedCourses.map(course => course.course_code);
     const body = { ...filters, selectedCourses: courseCodes };
-    POST('/masters', body).then(data => setStats(data));
+    POST(Endpoints.masterCheck, body).then(data => setStats(data));
   };
 
   const handleUpdate = () => {
@@ -67,9 +68,9 @@ function CreditsTable({ filters }: ICreditsTable): JSX.Element {
     const sortedMasters = [...masters];
 
     sortedMasters.sort((a, b) => {
-      if (a.master_name_en === API.CREDITS_TOTAL_KEY) {
+      if (a.master_name_en === CREDITS_TOTAL_KEY) {
         return 1; // "General" should be placed at the end
-      } else if (b.master_name_en === API.CREDITS_TOTAL_KEY) {
+      } else if (b.master_name_en === CREDITS_TOTAL_KEY) {
         return -1; // "General" should be placed at the end
       } else {
         return a.master_name_en.localeCompare(b.master_name_en); // Sort alphabetically

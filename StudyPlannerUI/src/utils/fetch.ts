@@ -31,7 +31,13 @@ export async function GET<T = any>(
     params?: URLSearchParams
 ): Promise<T> {
     try {
-        const response = await fetch(BASE_URL + endpoint + '?' + params?.toString());
+        const url = new URL(BASE_URL + endpoint);
+
+        if (params) {
+            url.search = params.toString();
+        }
+
+        const response = await fetch(url.toString());
         const json = await response.json();
         return json;
     } catch (error) {
