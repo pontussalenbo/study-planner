@@ -1,4 +1,4 @@
-export const CREDITS_TOTAL_KEY = 'general';
+export const CREDITS_TOTAL_KEY = 'General';
 
 export const Endpoints = {
     courses: '/courses',
