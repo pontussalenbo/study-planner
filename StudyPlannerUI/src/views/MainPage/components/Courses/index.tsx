@@ -11,6 +11,7 @@ import { POST } from 'utils/fetch';
 import { dataParser } from 'views/MainPage/dataParser';
 import { FilterContainer } from './styles';
 import type { TransformFn } from 'interfaces/TransformFn';
+import { Endpoints } from 'interfaces/API_Constants.d';
 
 function Courses() {
   const [filters, setFilters] = useState({
@@ -21,7 +22,7 @@ function Courses() {
   const [filteredCourses, setFilteredCourses] = useState<CourseData.DataWithLocale[]>([]);
   const [matches, setMatches] = useState(true);
 
-  const transformCourses = (transformFn: TransformFn) => {
+  const filterCourses = (transformFn: TransformFn) => {
     const result = transformFn([...courses]);
 
     // If result is a Promise, handle it
@@ -36,8 +37,13 @@ function Courses() {
     });
   };
 
+  const updateCourses = (newCourses: CourseData.DataWithLocale[]) => {
+    setCourses(newCourses);
+    setFilteredCourses(newCourses);
+  };
+
   const handleGetCourses = () => {
-    POST('/courses', filters).then(resp => {
+    POST(Endpoints.courses, filters).then(resp => {
       const parsedData = dataParser(resp, 'course_name_en');
       setCourses(parsedData);
       setFilteredCourses(parsedData);
@@ -64,7 +70,7 @@ function Courses() {
       </FilterContainer>
 
       <Section id='courses'>
-        <SearchBar matches={matches} filter={transformCourses} />
+        <SearchBar matches={matches} filter={filterCourses} update={updateCourses} />
         <Row>
           <Col lg={8}>
             <Table courses={filteredCourses} />

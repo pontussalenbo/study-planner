@@ -2,6 +2,7 @@ import { useContext, useState } from 'react';
 import { StyledCell } from './Table.style';
 import { AlertButton, StyledButton } from 'components/Button';
 import { MyContext, CtxType } from 'hooks/CourseContext';
+import { Select } from '../Courses/styles';
 
 interface CourseTableRowProps {
   course: CourseData.DataWithLocale;
@@ -49,12 +50,8 @@ const CourseTableRow: React.FC<CourseTableRowProps> = ({ course, handleAddCourse
       <StyledCell>{course.level}</StyledCell>
       <StyledCell>
         {course.periods.length > 1 ? (
-          <select
-            style={{ minWidth: 'max-content' }}
-            defaultValue=''
-            onChange={handlePeriodChange}
-          >
-            <option style={{ minWidth: 'max-content' }} value='' disabled>
+          <Select defaultValue='' onChange={handlePeriodChange}>
+            <option value='' disabled>
               Select
             </option>
             {course.periods.map((period, index) => {
@@ -85,7 +82,6 @@ const CourseTableRow: React.FC<CourseTableRowProps> = ({ course, handleAddCourse
           <AlertButton onClick={handleRemoveClick}>&#45; Remove</AlertButton>
         ) : (
           <StyledButton
-            style={{ display: 'block', margin: '0 auto' }}
             disabled={!selectedPeriod && course.periods.length > 1}
             onClick={handleButtonClick}
           >

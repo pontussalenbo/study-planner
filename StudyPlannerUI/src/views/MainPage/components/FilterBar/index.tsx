@@ -6,6 +6,7 @@ import useFetch from 'hooks/useFetch';
 import { BASE_URL } from 'utils/URL';
 import { GetButton, SelectWrapper } from './style';
 import { GET } from 'utils/fetch';
+import { Endpoints } from 'interfaces/API_Constants.d';
 
 interface FilterBarProps {
   filters: Record<string, string>;
@@ -20,17 +21,17 @@ export const FilterBar: React.FC<FilterBarProps> = ({
   onFilterChange,
   onGetCourses
 }) => {
-  const programmes = useFetch<string[]>(BASE_URL + '/general/programmes') || [];
+  const programmes = useFetch<string[]>(BASE_URL + Endpoints.programmes) || [];
   const [filterValues, setFilterValues] = React.useState<string[]>([]);
 
   const handleChange = (e: ChangeEvent<HTMLSelectElement>) => {
     onFilterChange(e);
   };
 
-  const fetchFilterValues = async (filter: 'Class' | 'Year') => {
+  const fetchFilterValues = async (filter: Filter) => {
     const urls = {
-      Class: BASE_URL + '/general/class_years',
-      Year: BASE_URL + '/general/academic_years'
+      Class: Endpoints.classYears,
+      Year: Endpoints.academicYears
     };
 
     const data = await GET(urls[filter]);
