@@ -90,7 +90,6 @@ public class MasterRequirementValidator : IMasterRequirementValidator
 
         queryBuilder.AppendLine(condStmtBuilder.ToString());
         var query = queryBuilder.ToString();
-        Console.WriteLine(query);
         var queryResult =
             await databaseManager.ExecuteQuery<CourseDTO>(query, parameters.ToArray());
 

@@ -61,6 +61,7 @@ public class CourseInfoManager : ICourseInfoManager
         parameters.Add(programme);
 
         condStmtBuilder.AppendLine($"AND {column} = @p{parameters.Count}");
+        condStmtBuilder.AppendLine($"AND ({Columns.ELECTABILITY} = '{Constants.ELECTIVE}' OR {Columns.ELECTABILITY} = '{Constants.EXTERNAL_ELECTIVE}')");
         parameters.Add(year);
 
         if (master != string.Empty)
