@@ -19,7 +19,7 @@ export const Select = styled.select`
   grid-area: select;
   padding: 2px;
   border-radius: 4px;
-  border: 1px solid #ccc;
+  border: 1px solid ${({ theme }) => theme.secondary};
   min-width: max-content;
   width: 100px;
 `;

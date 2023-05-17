@@ -6,7 +6,7 @@ interface StyledButtonProps {
 
 export const StyledButton = styled.button<StyledButtonProps>`
   background-color: ${({ theme }) => theme.button};
-  border-color: #007bff;
+  border-color: ${({ theme }) => theme.buttonBorder};
   min-width: 88px;
   padding: 8px 12px;
   border-radius: 4px;
@@ -15,10 +15,9 @@ export const StyledButton = styled.button<StyledButtonProps>`
   padding: 6px 12px;
   &:hover {
     filter: brightness(1.2);
-    border-color: #0062cc;
+    // border-color: #0062cc;
   }
-  ${({ disabled }) =>
-    disabled && 'opacity: 0.5; &:hover { border-color: #007bff; }; cursor: not-allowed;'}
+  ${({ disabled }) => disabled && 'opacity: 0.5; cursor: not-allowed;'}
 `;
 
 export const AlertButton = styled(StyledButton)`

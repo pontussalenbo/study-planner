@@ -24,18 +24,36 @@ export const SearchBarContainer = styled.div`
   margin-bottom: 20px;
 `;
 
+export const SearchInputWrapper = styled.div`
+  position: relative;
+`;
+
 interface SearchInputProps {
   error: boolean;
 }
 
 export const SearchInput = styled.input<SearchInputProps>`
   outline: ${({ error, theme }) =>
-    error ? '1px solid red' : `1px solid ${theme.primary}`}};
+    error ? '1px solid red' : `2px solid ${theme.secondary}`}};
 
-  border: ${({ error, theme }) =>
-    error ? '1px solid red' : `1px solid ${theme.primary}`}};
+  &:focus {
+    box-shadow: ${({ theme }) => theme.boxShadow};
+    border: none;
+    outline: 2px solid ${({ error, theme }) => (error ? 'red' : theme.button)};
+  }
+
   border-radius: 4px;
   width: 330px;
   height: 30px;
   padding: 5px;
+`;
+
+export const SearchError = styled.span`
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  color: red;
+  font-size: 10px;
+  font-weight: 600;
+  font-style: italic;
 `;

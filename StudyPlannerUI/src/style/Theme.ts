@@ -5,6 +5,7 @@ export interface Theme {
   accent: string;
   text: string;
   button: string;
+  buttonBorder: string;
   buttonHover: string;
   header: string;
   table: string;
@@ -14,6 +15,10 @@ export interface Theme {
   boxShadow: string;
   selectBackground: string;
   selectText: string;
+  alert: string;
+  alertBorder: string;
+  fulfilled: string;
+  notFulfilled: string;
 }
 
 export const lightTheme = {
@@ -37,6 +42,7 @@ export const customTheme: Theme = {
     accent: '#0EF6CC',
     text: '#F4FEFD',
     button: '#5F7ADB',
+    buttonBorder: '#007bff',
     buttonHover: '#5F7ADBCC',
     header: '#1B2223',
     table: '#F4FEFD',
@@ -45,5 +51,9 @@ export const customTheme: Theme = {
     inputText: '#1B2223',
     boxShadow: '0px 4px 12px rgba(0, 0, 0, 0.1)',
     selectBackground: '#F4FEFD',
-    selectText: '#1B2223'
+    selectText: '#1B2223',
+    alert: '#c83232',
+    alertBorder: '#bd2130',
+    fulfilled: '#008705',
+    notFulfilled: '#e49a9a'
 };

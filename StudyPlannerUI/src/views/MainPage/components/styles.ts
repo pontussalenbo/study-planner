@@ -7,7 +7,8 @@ interface IColoredTableRow {
 }
 
 export const ColoredTableRow = styled(TableRow)<IColoredTableRow>`
-  background-color: ${props => (props.fullfilled ? '#008705' : '#e49a9a')} !important;
+  background-color: ${props =>
+        props.fullfilled ? props.theme.fulfilled : props.theme.notFulfilled} !important;
   color: black;
 `;
 
@@ -23,5 +24,5 @@ export const ActionButton = styled(StyledButton)`
 `;
 
 export const RemoveButton = styled(ActionButton)`
-  background: #c83232;
+  background: ${({ theme }) => theme.alert};
 `;

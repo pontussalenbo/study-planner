@@ -15,7 +15,7 @@ export const ButtonIcon = styled.span`
 export const RemoveButton = styled(StyledButton)`
   display: block;
   margin: 0 auto;
-  background: #c83232;
+  background: ${({ theme }) => theme.alert};
 `;
 
 export const Wrapper = styled.div`
