@@ -1,8 +1,9 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using FluentValidation;
+using Microsoft.AspNetCore.Mvc;
 using StudyPlannerAPI.Controllers.Params;
+using StudyPlannerAPI.Controllers.Validation;
 using StudyPlannerAPI.Extensions;
 using StudyPlannerAPI.Model;
-using StudyPlannerAPI.Model.Util;
 
 namespace StudyPlannerAPI.Controllers;
 
@@ -12,11 +13,13 @@ public class MasterCheckController : ControllerBase
 {
     private readonly ILogger<MasterCheckController> logger;
     private readonly IMasterRequirementValidator masterRequirementValidator;
+    private readonly IValidator<MasterCheckParams> validator;
 
     public MasterCheckController(IMasterRequirementValidator masterRequirementValidator,
-        ILogger<MasterCheckController> logger)
+        IValidator<MasterCheckParams> validator, ILogger<MasterCheckController> logger)
     {
         this.masterRequirementValidator = masterRequirementValidator;
+        this.validator = validator;
         this.logger = logger;
     }
 
@@ -24,17 +27,15 @@ public class MasterCheckController : ControllerBase
     [Consumes(Constants.JSON_CONTENT_TYPE)]
     public async Task<IActionResult> CheckMasterRequirements([FromBody] MasterCheckParams masterCheckParams)
     {
-        if (masterCheckParams.Programme == null
-            || masterCheckParams.SelectedCourses.Count == 0
-            || masterCheckParams.Year == null
-            || !ModelUtil.ValidateYearPattern(masterCheckParams.Year))
+        var validationResult = await validator.ValidateAsync(masterCheckParams);
+        if (validationResult.IsValid)
         {
-            return new StatusCodeResult(StatusCodes.Status400BadRequest);
+            return await this.PerformEndpointAction(
+                async () => await masterRequirementValidator.ValidateCourseSelection(masterCheckParams.Programme,
+                    masterCheckParams.Year, masterCheckParams.SelectedCourses, masterCheckParams.MasterCodes), logger);
         }
 
-        return await this.PerformEndpointAction(
-            async () => await masterRequirementValidator.ValidateCourseSelection(masterCheckParams.Programme,
-                masterCheckParams.Year ?? string.Empty,
-                masterCheckParams.SelectedCourses, masterCheckParams.MasterCodes), logger);
+        var errors = validationResult.Errors.Select(e => new ValidationError(e.ErrorCode, e.ErrorMessage));
+        return BadRequest(errors);
     }
 }

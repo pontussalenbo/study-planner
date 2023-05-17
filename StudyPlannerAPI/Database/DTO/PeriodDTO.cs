@@ -12,7 +12,7 @@ public class PeriodDTO
     public int start { get; set; }
     public int end { get; set; }
 
-    public override bool Equals(object? obj)
+    public override bool Equals(object obj)
     {
         if (obj is not PeriodDTO dto)
         {

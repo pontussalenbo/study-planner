@@ -2,6 +2,7 @@
 using StudyPlannerAPI.Database;
 using StudyPlannerAPI.Database.DTO;
 using StudyPlannerAPI.Database.Util;
+using StudyPlannerAPI.Model.Util;
 
 namespace StudyPlannerAPI.Model;
 
@@ -45,8 +46,8 @@ public class GeneralInfoManager : IGeneralInfoManager
 
     public async Task<IActionResult> GetMasters(string programme, string year)
     {
-        var table = Util.YearPatternToTable(year);
-        var column = Util.YearPatternToColumn(year);
+        var table = ModelUtil.YearPatternToTable(year);
+        var column = ModelUtil.YearPatternToColumn(year);
         var parameters = new List<string>
         {
             programme,

@@ -25,6 +25,12 @@ public class Constants
     public const string ELECTIVE = "elective";
     public const string EXTERNAL_ELECTIVE = "external_elective";
 
+    public const string INVALID_FORMAT = "invalid_format";
+    public const string PARAM_NULL = "param_null";
+    public const string COUNT_LEQ_ZERO = "count_leq_zero";
+
+    public const string STUDY_PLAN_NAME_DEFAULT = "My study plan";
+
     public const int REQUIRED_A_CREDITS_TOTAL = 45;
     public const int REQUIRED_A_CREDITS_MASTER = 30;
     public const int REQUIRED_CREDITS_TOTAL = 90;

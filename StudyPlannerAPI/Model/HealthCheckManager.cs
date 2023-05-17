@@ -6,8 +6,8 @@ namespace StudyPlannerAPI.Model;
 public class HealthCheckManager : IHealthCheckManager
 {
     private readonly IConfiguration configuration;
-    private readonly IDatabaseQueryManager databaseQueryManager;
     private readonly ILogger<HealthCheckManager> logger;
+    private IDatabaseQueryManager databaseQueryManager;
 
     public HealthCheckManager(IDatabaseQueryManager databaseQueryManager, IConfiguration configuration,
         ILogger<HealthCheckManager> logger)
@@ -23,12 +23,18 @@ public class HealthCheckManager : IHealthCheckManager
 
     private bool CheckHealth()
     {
-        _ = DatabaseUtil.ConfigureDatabaseManager(databaseQueryManager, configuration, Constants.CONNECTION_STRING);
+        databaseQueryManager =
+            (IDatabaseQueryManager)DatabaseUtil.ConfigureDatabaseManager(databaseQueryManager, configuration,
+                Constants.CONNECTION_STRING);
         var connectionResult = databaseQueryManager.ValidateConnection();
 
-        _ = DatabaseUtil.ConfigureDatabaseManager(databaseQueryManager, configuration,
+        Console.WriteLine(connectionResult);
+
+        databaseQueryManager = (IDatabaseQueryManager)DatabaseUtil.ConfigureDatabaseManager(databaseQueryManager,
+            configuration,
             Constants.CONNECTION_STRING_LINKS);
         connectionResult = connectionResult && databaseQueryManager.ValidateConnection();
+        Console.WriteLine(connectionResult);
 
         return connectionResult;
     }
