@@ -1,4 +1,4 @@
-function generateArrayOfYears(START_YEAR, END_YEAR) {
+function generateArrayOfYears(START_YEAR: number, END_YEAR: number) {
     const years = [];
 
     for (let i = END_YEAR; i >= START_YEAR; i -= 1) {
@@ -7,5 +7,4 @@ function generateArrayOfYears(START_YEAR, END_YEAR) {
     return years;
 }
 
-module.exports = generateArrayOfYears;
-module.exports.default = module.exports;
+export default generateArrayOfYears;

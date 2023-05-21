@@ -1,4 +1,5 @@
 const axios = require('axios');
+const path = require('path');
 const fs = require('fs');
 
 /**
@@ -42,10 +43,10 @@ async function main({ programmeCode, classes }) {
         return Promise.all(y);
     });
     const unwrap = await Promise.all(x);
-    fs.writeFileSync('courses.json', JSON.stringify(unwrap.flat(2)));
+    fs.writeFileSync(path.join(__dirname, 'courses.json'), JSON.stringify(unwrap.flat(2)));
 }
 
 main({
-    programmeCode: ['B', 'C', 'D', 'E', 'F', 'M', 'MD', 'I', 'K', 'L', 'N', 'Pi', 'V', 'W'],
-    classes: ['H07', 'H08', 'H09', 'H10', 'H11', 'H12', 'H13', 'H14', 'H15', 'H16', 'H17', 'H18', 'H19', 'H20']
+    programmeCode: ['D'], // ['B', 'C', 'D', 'E', 'F', 'M', 'MD', 'I', 'K', 'L', 'N', 'Pi', 'V', 'W'],
+    classes: ['H19', 'H20']// ['H07', 'H08', 'H09', 'H10', 'H11', 'H12', 'H13', 'H14', 'H15', 'H16', 'H17', 'H18', 'H19', 'H20']
 });

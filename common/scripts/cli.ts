@@ -1,6 +1,6 @@
-const inquirer = require('inquirer');
-const { DB_TABLES } = require('./utils/constants');
-const { getKeyMapfromSQLTable, mapPropToType, genSqlStmt } = require('./genSqlDb');
+import inquirer from 'inquirer';
+import { DB_TABLES } from './utils/constants';
+import { generateSQLData } from './parse';
 
 const generalQuestions = [
     {
@@ -15,9 +15,14 @@ const generalQuestions = [
 // when the script is run
 (async () => {
     const { db } = await inquirer.prompt(generalQuestions);
-    db.forEach(async (tableName) => {
+    db.forEach((tableName: string) => {
+        generateSQLData(tableName);
+    })
+
+    /* db.forEach(async (tableName) => {
         const keyMappings = await getKeyMapfromSQLTable(tableName);
         const jsonKeys = await mapPropToType(tableName, keyMappings);
         genSqlStmt({ jsonKeys, tableName });
     });
+    */
 })();

@@ -2,7 +2,7 @@ const fs = require('fs').promises;
 const path = require('path');
 
 const { FILE_PATHS } = require('./utils/constants');
-const courses = require('../data/courses.json');
+const courses = require('./courses.json');
 
 /**
  * Generate array of unique entries by given key
