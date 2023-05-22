@@ -11,6 +11,7 @@ const generalQuestions = [
     },
 ];
 
+console.time('Generating insert statements took');
 // Self invoking async function, i.e run this function immediately
 // when the script is run
 (async () => {
@@ -25,4 +26,6 @@ const generalQuestions = [
         genSqlStmt({ jsonKeys, tableName });
     });
     */
+    console.timeEnd('Generating insert statements took');
 })();
+
