@@ -74,8 +74,11 @@ export interface CourseData {
     footnote_sv: string | null;
     footnote_en: string | null;
     timePlans: TimePlan[];
-    class: string;
 }
+
+export interface CourseDataWithClass extends CourseData {
+    class: string;
+};
 
 interface Period {
     periodStart: number;
@@ -83,5 +86,6 @@ interface Period {
 }
 
 interface CourseDataWithPeriods extends CourseData, Omit<"timePlans"> {
+    class: string;
     periods: Period[];
 }

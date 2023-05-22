@@ -1,25 +1,30 @@
 import fs from 'fs';
-import { CourseData, CourseDataWithPeriods, TimePlan } from "./API";
+import { CourseData, CourseDataWithClass, CourseDataWithPeriods, TimePlan } from "./API";
 import m from '../db/tables/mappings/all.json';
 import { FILE_PATHS } from './utils/constants';
 
-const mappings = m as Record<string, keyof CourseData>;
 const courseDir = "./scripts/courses.json";
+const mappings = m as Record<string, keyof CourseData>;
+const courseData: CourseDataWithClass[] = JSON.parse(fs.readFileSync(courseDir, 'utf-8'));
+
 
 function findCoursePeriods(timePlans: TimePlan[]) {
     return timePlans.map((timePlan) => {
-        const periods = timePlan.studyPeriods.map((period, idx) => (period !== null ? idx + 1 : 0))
-            .filter((_) => !!_);
+        const periods = timePlan.studyPeriods
+            .map((period, idx) => (period !== null ? idx + 1 : 0))
+            .filter((period) => period !== 0);
+
         if (periods.length === 0) {
             return { periodStart: 0, periodEnd: 0 };
         }
+
         const periodStart = Math.min(...periods);
         const periodEnd = Math.max(...periods);
 
         return { periodStart, periodEnd };
     });
 }
-
+/*
 function parse(data: CourseData[]): CourseDataWithPeriods[] {
     return data.map((course) => {
         const destructuredProps: CourseDataWithPeriods = {} as CourseDataWithPeriods;
@@ -47,8 +52,16 @@ function parse(data: CourseData[]): CourseDataWithPeriods[] {
         return { ...destructuredProps, periods };
     });
 }
+*/
 
-const courseData = JSON.parse(fs.readFileSync(courseDir, 'utf-8')) as CourseData[];
+function parse(data: CourseDataWithClass[]): CourseDataWithPeriods[] {
+    return data.map((course) => {
+        const periods = findCoursePeriods(course.timePlans);
+        return { ...course, periods };
+    });
+}
+
+
 
 const sqlSchema = (table: string) => fs.readFileSync(`${FILE_PATHS.DB_TABLES}/${table}.sql`, 'utf8');
 
@@ -85,16 +98,10 @@ const generateSqlInserts = (schema: string, data: CourseDataWithPeriods[], colum
                 const value = course[mappedCol] || period[mappedCol as keyof typeof period];
 
                 if (value === undefined) {
-                    throw new Error(`Value for column ${col} is undefined`);
+                    throw new Error(`[${course.courseCode} - ${course.class}]: Value for column ${col} is undefined`);
                 }
 
-                if (type === 'TEXT' || type === 'VARCHAR') {
-                    return `'${value}'`;
-                }
-                // short circuiting as if the mapped value is undefined on the course object
-                // and everything is mapped and parsed correctly,
-                // we are at the period keys which needs special treatment
-                return value;
+                return type === 'TEXT' || type === 'VARCHAR' ? `'${value}'` : value;
             });
             sqlInsert += `(${values.join(', ')}),\n`;
         });

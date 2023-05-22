@@ -5,8 +5,8 @@
 	"main": "index.js",
 	"scripts": {
 		"db:cli": "ts-node ./scripts/cli.ts",
-		"db:update": "node ./scripts/ftp.js",
-		"courses": "node ./scripts/getCourses.js"
+		"db:update": "ts-node ./scripts/ftp.ts",
+		"courses": "ts-node ./scripts/getCourses.ts"
 	},
 	"author": "",
 	"license": "ISC",
