@@ -35,7 +35,7 @@ public class MasterRequirementValidator : IMasterRequirementValidator
             };
             var query =
                 $"SELECT DISTINCT({Columns.MASTER_CODE}) FROM {table} JOIN {Tables.MASTERS} USING({Columns.MASTER_CODE}) WHERE {Columns.PROGRAMME_CODE} = @p0 AND {column} = @p1";
-            var queryResult = await databaseManager.ExecuteQuery<MasterCodeDTO>(query, parameters.ToArray());
+            var queryResult = await databaseQueryManager.ExecuteQuery<MasterCodeDTO>(query, parameters.ToArray());
             masterCodes = queryResult.Select(dto => dto.master_code).ToList();
         }
 
@@ -60,15 +60,11 @@ public class MasterRequirementValidator : IMasterRequirementValidator
     {
         var queryBuilder = new StringBuilder();
         var condStmtBuilder = new StringBuilder();
-
-        queryBuilder.AppendLine($"SELECT DISTINCT({Columns.COURSE_CODE}), {Columns.CREDITS}, {Columns.LEVEL}");
-
-        var condTable = ModelUtil.YearPatternToTable(year);
-        var condColumn = ModelUtil.YearPatternToColumn(year);
-
-        queryBuilder.AppendLine($"FROM {condTable}");
-        condStmtBuilder.AppendLine($"WHERE {condColumn} = @p{parameters.Count}");
-        parameters.Add(year);
+        var parameters = new List<string>
+        {
+            programme,
+            year
+        };
 
         queryBuilder.AppendLine(
             @$"SELECT DISTINCT({Columns.COURSE_CODE}), {Columns.CREDITS}, {Columns.LEVEL}
@@ -99,6 +95,7 @@ public class MasterRequirementValidator : IMasterRequirementValidator
 
         queryBuilder.AppendLine(condStmtBuilder.ToString());
         var query = queryBuilder.ToString();
+        Console.WriteLine(query);
         var queryResult =
             await databaseQueryManager.ExecuteQuery<CourseDTO>(query, parameters.ToArray());
 

@@ -12,17 +12,17 @@ public class CourseParamsValidator : AbstractValidator<CourseParams>
         RuleFor(cp => cp.Year)
             .NotNull()
             .WithErrorCode(ErrorCodes.PARAM_NULL)
-            .WithMessage($"parameter may not be null: {nameof(CourseParams.Year)}");
+            .WithMessage(ErrorUtil.ParamNull(nameof(CourseParams.Year)));
 
         RuleFor(cp => cp.Year)
-            .Must(year => ModelUtil.IsYearPatternValid(year ?? string.Empty))
+            .Must(ModelUtil.IsYearPatternValid)
+            .When(cp => cp.Year != null)
             .WithErrorCode(ErrorCodes.INVALID_FORMAT)
-            .WithMessage($"parameter must be formatted correctly: {nameof(CourseParams.Year)}")
-            .When(cp => cp.Year != null);
+            .WithMessage(ErrorUtil.InvalidFormat(nameof(CourseParams.Year)));
 
         RuleFor(cp => cp.Programme)
             .NotNull()
             .WithErrorCode(ErrorCodes.PARAM_NULL)
-            .WithMessage($"parameter may not be null: {nameof(CourseParams.Programme)}");
+            .WithMessage(ErrorUtil.ParamNull(nameof(CourseParams.Programme)));
     }
 }

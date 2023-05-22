@@ -13,10 +13,10 @@ public class GeneralController : ControllerBase
 {
     private readonly IGeneralInfoManager generalInfoManager;
     private readonly ILogger<GeneralController> logger;
-    private readonly IValidator<CourseParams> validator;
+    private readonly IValidator<ProgrammeMastersParams> validator;
 
     public GeneralController(IGeneralInfoManager generalInfoManager, ILogger<GeneralController> logger,
-        IValidator<CourseParams> validator)
+        IValidator<ProgrammeMastersParams> validator)
     {
         this.generalInfoManager = generalInfoManager;
         this.logger = logger;
@@ -46,14 +46,14 @@ public class GeneralController : ControllerBase
 
     [HttpGet]
     [Route(Routes.MASTERS)]
-    public async Task<IActionResult> GetMastersByProgramme([FromQuery] CourseParams courseParams)
+    public async Task<IActionResult> GetMastersByProgramme([FromQuery] ProgrammeMastersParams programmeMasterParams)
     {
-        var validationResult = await validator.ValidateAsync(courseParams);
+        var validationResult = await validator.ValidateAsync(programmeMasterParams);
         if (validationResult.IsValid)
         {
             return await this.PerformEndpointAction(
-                async () => await generalInfoManager.GetMasters(courseParams.Programme,
-                    courseParams.Year ?? string.Empty), logger);
+                async () => await generalInfoManager.GetMasters(programmeMasterParams.Programme,
+                    programmeMasterParams.Year), logger);
         }
 
         var errors = validationResult.Errors.Select(e => new ValidationError(e.ErrorCode, e.ErrorMessage));

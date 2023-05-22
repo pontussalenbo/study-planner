@@ -10,7 +10,8 @@ public static class DatabaseUtil
         string connectionStringParam)
     {
         var connectionString = configuration[connectionStringParam] ??
-                               throw new ConfigurationErrorsException(ErrorUtil.ConfigurationParam(connectionStringParam));
+                               throw new ConfigurationErrorsException(
+                                   ErrorUtil.ConfigurationParam(connectionStringParam));
         databaseManager.SetConnectionString(connectionString);
         return databaseManager;
     }

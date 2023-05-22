@@ -33,7 +33,8 @@ public class App
             app.UseSwaggerUI();
         }
 
-        var azureHost = app.Configuration[Constants.AZURE_HOST] ?? throw new ConfigurationErrorsException(ErrorUtil.ConfigurationParam(Constants.AZURE_HOST));
+        var azureHost = app.Configuration[Constants.AZURE_HOST] ??
+                        throw new ConfigurationErrorsException(ErrorUtil.ConfigurationParam(Constants.AZURE_HOST));
 
         app.UseCors(x => x.AllowAnyHeader().AllowAnyMethod()
             .WithOrigins("http://localhost:5173", "http://127.0.0.1:5173", azureHost));
@@ -64,5 +65,6 @@ public class App
         services.AddScoped<IValidator<MasterCheckParams>, MasterCheckParamsValidator>();
         services.AddScoped<IValidator<LinkShareParams>, LinkShareParamsValidator>();
         services.AddScoped<IValidator<UniqueBlobDTO>, UniqueBlobValidator>();
+        services.AddScoped<IValidator<ProgrammeMastersParams>, ProgrammeMastersParamsValidator>();
     }
 }

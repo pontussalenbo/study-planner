@@ -16,9 +16,9 @@ public class MasterCheckParamsValidator : AbstractValidator<MasterCheckParams>
 
         RuleFor(mcp => mcp.Year)
             .Must(year => ModelUtil.IsYearPatternValid(year ?? string.Empty))
+            .When(mcp => mcp.Year != null)
             .WithErrorCode(ErrorCodes.INVALID_FORMAT)
-            .WithMessage(ErrorUtil.InvalidFormat(nameof(MasterCheckParams.Year)))
-            .When(mcp => mcp.Year != null);
+            .WithMessage(ErrorUtil.InvalidFormat(nameof(MasterCheckParams.Year)));
 
         RuleFor(mcp => mcp.Programme)
             .NotNull()

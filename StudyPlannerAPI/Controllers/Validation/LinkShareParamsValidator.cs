@@ -21,9 +21,9 @@ public class LinkShareParamsValidator : AbstractValidator<LinkShareParams>
 
         RuleFor(lsp => lsp.Year)
             .Must(ModelUtil.IsYearPatternValid)
+            .When(lsp => lsp.Year != null)
             .WithErrorCode(ErrorCodes.INVALID_FORMAT)
-            .WithMessage(ErrorUtil.InvalidFormat(nameof(LinkShareParams.Year)))
-            .When(lsp => lsp.Year != null);
+            .WithMessage(ErrorUtil.InvalidFormat(nameof(LinkShareParams.Year)));
 
         RuleFor(lsp => lsp.SelectedCourses)
             .Must(courses => courses.Count > 0)
