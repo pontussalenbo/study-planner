@@ -3,7 +3,7 @@ using StudyPlannerAPI.Model;
 
 namespace StudyPlannerAPI.Controllers;
 
-[Route(Constants.ROUTE_HEALTH_CHECK)]
+[Route(Routes.HEALTH_CHECK)]
 [ApiController]
 public class HealthCheckController : ControllerBase
 {

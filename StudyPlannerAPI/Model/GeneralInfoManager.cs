@@ -1,7 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using StudyPlannerAPI.Database;
 using StudyPlannerAPI.Database.DTO;
-using StudyPlannerAPI.Database.Util;
 using StudyPlannerAPI.Model.Util;
 
 namespace StudyPlannerAPI.Model;

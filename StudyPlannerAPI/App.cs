@@ -1,9 +1,12 @@
+using System.Configuration;
 using System.Data;
 using System.Data.SQLite;
 using FluentValidation;
 using StudyPlannerAPI.Controllers.Params;
 using StudyPlannerAPI.Controllers.Validation;
 using StudyPlannerAPI.Database;
+using StudyPlannerAPI.Database.DTO;
+using StudyPlannerAPI.Error;
 using StudyPlannerAPI.Model;
 
 namespace StudyPlannerAPI;
@@ -30,8 +33,10 @@ public class App
             app.UseSwaggerUI();
         }
 
+        var azureHost = app.Configuration[Constants.AZURE_HOST] ?? throw new ConfigurationErrorsException(ErrorUtil.ConfigurationParam(Constants.AZURE_HOST));
+
         app.UseCors(x => x.AllowAnyHeader().AllowAnyMethod()
-            .WithOrigins("http://localhost:5173", "http://127.0.0.1:5173", Constants.GENTLE_COAST));
+            .WithOrigins("http://localhost:5173", "http://127.0.0.1:5173", azureHost));
 
         app.UseHttpsRedirection();
         app.UseAuthorization();
@@ -58,5 +63,6 @@ public class App
         services.AddScoped<IValidator<CourseParams>, CourseParamsValidator>();
         services.AddScoped<IValidator<MasterCheckParams>, MasterCheckParamsValidator>();
         services.AddScoped<IValidator<LinkShareParams>, LinkShareParamsValidator>();
+        services.AddScoped<IValidator<UniqueBlobDTO>, UniqueBlobValidator>();
     }
 }

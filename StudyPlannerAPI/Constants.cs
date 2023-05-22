@@ -2,13 +2,7 @@
 
 public class Constants
 {
-    public const string GENTLE_COAST = "https://gentle-coast-037526f03.3.azurestaticapps.net";
-
-    public const string ROUTE_MASTER_CHECK = "studyplanner/masters";
-    public const string ROUTE_COURSE_DATA = "studyplanner/courses";
-    public const string ROUTE_LINK_SHARE = "studyplanner/links";
-    public const string ROUTE_GENERAL_INFO = "studyplanner/general";
-    public const string ROUTE_HEALTH_CHECK = "studyplanner/health";
+    public const string AZURE_HOST = "AzureHost";
 
     public const string CONNECTION_STRING = "ConnectionString";
     public const string CONNECTION_STRING_LINKS = "ConnectionStringLinks";
@@ -18,16 +12,10 @@ public class Constants
     public const string G1_CREDITS = "G1";
     public const string G2_CREDITS = "G2";
 
-    public const string JSON_CONTENT_TYPE = "application/json";
-
     public const string GENERAL = "general";
     public const string SUMMARY = "summary";
     public const string ELECTIVE = "elective";
     public const string EXTERNAL_ELECTIVE = "external_elective";
-
-    public const string INVALID_FORMAT = "invalid_format";
-    public const string PARAM_NULL = "param_null";
-    public const string COUNT_LEQ_ZERO = "count_leq_zero";
 
     public const string STUDY_PLAN_NAME_DEFAULT = "My study plan";
 

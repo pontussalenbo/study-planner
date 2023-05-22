@@ -1,6 +1,7 @@
 ﻿using System.Configuration;
+using StudyPlannerAPI.Error;
 
-namespace StudyPlannerAPI.Database.Util;
+namespace StudyPlannerAPI.Database;
 
 public static class DatabaseUtil
 {
@@ -9,14 +10,8 @@ public static class DatabaseUtil
         string connectionStringParam)
     {
         var connectionString = configuration[connectionStringParam] ??
-                               throw new ConfigurationErrorsException(
-                                   ConfigurationParamErrorMsg(connectionStringParam));
+                               throw new ConfigurationErrorsException(ErrorUtil.ConfigurationParam(connectionStringParam));
         databaseManager.SetConnectionString(connectionString);
         return databaseManager;
-    }
-
-    public static string ConfigurationParamErrorMsg(string configurationParam)
-    {
-        return $"Configuration parameter \"{configurationParam}\" is not defined!";
     }
 }

@@ -1,13 +1,14 @@
-﻿using FluentValidation;
+﻿using System.Net.Mime;
+using FluentValidation;
 using Microsoft.AspNetCore.Mvc;
 using StudyPlannerAPI.Controllers.Params;
-using StudyPlannerAPI.Controllers.Validation;
+using StudyPlannerAPI.Error;
 using StudyPlannerAPI.Extensions;
 using StudyPlannerAPI.Model;
 
 namespace StudyPlannerAPI.Controllers;
 
-[Route(Constants.ROUTE_MASTER_CHECK)]
+[Route(Routes.MASTER_CHECK)]
 [ApiController]
 public class MasterCheckController : ControllerBase
 {
@@ -24,7 +25,7 @@ public class MasterCheckController : ControllerBase
     }
 
     [HttpPost]
-    [Consumes(Constants.JSON_CONTENT_TYPE)]
+    [Consumes(MediaTypeNames.Application.Json)]
     public async Task<IActionResult> CheckMasterRequirements([FromBody] MasterCheckParams masterCheckParams)
     {
         var validationResult = await validator.ValidateAsync(masterCheckParams);
