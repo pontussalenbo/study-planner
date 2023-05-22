@@ -1,6 +1,6 @@
-﻿namespace StudyPlannerAPI.Controllers.Validation;
+﻿namespace StudyPlannerAPI.Error;
 
-public static class ValidationUtil
+public static class ErrorUtil
 {
     public static string InvalidFormat(string param)
     {
@@ -15,5 +15,10 @@ public static class ValidationUtil
     public static string LeqZero(string param)
     {
         return $"Parameter {param} must contain at least one element!";
+    }
+
+    public static string ConfigurationParam(string configurationParam)
+    {
+        return $"Configuration parameter \"{configurationParam}\" is not defined!";
     }
 }

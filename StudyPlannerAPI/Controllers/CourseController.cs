@@ -1,13 +1,14 @@
-﻿using FluentValidation;
+﻿using System.Net.Mime;
+using FluentValidation;
 using Microsoft.AspNetCore.Mvc;
 using StudyPlannerAPI.Controllers.Params;
-using StudyPlannerAPI.Controllers.Validation;
+using StudyPlannerAPI.Error;
 using StudyPlannerAPI.Extensions;
 using StudyPlannerAPI.Model;
 
 namespace StudyPlannerAPI.Controllers;
 
-[Route(Constants.ROUTE_COURSE_DATA)]
+[Route(Routes.COURSE_DATA)]
 [ApiController]
 public class CourseController : ControllerBase
 {
@@ -24,7 +25,7 @@ public class CourseController : ControllerBase
     }
 
     [HttpPost]
-    [Consumes(Constants.JSON_CONTENT_TYPE)]
+    [Consumes(MediaTypeNames.Application.Json)]
     public async Task<IActionResult> GetCourses([FromBody] CourseParams courseParams)
     {
         var validationResult = await validator.ValidateAsync(courseParams);

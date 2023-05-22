@@ -1,33 +1,37 @@
-﻿using FluentValidation;
+﻿using System.Net.Mime;
+using FluentValidation;
 using Microsoft.AspNetCore.Mvc;
 using StudyPlannerAPI.Controllers.Params;
-using StudyPlannerAPI.Controllers.Validation;
 using StudyPlannerAPI.Database.DTO;
+using StudyPlannerAPI.Error;
 using StudyPlannerAPI.Extensions;
 using StudyPlannerAPI.Model;
 
 namespace StudyPlannerAPI.Controllers;
 
-[Route(Constants.ROUTE_LINK_SHARE)]
+[Route(Routes.LINK_SHARE)]
 [ApiController]
 public class LinkShareController : ControllerBase
 {
     private readonly ILinkShareManager linkShareManager;
+    private readonly IValidator<LinkShareParams> linkShareValidator;
+    private readonly IValidator<UniqueBlobDTO> uniqueBlobValidator;
     private readonly ILogger<LinkShareController> logger;
-    private readonly IValidator<LinkShareParams> validator;
 
     public LinkShareController(ILinkShareManager linkShareManager, ILogger<LinkShareController> logger,
-        IValidator<LinkShareParams> validator)
+        IValidator<LinkShareParams> linkShareValidator, IValidator<UniqueBlobDTO> uniqueBlobValidator)
     {
         this.linkShareManager = linkShareManager;
         this.logger = logger;
-        this.validator = validator;
+        this.linkShareValidator = linkShareValidator;
+        this.uniqueBlobValidator = uniqueBlobValidator;
     }
 
     [HttpPost]
+    [Consumes(MediaTypeNames.Application.Json)]
     public async Task<IActionResult> GetUniqueShareLink([FromBody] LinkShareParams linkShareParams)
     {
-        var validationResult = await validator.ValidateAsync(linkShareParams);
+        var validationResult = await linkShareValidator.ValidateAsync(linkShareParams);
         if (validationResult.IsValid)
         {
             return await this.PerformEndpointAction(async () =>
@@ -44,12 +48,14 @@ public class LinkShareController : ControllerBase
     [HttpGet]
     public async Task<IActionResult> GetStudyPlanFromUniqueBlob([FromQuery] UniqueBlobDTO uniqueBlobDTO)
     {
-        if (uniqueBlobDTO.StudyPlanId == null)
+        var validationResult = await uniqueBlobValidator.ValidateAsync(uniqueBlobDTO);
+        if (validationResult.IsValid)
         {
-            return new StatusCodeResult(StatusCodes.Status400BadRequest);
+            return await this.PerformEndpointAction(
+                async () => await linkShareManager.GetPlanFromUniqueBlob(uniqueBlobDTO.StudyPlanId), logger);
         }
 
-        return await this.PerformEndpointAction(
-            async () => await linkShareManager.GetPlanFromUniqueBlob(uniqueBlobDTO.StudyPlanId), logger);
+        var errors = validationResult.Errors.Select(e => new ValidationError(e.ErrorCode, e.ErrorMessage));
+        return BadRequest(errors);
     }
 }

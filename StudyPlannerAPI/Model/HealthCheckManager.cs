@@ -1,5 +1,4 @@
 ﻿using StudyPlannerAPI.Database;
-using StudyPlannerAPI.Database.Util;
 
 namespace StudyPlannerAPI.Model;
 

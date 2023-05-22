@@ -1,3 +1,3 @@
-﻿namespace StudyPlannerAPI.Controllers.Validation;
+﻿namespace StudyPlannerAPI.Error;
 
 public record ValidationError(string Code, string Message);
