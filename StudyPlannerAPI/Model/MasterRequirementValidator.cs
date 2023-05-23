@@ -9,7 +9,6 @@ namespace StudyPlannerAPI.Model;
 public class MasterRequirementValidator : IMasterRequirementValidator
 {
     private readonly IDatabaseQueryManager databaseQueryManager;
-
     private readonly ILogger<MasterRequirementValidator> logger;
 
     public MasterRequirementValidator(IDatabaseQueryManager databaseQueryManager, IConfiguration configuration,
@@ -44,7 +43,7 @@ public class MasterRequirementValidator : IMasterRequirementValidator
             masterCodes.Add(Constants.GENERAL);
         }
 
-        masterCodes.Add("summary");
+        masterCodes.Add(Constants.SUMMARY);
         var result = new List<MasterValidationResult>();
         foreach (var masterCode in masterCodes)
         {
@@ -95,7 +94,6 @@ public class MasterRequirementValidator : IMasterRequirementValidator
 
         queryBuilder.AppendLine(condStmtBuilder.ToString());
         var query = queryBuilder.ToString();
-        Console.WriteLine(query);
         var queryResult =
             await databaseQueryManager.ExecuteQuery<CourseDTO>(query, parameters.ToArray());
 

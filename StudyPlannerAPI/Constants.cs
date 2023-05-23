@@ -3,6 +3,8 @@
 public class Constants
 {
     public const string AZURE_HOST = "AzureHost";
+    public const string MAIN_DOMAIN = "MainDomain";
+    public const string ORIGINS = "Origins";
 
     public const string CONNECTION_STRING = "ConnectionString";
     public const string CONNECTION_STRING_LINKS = "ConnectionStringLinks";
