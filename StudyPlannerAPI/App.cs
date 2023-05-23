@@ -33,11 +33,11 @@ public class App
             app.UseSwaggerUI();
         }
 
-        var azureHost = app.Configuration[Constants.AZURE_HOST] ??
-                        throw new ConfigurationErrorsException(ErrorUtil.ConfigurationParam(Constants.AZURE_HOST));
+        var origins = app.Configuration.GetSection(Constants.ORIGINS).Get<List<string>>() ??
+                      throw new ConfigurationErrorsException(ErrorUtil.ConfigurationParam(Constants.ORIGINS));
 
         app.UseCors(x => x.AllowAnyHeader().AllowAnyMethod()
-            .WithOrigins("http://localhost:5173", "http://127.0.0.1:5173", azureHost));
+            .WithOrigins(origins.ToArray()));
 
         app.UseHttpsRedirection();
         app.UseAuthorization();
