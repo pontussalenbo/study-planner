@@ -5,64 +5,102 @@ import fs from 'fs';
 import { CourseData } from './API';
 
 interface Query {
-    programmeCode: string;
-    kull: string;
+	programmeCode: string;
+	kull: string;
 }
 
-const programmeCode = ['B', 'C', 'D', 'E', 'F', 'M', 'MD', 'I', 'K', 'L', 'N', 'Pi', 'V', 'W'];
-const classes = ['H10', 'H11', 'H12', 'H13', 'H14', 'H15', 'H16', 'H17', 'H18', 'H19', 'H20'];
+const programmeCode = [
+	'B',
+	'C',
+	'D',
+	'E',
+	'F',
+	'M',
+	'MD',
+	'I',
+	'K',
+	'L',
+	'N',
+	'Pi',
+	'V',
+	'W',
+];
+const classes = [
+	'H10',
+	'H11',
+	'H12',
+	'H13',
+	'H14',
+	'H15',
+	'H16',
+	'H17',
+	'H18',
+	'H19',
+	'H20',
+];
 const delayBetweenRequests = 500;
 
 async function getCourses(queryObj: Partial<Query>) {
-    const queryParams = Object.keys(queryObj) as Array<keyof typeof queryObj>;
-    const queries = queryParams
-        .map((key) => `${key}=${queryObj[key]}`)
-        .join('&');
-    const url = `https://api.lth.lu.se/lot/courses?${queries}}`;
-    const resp = await axios.get<CourseData[]>(url);
-    return resp.data;
+	const queryParams = Object.keys(queryObj) as Array<keyof Query>;
+	const queries = queryParams.map(key => `${key}=${queryObj[key]}`).join('&');
+	const url = `https://api.lth.lu.se/lot/courses?${queries}}`;
+	const resp = await axios.get<CourseData[]>(url);
+	return resp.data;
 }
 
 const fetchCourseData = async (programmeCode: string, kull: string) => {
-    console.log(`Retrieving course data for programme: ${programmeCode} and class: ${kull}...`);
+	console.log(
+		`Retrieving course data for programme: ${programmeCode} and class: ${kull}...`
+	);
 
-    try {
-        const courses = await getCourses({ programmeCode, kull });
+	try {
+		const courses = await getCourses({ programmeCode, kull });
 
-        return courses.map((course) => ({
-            ...course,
-            class: kull
-        }));
-    } catch (error) {
-        console.error(`Error retrieving course data for programme: ${programmeCode} and class: ${kull}`, error);
-        return [];
-    }
+		return courses.map(course => ({
+			...course,
+			class: kull,
+		}));
+	} catch (error) {
+		console.error(
+			`Error retrieving course data for programme: ${programmeCode} and class: ${kull}`,
+			error
+		);
+		return [];
+	}
 };
 
-const fetchByClass = async (programme: string, clazz: string) => new Promise((resolve, reject) => {
-    const intervalId = setTimeout(async () => {
-        try {
-            const coursesWithClass = await fetchCourseData(programme, clazz);
-            resolve(coursesWithClass);
-        } catch (error) {
-            reject(error);
-        } finally {
-            clearInterval(intervalId);
-        }
-    }, delayBetweenRequests);
-});
+const fetchByClass = async (programme: string, clazz: string) =>
+	new Promise((resolve, reject) => {
+		const intervalId = setTimeout(async () => {
+			try {
+				const coursesWithClass = await fetchCourseData(
+					programme,
+					clazz
+				);
+				resolve(coursesWithClass);
+			} catch (error) {
+				reject(error);
+			} finally {
+				clearInterval(intervalId);
+			}
+		}, delayBetweenRequests);
+	});
 
-const getCoursesByProgramme = (programme: string) => classes.map((kull) => fetchByClass(programme, kull));
+const getCoursesByProgramme = (programme: string) =>
+	classes.map(kull => fetchByClass(programme, kull));
 
 (async function main() {
-    const fetchPromises = programmeCode
-        .flatMap((programme) => getCoursesByProgramme(programme));
+	const fetchPromises = programmeCode.flatMap(programme =>
+		getCoursesByProgramme(programme)
+	);
 
-    const courseDataArray = await Promise.all(fetchPromises);
-    const coursesWithClass = courseDataArray.flat();
+	const courseDataArray = await Promise.all(fetchPromises);
+	const coursesWithClass = courseDataArray.flat();
 
-    console.log(`Retrieved course data for ${coursesWithClass.length} courses.`);
+	console.log(
+		`Retrieved course data for ${coursesWithClass.length} courses.`
+	);
 
-    const json = JSON.stringify(coursesWithClass);
-    await fs.promises.writeFile(path.join(__dirname, 'courses.json'), json);
+	const json = JSON.stringify(coursesWithClass);
+	await fs.promises.writeFile(path.join(__dirname, 'courses.json'), json);
 })();

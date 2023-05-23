@@ -1,5 +1,11 @@
 import fs from 'fs';
-import { CourseData, CourseDataWithClass, CourseDataWithPeriods, Period, TimePlan } from "./API";
+import {
+	CourseData,
+	CourseDataWithClass,
+	CourseDataWithPeriods,
+	Period,
+	TimePlan,
+} from './API';
 import m from '../db/tables/mappings/all.json';
 import { FILE_PATHS } from './utils/constants';
 
@@ -7,40 +13,44 @@ type Column = keyof CourseData;
 type ColumnType = Record<string, string>;
 type PeriodKey = keyof Period;
 
-const courseDir = "./scripts/courses.json";
+const courseDir = './scripts/courses.json';
 const mappings = m as Record<string, Column>;
-const courseData: CourseDataWithClass[] = JSON.parse(fs.readFileSync(courseDir, 'utf-8'));
+const courseData: CourseDataWithClass[] = JSON.parse(
+	fs.readFileSync(courseDir, 'utf-8')
+);
 
 function findCoursePeriods(timePlans: TimePlan[]) {
-    return timePlans.map((timePlan) => {
-        const periods = timePlan.studyPeriods
-            .map((period, idx) => (period !== null ? idx + 1 : 0))
-            .filter((period) => period !== 0);
+	return timePlans.map(timePlan => {
+		const periods = timePlan.studyPeriods
+			.map((period, idx) => (period !== null ? idx + 1 : 0))
+			.filter(period => period !== 0);
 
-        if (periods.length === 0) {
-            return { periodStart: 0, periodEnd: 0 };
-        }
+		if (periods.length === 0) {
+			return { periodStart: 0, periodEnd: 0 };
+		}
 
-        const periodStart = Math.min(...periods);
-        const periodEnd = Math.max(...periods);
+		const periodStart = Math.min(...periods);
+		const periodEnd = Math.max(...periods);
 
-        return { periodStart, periodEnd };
-    });
+		return { periodStart, periodEnd };
+	});
 }
+
 /**
  * Add periods array to course data in order to generate SQL insert statements.
  * @param data course data from LTH API
  * @returns original course data with periods array
  */
 function parse(data: CourseDataWithClass[]): CourseDataWithPeriods[] {
-    return data.map((course) => {
-        const periods = findCoursePeriods(course.timePlans);
-        return { ...course, periods };
-    });
+	return data.map(course => {
+		const periods = findCoursePeriods(course.timePlans);
+		return { ...course, periods };
+	});
 }
 
 // Helper to get SQL schema from file.
-const sqlSchema = (table: string) => fs.readFileSync(`${FILE_PATHS.DB_TABLES}/${table}.sql`, 'utf8');
+const sqlSchema = (table: string) =>
+	fs.readFileSync(`${FILE_PATHS.DB_TABLES}/${table}.sql`, 'utf8');
 
 /**
  * Extracts columns from SQL schema.
@@ -48,21 +58,21 @@ const sqlSchema = (table: string) => fs.readFileSync(`${FILE_PATHS.DB_TABLES}/${
  * @returns Record with column names as keys and column types as values
  */
 const extractColumnsFromSchema = (schema: string) => {
-    const columnRegex: RegExp = /\b(\w+)\b\s+(\w+)/g;
-    const excludedKeywords = /(PRAGMA|IF|DROP TABLE|PRIMARY KEY|FOREIGN KEY|REFERENCES|CREATE TABLE|NOT NULL)/;
-    const columns: Record<string, string> = {};
-    let match: RegExpExecArray | null;
+	const columnRegex: RegExp = /\b(\w+)\b\s+(\w+)/g;
+	const excludedKeywords =
+		/(PRAGMA|IF|DROP TABLE|PRIMARY KEY|FOREIGN KEY|REFERENCES|CREATE TABLE|NOT NULL)/;
+	const columns: Record<string, string> = {};
+	let match: RegExpExecArray | null;
 
-    while ((match = columnRegex.exec(schema)) !== null) {
-        const columnName: string = match[1];
-        const columnType: string = match[2];
-        const line = (columnName + " " + columnType).trim();
-        const bool = excludedKeywords.test(line);
-        if (!bool) {
-            columns[columnName] = columnType;
-        }
-    }
-    return columns;
+	while ((match = columnRegex.exec(schema)) !== null) {
+		const [columnName, columnType] = match;
+		const line = `${columnName} ${columnType}`.trim();
+		const isKeyword = excludedKeywords.test(line);
+		if (!isKeyword) {
+			columns[columnName] = columnType;
+		}
+	}
+	return columns;
 };
 
 /**
@@ -71,15 +81,15 @@ const extractColumnsFromSchema = (schema: string) => {
  * @returns primary key(s) as an array of stringss
  */
 function getPrimaryKeys(primaryKeyString: string) {
-    const regex = /PRIMARY KEY\s*\(([^)]+)\)/i;
-    const match = primaryKeyString.match(regex);
+	const regex = /PRIMARY KEY\s*\(([^)]+)\)/i;
+	const match = primaryKeyString.match(regex);
 
-    if (match && match[1]) {
-        // split by comma, trim whitespace, and return the result array
-        return match[1].split(',').map((key: string) => key.trim());
-    } else {
-        return [];
-    }
+	if (match?.[1]) {
+		// split by comma, trim whitespace, and return the result array
+		return match[1].split(',').map((key: string) => key.trim());
+	} else {
+		return [];
+	}
 }
 
 /**
@@ -89,11 +99,15 @@ function getPrimaryKeys(primaryKeyString: string) {
  * @param columns columns to be included in insert statement
  * @returns SQL insert statement as string
  */
-const createSqlInsertStatement = (schema: string, table: string, columns: Array<keyof CourseData>): string => {
-    let sqlInsert = `${schema}\nINSERT OR REPLACE INTO ${table}(`;
-    sqlInsert += columns.join(', ') + ') VALUES\n';
-    return sqlInsert;
-}
+const createSqlInsertStatement = (
+	schema: string,
+	table: string,
+	columns: Array<keyof CourseData>
+): string => {
+	let sqlInsert = `${schema}\nINSERT OR REPLACE INTO ${table}(`;
+	sqlInsert += columns.join(', ') + ') VALUES\n';
+	return sqlInsert;
+};
 
 /**
  * Generates SQL insert statements from course data based on SQL schema and needed columns.
@@ -103,21 +117,28 @@ const createSqlInsertStatement = (schema: string, table: string, columns: Array<
  * @param colTypes column type mappings
  * @returns SQL row insert statement as string
  */
-const generateRow = (course: CourseDataWithPeriods, period: Period, columns: Column[], colTypes: ColumnType) => {
-    const value = columns.map((col) => {
-        const type = colTypes[col];
-        const mappedCol = mappings[col];
-        const value = course[mappedCol] || period[mappedCol as PeriodKey];
+const generateRow = (
+	course: CourseDataWithPeriods,
+	period: Period,
+	columns: Column[],
+	colTypes: ColumnType
+) => {
+	const value = columns.map(col => {
+		const type = colTypes[col];
+		const mappedCol = mappings[col];
+		const value = course[mappedCol] || period[mappedCol as PeriodKey];
 
-        if (value === undefined) {
-            throw new Error(`[${course.courseCode} - ${course.class}]: Value for column ${col} is undefined`);
-        }
+		if (value === undefined) {
+			throw new Error(
+				`[${course.courseCode} - ${course.class}]: Value for column ${col} is undefined`
+			);
+		}
 
-        return type === 'TEXT' || type === 'VARCHAR' ? `'${value}'` : value;
-    })
+		return type === 'TEXT' || type === 'VARCHAR' ? `'${value}'` : value;
+	});
 
-    return value.join(', ');
-}
+	return value.join(', ');
+};
 
 /**
  * Creates rows with values for SQL insert statement.
@@ -127,23 +148,30 @@ const generateRow = (course: CourseDataWithPeriods, period: Period, columns: Col
  * @param pk primary key(s) of table
  * @returns SQL value rows insert statement as string
  */
-const createValuesForInsert = (courses: CourseDataWithPeriods[], colTypes: ColumnType, columns: Column[], pk: string[]) => {
-    let insertValues = '';
-    const uniqueKeys = new Set<string>();
+const createValuesForInsert = (
+	courses: CourseDataWithPeriods[],
+	colTypes: ColumnType,
+	columns: Column[],
+	pk: string[]
+) => {
+	let insertValues = '';
+	const uniqueKeys = new Set<string>();
 
-    courses.forEach((course) => {
-        const uniqueKey = pk.map((key) => course[mappings[key]]).join('-');
+	courses.forEach(course => {
+		const uniqueKey = pk.map(key => course[mappings[key]]).join('-');
 
-        if (uniqueKeys.has(uniqueKey)) {
-            return;
-        }
-        uniqueKeys.add(uniqueKey);
-        const row = course.periods.map((period) => `(${generateRow(course, period, columns, colTypes)}),\n`)
-        insertValues += row.join('');
-    });
+		if (uniqueKeys.has(uniqueKey)) {
+			return;
+		}
+		uniqueKeys.add(uniqueKey);
+		const row = course.periods.map(
+			period => `(${generateRow(course, period, columns, colTypes)}),\n`
+		);
+		insertValues += row.join('');
+	});
 
-    return insertValues;
-}
+	return insertValues;
+};
 
 /**
  * Generates SQL table creation with insert statements from course data based on SQL schema and needed columns for the table.
@@ -153,16 +181,21 @@ const createValuesForInsert = (courses: CourseDataWithPeriods[], colTypes: Colum
  * @param tableName name of table
  * @returns SQL table creation and insert statement as string
  */
-const generateSqlInserts = (schema: string, data: CourseDataWithPeriods[], colTypes: ColumnType, tableName: string) => {
-    const columns = Object.keys(colTypes) as Column[];
-    const pk = getPrimaryKeys(schema);
+const generateSqlInserts = (
+	schema: string,
+	data: CourseDataWithPeriods[],
+	colTypes: ColumnType,
+	tableName: string
+) => {
+	const columns = Object.keys(colTypes) as Column[];
+	const pk = getPrimaryKeys(schema);
 
-    let sqlInsert = createSqlInsertStatement(schema, tableName, columns);
-    sqlInsert += createValuesForInsert(data, colTypes, columns, pk);
+	let sqlInsert = createSqlInsertStatement(schema, tableName, columns);
+	sqlInsert += createValuesForInsert(data, colTypes, columns, pk);
 
-    sqlInsert = sqlInsert.slice(0, -2) + ';';
+	sqlInsert = sqlInsert.slice(0, -2) + ';';
 
-    return sqlInsert;
+	return sqlInsert;
 };
 
 /**
@@ -171,25 +204,29 @@ const generateSqlInserts = (schema: string, data: CourseDataWithPeriods[], colTy
  * @param table name of table
  */
 const output = (sqlInserts: string, table: string) => {
-    try {
-        fs.promises.mkdir(`${FILE_PATHS.DB_DATA_OUT_DIR}`, { recursive: true });
-        // Write to file
-        fs.promises.writeFile(`${FILE_PATHS.DB_DATA_OUT_DIR}/${table}.sql`, sqlInserts, 'utf8');
-    } catch (err) {
-        console.error("Error writing to file for table: " + table + "\n")
-        console.error(err);
-    }
-}
+	try {
+		fs.promises.mkdir(`${FILE_PATHS.DB_DATA_OUT_DIR}`, { recursive: true });
+		// Write to file
+		fs.promises.writeFile(
+			`${FILE_PATHS.DB_DATA_OUT_DIR}/${table}.sql`,
+			sqlInserts,
+			'utf8'
+		);
+	} catch (err) {
+		console.error('Error writing to file for table: ' + table + '\n');
+		console.error(err);
+	}
+};
 
 /**
  * Generates SQL insert statements from course data for a specific table.
  * @param table name of table to generate SQL insert statements for
  */
 export function generateSQLData(table: string) {
-    const schema = sqlSchema(table);
-    const data = parse(courseData);
-    const columns = extractColumnsFromSchema(schema);
-    const sqlInserts = generateSqlInserts(schema, data, columns, table);
+	const schema = sqlSchema(table);
+	const data = parse(courseData);
+	const columns = extractColumnsFromSchema(schema);
+	const sqlInserts = generateSqlInserts(schema, data, columns, table);
 
-    output(sqlInserts, table);
+	output(sqlInserts, table);
 }
