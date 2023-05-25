@@ -5,6 +5,7 @@ import { defineConfig } from 'vite';
 import { VitePWA } from 'vite-plugin-pwa';
 import tsconfigPaths from 'vite-tsconfig-paths';
 import { visualizer } from 'rollup-plugin-visualizer';
+import svgr from 'vite-plugin-svgr';
 
 // eslint-disable-next-line @typescript-eslint/prefer-ts-expect-error, @typescript-eslint/ban-ts-comment
 /* @ts-ignore */
@@ -48,6 +49,7 @@ export default defineConfig(({ mode }) => ({
   },
   plugins: [
     tsconfigPaths(),
+    svgr(),
     react(),
     ...(mode === 'test'
       ? []
