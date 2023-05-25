@@ -2,6 +2,8 @@
 
 public class Constants
 {
+    public const string CORS_POLICY = "defaultCorsPolicy";
+
     public const string AZURE_HOST = "AzureHost";
     public const string MAIN_DOMAIN = "MainDomain";
     public const string ORIGINS = "Origins";
