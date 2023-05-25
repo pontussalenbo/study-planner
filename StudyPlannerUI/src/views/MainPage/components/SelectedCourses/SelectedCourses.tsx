@@ -6,7 +6,12 @@ import {
   StyledTableContainer,
   TableBody
 } from '../Table/Table.style';
-import { MyContext, CtxType } from 'hooks/CourseContext';
+import {
+  CtxType,
+  MyContext,
+  useSelectedCourses,
+  useSelectedCoursesDispatch
+} from 'hooks/CourseContext';
 import { useContext, useMemo } from 'react';
 import { ArrowButton, ButtonIcon, RemoveButton } from './styles';
 interface CreditsTableProps {
@@ -16,6 +21,7 @@ interface CreditsTableProps {
 function SelectedCoursesTable({ year }: CreditsTableProps): JSX.Element {
   const { courses, removeCourse, changeYear } = useContext(MyContext) as CtxType;
   const yearCourses = useMemo(() => courses[year], [courses, year]);
+
   return (
     <StyledTableContainer>
       <StyledTable>

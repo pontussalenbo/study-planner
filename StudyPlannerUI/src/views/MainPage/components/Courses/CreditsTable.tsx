@@ -10,7 +10,7 @@ import { CtxType, MyContext } from 'hooks/CourseContext';
 import { GetStatsBar, StatsWrapper } from './styles';
 import Tooltip from 'components/Tooltip';
 import { Select } from 'components/Select';
-import { StyledButton } from 'components/Button';
+import StyledButtonWithIcon, { StyledButton } from 'components/Button';
 import { GET, POST } from 'utils/fetch';
 import { CREDITS_TOTAL_KEY, Endpoints } from 'interfaces/API_Constants.d';
 
@@ -27,7 +27,7 @@ function CreditsTable({ filters }: ICreditsTable): JSX.Element {
   const [masters, setMasters] = useState<API.Masters[]>([]);
   const [classes, setClasses] = useState<string[]>([]);
 
-  const [clazz, setClazz] = useState<string>('');
+  const [classYear, setClassYear] = useState<string>('');
   const [stats, setStats] = useState<API.MasterStatus[]>([]);
 
   useEffect(() => {
@@ -37,7 +37,7 @@ function CreditsTable({ filters }: ICreditsTable): JSX.Element {
   useEffect(() => {
     const classSelected = filters.Year.startsWith('H');
     if (classSelected) {
-      setClazz(filters.Year);
+      setClassYear(filters.Year);
     }
   }, [filters]);
 
@@ -48,7 +48,7 @@ function CreditsTable({ filters }: ICreditsTable): JSX.Element {
   const getMasters = async () => {
     const params = {
       programme: filters.Programme,
-      year: clazz
+      year: classYear
     };
     const data = await GET(Endpoints.masters, new URLSearchParams(params));
     setMasters(data);
@@ -87,12 +87,11 @@ function CreditsTable({ filters }: ICreditsTable): JSX.Element {
   return (
     <StatsWrapper>
       <GetStatsBar>
-        <Tooltip enabled={!enoughCourses} text='Needs atleast 4 courses'>
-          <StyledButton disabled={!enoughCourses || !clazz} onClick={handleUpdate}>
-            Get stats
-          </StyledButton>
-        </Tooltip>
-        <Select value={clazz} onChange={e => setClazz(e.target.value)} label='Class'>
+        <Select
+          value={classYear}
+          onChange={e => setClassYear(e.target.value)}
+          label='Class'
+        >
           <option value='' disabled>
             Select
           </option>
@@ -103,12 +102,20 @@ function CreditsTable({ filters }: ICreditsTable): JSX.Element {
             </option>
           ))}
         </Select>
+        <Tooltip enabled={!enoughCourses} text='Needs atleast 4 courses'>
+          <StyledButtonWithIcon
+            disabled={!enoughCourses || !classYear}
+            onClick={handleUpdate}
+          >
+            Get stats
+          </StyledButtonWithIcon>
+        </Tooltip>
       </GetStatsBar>
       <StyledTableContainer>
         <StyledTable>
           <thead>
             <tr>
-              <StyledHeader>Specialization</StyledHeader>
+              <StyledHeader>Specialisation</StyledHeader>
               <StyledHeader>G1</StyledHeader>
               <StyledHeader>G2</StyledHeader>
               <StyledHeader>A</StyledHeader>
