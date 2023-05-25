@@ -2,7 +2,8 @@ import { app, InvocationContext, Timer } from '@azure/functions';
 import axios from 'axios';
 import * as df from 'durable-functions';
 import { EntityContext, EntityHandler } from 'durable-functions';
-import { main } from "shared-scripts";
+import { main } from "scripts/dist/getCourses";
+
 const entityName = 'UpdateCourses';
 const LAST_UPDATED_URL = "https://kurser.lth.se/lot/";
 
