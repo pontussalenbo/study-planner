@@ -34,9 +34,7 @@ jobs:
                   pushd '${{ env.ROOT_DIR }}'
                   npm install -g lerna
                   lerna bootstrap
-                  pushd './azure'
                   npm run build --if-present
-                  popd
                   popd
 
             - name: 'Run Azure Functions Action'

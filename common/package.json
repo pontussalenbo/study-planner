@@ -4,7 +4,7 @@
 	"description": "",
 	"main": "index.js",
 	"scripts": {
-		"build": "tsc -b",
+		"build": "lerna run build",
 		"db:cli": "ts-node ./scripts/cli.ts",
 		"db:update": "ts-node ./scripts/ftp.ts",
 		"courses": "ts-node ./scripts/getCourses.ts"
