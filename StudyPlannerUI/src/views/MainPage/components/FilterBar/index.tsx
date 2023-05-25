@@ -2,8 +2,6 @@
 import React, { ChangeEvent } from 'react';
 import { Select } from 'components/Select';
 import Tooltip from 'components/Tooltip';
-import useFetch from 'hooks/useFetch';
-import { BASE_URL } from 'utils/URL';
 import { GetButton, SelectWrapper } from './style';
 import { GET } from 'utils/fetch';
 import { Endpoints } from 'interfaces/API_Constants.d';
@@ -21,7 +19,6 @@ export const FilterBar: React.FC<FilterBarProps> = ({
   onFilterChange,
   onGetCourses
 }) => {
-  const programmes = useFetch<string[]>(BASE_URL + Endpoints.programmes) || [];
   const [filterValues, setFilterValues] = React.useState<string[]>([]);
 
   const handleChange = (e: ChangeEvent<HTMLSelectElement>) => {
@@ -40,17 +37,6 @@ export const FilterBar: React.FC<FilterBarProps> = ({
 
   return (
     <SelectWrapper>
-      <Select
-        label='Programme'
-        options={programmes.data || []}
-        defaultValue=''
-        name='Programme'
-        onChange={handleChange}
-      >
-        <option value='' disabled>
-          Select
-        </option>
-      </Select>
       <Select
         label='Filter by'
         options={['Class', 'Year']}
@@ -76,10 +62,7 @@ export const FilterBar: React.FC<FilterBarProps> = ({
           </option>
         </Select>
       </Tooltip>
-      <GetButton
-        disabled={filters.Programme === '' || filters.Year === ''}
-        onClick={() => onGetCourses()}
-      >
+      <GetButton disabled={filters.Year === ''} onClick={() => onGetCourses()}>
         Get Courses
       </GetButton>
     </SelectWrapper>

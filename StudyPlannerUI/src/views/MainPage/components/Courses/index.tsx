@@ -61,15 +61,14 @@ function Courses() {
 
   return (
     <>
-      <FilterContainer>
-        <FilterBar
-          filters={filters}
-          onFilterChange={handleFilterChange}
-          onGetCourses={handleGetCourses}
-        />
-      </FilterContainer>
-
       <Section id='courses'>
+        <FilterContainer>
+          <FilterBar
+            filters={filters}
+            onFilterChange={handleFilterChange}
+            onGetCourses={handleGetCourses}
+          />
+        </FilterContainer>
         <SearchBar matches={matches} filter={filterCourses} update={updateCourses} />
         <Row>
           <Col lg={8}>

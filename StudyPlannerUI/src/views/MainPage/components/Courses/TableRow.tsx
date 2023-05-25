@@ -1,4 +1,4 @@
-import { useCallback, useContext, useMemo, useState } from 'react';
+import { useContext, useMemo, useState } from 'react';
 import { StyledCell } from '../Table/Table.style';
 import { MyContext, CtxType } from 'hooks/CourseContext';
 import { ActionButton, RemoveButton } from '../styles';
@@ -12,6 +12,19 @@ interface CourseTableRowProps {
     selectedPeriod: API.Period | null
   ) => void;
 }
+
+interface Period {
+  start: number;
+  end: number;
+}
+
+const getDisplayPeriod = (period: Period) => {
+  const { start, end } = period;
+  if (start === end) {
+    return start;
+  }
+  return `${start} \u2192 ${end}`;
+};
 
 const CourseTableRow: React.FC<CourseTableRowProps> = ({ course, handleAddCourse }) => {
   const [selectedPeriod, setSelectedPeriod] = useState<API.Period | null>(null);
@@ -39,10 +52,6 @@ const CourseTableRow: React.FC<CourseTableRowProps> = ({ course, handleAddCourse
     removeCourse(course.course_code);
   };
 
-  const endPeriod = (period: API.Period) => {
-    return period.end > period.start ? period.end : null;
-  };
-
   return (
     <tr>
       <StyledCell>{course.course_code}</StyledCell>
@@ -55,27 +64,14 @@ const CourseTableRow: React.FC<CourseTableRowProps> = ({ course, handleAddCourse
             <option value='' disabled>
               Select
             </option>
-            {course.periods.map((period, index) => {
-              const end = endPeriod(period);
-              const displayPeriod = end ? `${period.start} \u2192 ${end}` : period.start;
-
-              return (
-                <option key={index} value={index}>
-                  {displayPeriod}
-                </option>
-              );
-            })}
+            {course.periods.map((period, index) => (
+              <option key={`${period.start}_${period.end}`} value={index}>
+                {getDisplayPeriod(period)}
+              </option>
+            ))}
           </Select>
         ) : (
-          <span>
-            {(() => {
-              const end = endPeriod(course.periods[0]);
-              const displayPeriod = end
-                ? `${course.periods[0].start} \u2192 ${end}`
-                : course.periods[0].start;
-              return displayPeriod;
-            })()}
-          </span>
+          <span>{getDisplayPeriod(course.periods[0])}</span>
         )}
       </StyledCell>
       <StyledCell>

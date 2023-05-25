@@ -56,6 +56,7 @@ const SearchBar: React.FC<SearchBarProps> = ({
   };
 
   const handleMasterFilter = (master: string) => {
+    // TODO: replace with real filter
     const body = { Programme: 'D', Year: 'H19', Master: master || undefined };
     POST(Endpoints.courses, body)
       .then(data => dataParser(data, 'course_name_en'))
