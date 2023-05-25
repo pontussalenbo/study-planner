@@ -15,7 +15,11 @@ interface FilterBarProps {
 
 type Filter = 'Year' | 'Class';
 
-export const FilterBar: React.FC<FilterBarProps> = ({ filters, onGetCourses }) => {
+export const FilterBar: React.FC<FilterBarProps> = ({
+  filters,
+  onFilterChange,
+  onGetCourses
+}) => {
   const [filterValues, setFilterValues] = React.useState<string[]>([]);
   const [coursesFilter, setFilterCourses] = React.useState<string>(filters.Year);
 
@@ -75,7 +79,7 @@ export const FilterBar: React.FC<FilterBarProps> = ({ filters, onGetCourses }) =
           </option>
         </Select>
       </Tooltip>
-      <GetButton disabled={disableGetCourses} onClick={() => onGetCourses(coursesFilter)}>
+      <GetButton disabled={filters.Year === ''} onClick={() => onGetCourses()}>
         Get Courses
       </GetButton>
     </SelectWrapper>

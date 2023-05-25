@@ -9,7 +9,8 @@ import { memo, useContext, useEffect, useMemo, useState } from 'react';
 import { CtxType, MyContext } from 'hooks/CourseContext';
 import { GetStatsBar, StatsWrapper } from './styles';
 import Tooltip from 'components/Tooltip';
-import StyledButtonWithIcon from 'components/Button';
+import { Select } from 'components/Select';
+import StyledButtonWithIcon, { StyledButton } from 'components/Button';
 import { GET, POST } from 'utils/fetch';
 import { CREDITS_TOTAL_KEY, Endpoints } from 'interfaces/API_Constants.d';
 
@@ -81,8 +82,26 @@ function CreditsTable({ filters }: ICreditsTable): JSX.Element {
   return (
     <StatsWrapper>
       <GetStatsBar>
+        <Select
+          value={classYear}
+          onChange={e => setClassYear(e.target.value)}
+          label='Class'
+        >
+          <option value='' disabled>
+            Select
+          </option>
+
+          {classes.map(classYear => (
+            <option key={classYear} value={classYear}>
+              {classYear}
+            </option>
+          ))}
+        </Select>
         <Tooltip enabled={!enoughCourses} text='Needs atleast 4 courses'>
-          <StyledButtonWithIcon disabled={!enoughCourses} onClick={handleUpdate}>
+          <StyledButtonWithIcon
+            disabled={!enoughCourses || !classYear}
+            onClick={handleUpdate}
+          >
             Get stats
           </StyledButtonWithIcon>
         </Tooltip>
