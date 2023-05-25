@@ -15,11 +15,11 @@ The areas and subtasks are not listed in any particular order of priority. Some 
 ## Design
 
 - [ ] Make tables look less stretched out (grid issue)
-- [ ] Search field looks a bit compressed(?)
+- [x] Search field looks a bit compressed(?)
 - [ ] Align items flex end for bar charts
 - [ ] Color row green when a master is fulfilled
 
 ## Others
 
-- [ ] Make context dispatch more efficient (useReducer?)
-- [ ] Fix Todods with real filters
+- [x] Make context dispatch more efficient (useReducer?)
+- [ ] Fix Todos with real filters
