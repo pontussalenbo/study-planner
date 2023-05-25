@@ -19,13 +19,6 @@ console.time('Generating insert statements took');
     db.forEach((tableName: string) => {
         generateSQLData(tableName);
     })
-
-    /* db.forEach(async (tableName) => {
-        const keyMappings = await getKeyMapfromSQLTable(tableName);
-        const jsonKeys = await mapPropToType(tableName, keyMappings);
-        genSqlStmt({ jsonKeys, tableName });
-    });
-    */
     console.timeEnd('Generating insert statements took');
 })();
 

@@ -1,4 +1,4 @@
-import fs from 'fs';
+import * as fs from 'fs';
 import {
 	CourseData,
 	CourseDataWithClass,
@@ -6,10 +6,10 @@ import {
 	Period,
 	TimePlan,
 } from './API';
-import m from '../db/tables/mappings/all.json';
-import { FILE_PATHS } from './utils/constants';
+import m from './all.json';
+import { DB_TABLES, FILE_PATHS } from './utils/constants';
 
-type Column = keyof CourseData;
+type Column = keyof CourseDataWithPeriods;
 type ColumnType = Record<string, string>;
 type PeriodKey = keyof Period;
 
@@ -102,7 +102,7 @@ function getPrimaryKeys(primaryKeyString: string) {
 const createSqlInsertStatement = (
 	schema: string,
 	table: string,
-	columns: Array<keyof CourseData>
+	columns: Array<Column>
 ): string => {
 	let sqlInsert = `${schema}\nINSERT OR REPLACE INTO ${table}(`;
 	sqlInsert += columns.join(', ') + ') VALUES\n';
@@ -229,4 +229,10 @@ export function generateSQLData(table: string) {
 	const sqlInserts = generateSqlInserts(schema, data, columns, table);
 
 	output(sqlInserts, table);
+}
+
+export function generateSQLDataForAllTables() {
+	DB_TABLES.forEach(table => {
+		generateSQLData(table);
+	});
 }

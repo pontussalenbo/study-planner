@@ -1,7 +1,7 @@
 /* eslint-disable no-shadow */
 import axios from 'axios';
-import path from 'path';
-import fs from 'fs';
+import * as path from 'path';
+import * as fs from 'fs';
 import { CourseData } from './API';
 
 interface Query {
@@ -89,7 +89,7 @@ const fetchByClass = async (programme: string, clazz: string) =>
 const getCoursesByProgramme = (programme: string) =>
 	classes.map(kull => fetchByClass(programme, kull));
 
-(async function main() {
+export async function main(filePath: string = __dirname) {
 	const fetchPromises = programmeCode.flatMap(programme =>
 		getCoursesByProgramme(programme)
 	);
@@ -102,5 +102,15 @@ const getCoursesByProgramme = (programme: string) =>
 	);
 
 	const json = JSON.stringify(coursesWithClass);
-	await fs.promises.writeFile(path.join(__dirname, 'courses.json'), json);
-})();
+	await fs.promises.writeFile(path.join(filePath, 'courses.json'), json);
+};
+
+if (process.argv[2] === '--run') {
+	main();
+}
+
+/*
+if (require.main === module) {
+	main();
+}
+*/

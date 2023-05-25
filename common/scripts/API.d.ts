@@ -78,14 +78,14 @@ export interface CourseData {
 
 export interface CourseDataWithClass extends CourseData {
     class: string;
-};
+}
 
 interface Period {
     periodStart: number;
     periodEnd: number;
 }
 
-interface CourseDataWithPeriods extends CourseData, Omit<"timePlans"> {
+interface CourseDataWithPeriods extends Omit<CourseData, "timePlans"> {
     class: string;
     periods: Period[];
 }

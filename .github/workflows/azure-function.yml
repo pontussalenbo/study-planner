@@ -1,0 +1,49 @@
+# Docs for the Azure Web Apps Deploy action: https://github.com/azure/functions-action
+# More GitHub Actions for Azure: https://github.com/Azure/actions
+
+name: Build and deploy Node.js project to Azure Function App - studyplanner-db-updater
+
+on:
+    push:
+        paths:
+            - 'common/azure/**'
+        branches:
+            - master
+    workflow_dispatch:
+
+env:
+    AZURE_FUNCTIONAPP_PACKAGE_PATH: 'common/azure' # set this to the path to your web app project, defaults to the repository root
+    NODE_VERSION: '18.x' # set this to the node version to use (supports 8.x, 10.x, 12.x)
+    ROOT_DIR: './common'
+
+jobs:
+    build-and-deploy:
+        runs-on: windows-latest
+        steps:
+            - name: 'Checkout GitHub Action'
+              uses: actions/checkout@v2
+
+            - name: Setup Node ${{ env.NODE_VERSION }} Environment
+              uses: actions/setup-node@v1
+              with:
+                  node-version: ${{ env.NODE_VERSION }}
+
+            - name: 'Install and Bootstrap Dependencies Using Lerna'
+              shell: pwsh
+              run: |
+                  pushd '${{ env.ROOT_DIR }}'
+                  npm install -g lerna
+                  lerna bootstrap
+                  pushd './azure'
+                  npm run build --if-present
+                  popd
+                  popd
+
+            - name: 'Run Azure Functions Action'
+              uses: Azure/functions-action@v1
+              id: fa
+              with:
+                  app-name: 'studyplanner-db-updater'
+                  slot-name: 'production'
+                  package: ${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }}
+                  publish-profile: ${{ secrets.AZURE_FUNCTIONAPP_PUBLISH_PROFILE }}
