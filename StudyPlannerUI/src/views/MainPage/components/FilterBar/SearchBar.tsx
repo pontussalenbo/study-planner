@@ -61,10 +61,8 @@ const SearchBar: React.FC<SearchBarProps> = ({
   };
 
   const handleMasterFilter = (master: string) => {
-    const { Programme, Year } = filters;
-    // TODO: This considers your Study Class, not selected course year
-    const body = { Programme, Year, Master: master || undefined };
-
+    // TODO: replace with real filter
+    const body = { Programme: 'D', Year: 'H19', Master: master || undefined };
     POST(Endpoints.courses, body)
       .then(data => dataParser(data, 'course_name_en'))
       .then(data => update(data));

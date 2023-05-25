@@ -71,19 +71,6 @@ function Courses() {
 
   return (
     <>
-      <FilterContainer>
-        <Select
-          label='Programme'
-          options={programmes}
-          name='Programme'
-          onChange={handleFilterChange}
-        >
-          <option value=''>Select</option>
-        </Select>
-        <Select label='Year' options={years} name='Year' onChange={handleFilterChange}>
-          <option value=''>Select</option>
-        </Select>
-      </FilterContainer>
       <Section id='courses'>
         <FilterContainer>
           <FilterBar
@@ -92,12 +79,7 @@ function Courses() {
             onGetCourses={handleGetCourses}
           />
         </FilterContainer>
-        <SearchBar
-          matches={matches}
-          filters={filters}
-          filter={filterCourses}
-          update={updateCourses}
-        />
+        <SearchBar matches={matches} filter={filterCourses} update={updateCourses} />
         <Row>
           <Col lg={8}>
             <Table courses={filteredCourses} />
