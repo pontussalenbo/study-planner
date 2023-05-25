@@ -52,5 +52,5 @@ app.timer('UpdateCoursesHttpStart', {
     schedule: '0 0 2 * * *',
     extraInputs: [df.input.durableClient()],
     handler: TimerTrigger,
-    runOnStartup: true
+    runOnStartup: false
 });
