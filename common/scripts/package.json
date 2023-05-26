@@ -2,11 +2,6 @@
 	"name": "scripts",
 	"version": "1.0.0",
 	"description": "",
-	"main": "dist/getCourses.js",
-	"exports": {
-		".": "./dist/getCourses.js"
-	},
-	"types": "./dist/getCourses.d.ts",
 	"scripts": {
 		"build": "tsc",
 		"courses": "ts-node ./getCourses.ts --run"
