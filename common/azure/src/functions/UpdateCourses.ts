@@ -2,7 +2,7 @@ import { app, InvocationContext, Timer } from '@azure/functions';
 import axios from 'axios';
 import * as df from 'durable-functions';
 import { EntityContext, EntityHandler } from 'durable-functions';
-import { main } from "scripts/dist/getCourses";
+import { main as getCourses } from "scripts/dist/getCourses";
 
 const entityName = 'UpdateCourses';
 const LAST_UPDATED_URL = "https://kurser.lth.se/lot/";
@@ -43,7 +43,7 @@ export async function TimerTrigger(myTimer: Timer, context: InvocationContext): 
         return;
     }
     console.log("Updating...");
-    await main(__dirname);
+    await getCourses(__dirname);
 
     await client.signalEntity(entityId, 'add', lastModified);
 };
@@ -52,5 +52,4 @@ app.timer('UpdateCoursesHttpStart', {
     schedule: '0 0 2 * * *',
     extraInputs: [df.input.durableClient()],
     handler: TimerTrigger,
-    runOnStartup: false
 });
