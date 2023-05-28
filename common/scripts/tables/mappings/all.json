@@ -1,0 +1,18 @@
+{
+	"course_code": "courseCode",
+	"class_year": "class",
+	"period_start": "periodStart",
+	"period_end": "periodEnd",
+	"academic_year": "academicYearId",
+	"course_name_sv": "name_sv",
+	"course_name_en": "name_en",
+	"credits": "credits",
+	"level": "cycle",
+	"master_code": "specialisationCode",
+	"master_name_sv": "specialisation_sv",
+	"master_name_en": "specialisation_en",
+	"programme_code": "programmeCode",
+	"electability": "choice",
+	"programme_name_sv": "programme_sv",
+	"programme_name_en": "programme_en"
+}

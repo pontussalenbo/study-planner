@@ -2,14 +2,18 @@
 	"name": "scripts",
 	"version": "1.0.0",
 	"description": "",
+	"main": "./dist/src/index.js",
 	"scripts": {
-		"build": "tsc",
-		"courses": "ts-node ./getCourses.ts --run"
+		"build": "rimraf dist && tsc -b",
+		"db:cli": "ts-node ./src/cli.ts",
+		"courses": "ts-node ./src/getCourses.ts --run",
+		"postbuild": "node postbuild.js"
 	},
 	"keywords": [],
 	"author": "",
 	"license": "ISC",
 	"dependencies": {
+		"shelljs": "^0.8.5",
 		"ts-node": "^10.9.1"
 	}
 }

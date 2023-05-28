@@ -6,7 +6,7 @@
     }
   },
   "references": [
+    { "path": "./scripts" },
     { "path": "./azure" },
-    { "path": "./scripts" }
   ]
 }
