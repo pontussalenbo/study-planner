@@ -1,9 +1,10 @@
 {
     "extends": "../tsconfig.json",
     "compilerOptions": {
-        "rootDir": ".",
+        "baseUrl": "./src",
         "outDir": "dist",
         "module": "commonjs",
+        "declaration": true,
         "target": "ES6",
         "resolveJsonModule": true,
         "moduleResolution": "node",
@@ -13,6 +14,6 @@
         "skipLibCheck": true,
         "composite": true,
     },
-    "include": ["./all.json", "."],
+    "include": ["./all.json", "src"],
     "exclude": ["node_modules", "**/*.spec.ts", "./dist"]
 }

@@ -1,4 +1,6 @@
 import * as fs from 'fs';
+import * as path from 'path';
+
 import {
 	CourseData,
 	CourseDataWithClass,
@@ -6,18 +8,20 @@ import {
 	Period,
 	TimePlan,
 } from './API';
-import m from './all.json';
+import m from '../all.json';
 import { DB_TABLES, FILE_PATHS } from './utils/constants';
 
 type Column = keyof CourseDataWithPeriods;
 type ColumnType = Record<string, string>;
 type PeriodKey = keyof Period;
 
-const courseDir = './scripts/courses.json';
+const defaultCourseDir = './courses.json';
 const mappings = m as Record<string, Column>;
-const courseData: CourseDataWithClass[] = JSON.parse(
-	fs.readFileSync(courseDir, 'utf-8')
-);
+
+const readCourseData = (
+	courseDir: string = defaultCourseDir
+): CourseDataWithClass[] =>
+	JSON.parse(fs.readFileSync(path.join(__dirname, 'courses.json'), 'utf-8'));
 
 function findCoursePeriods(timePlans: TimePlan[]) {
 	return timePlans.map(timePlan => {
@@ -49,8 +53,13 @@ function parse(data: CourseDataWithClass[]): CourseDataWithPeriods[] {
 }
 
 // Helper to get SQL schema from file.
-const sqlSchema = (table: string) =>
-	fs.readFileSync(`${FILE_PATHS.DB_TABLES}/${table}.sql`, 'utf8');
+const sqlSchema = (table: string) => {
+	const filepath = path.join(
+		__dirname,
+		`${FILE_PATHS.DB_TABLES}/${table}.sql`
+	);
+	return fs.readFileSync(filepath, 'utf8');
+};
 
 /**
  * Extracts columns from SQL schema.
@@ -65,7 +74,7 @@ const extractColumnsFromSchema = (schema: string) => {
 	let match: RegExpExecArray | null;
 
 	while ((match = columnRegex.exec(schema)) !== null) {
-		const [columnName, columnType] = match;
+		const [_, columnName, columnType] = match;
 		const line = `${columnName} ${columnType}`.trim();
 		const isKeyword = excludedKeywords.test(line);
 		if (!isKeyword) {
@@ -205,6 +214,12 @@ const generateSqlInserts = (
  */
 const output = (sqlInserts: string, table: string) => {
 	try {
+		console.log(
+			`Writing to file for table: ${FILE_PATHS.DB_DATA_OUT_DIR}}`
+		);
+		const filepath = `${FILE_PATHS.DB_DATA_OUT_DIR}/${table}.sql`;
+		console.log(`Writing to file: ${filepath}`);
+
 		fs.promises.mkdir(`${FILE_PATHS.DB_DATA_OUT_DIR}`, { recursive: true });
 		// Write to file
 		fs.promises.writeFile(
@@ -223,6 +238,7 @@ const output = (sqlInserts: string, table: string) => {
  * @param table name of table to generate SQL insert statements for
  */
 export function generateSQLData(table: string) {
+	const courseData = readCourseData();
 	const schema = sqlSchema(table);
 	const data = parse(courseData);
 	const columns = extractColumnsFromSchema(schema);
@@ -231,7 +247,11 @@ export function generateSQLData(table: string) {
 	output(sqlInserts, table);
 }
 
-export function generateSQLDataForAllTables() {
+/**
+ * Generates SQL insert statements from course data for all tables
+ * defined in the `DB_TABLES` constant.
+ */
+export function generateSQLDataAllTables() {
 	DB_TABLES.forEach(table => {
 		generateSQLData(table);
 	});
