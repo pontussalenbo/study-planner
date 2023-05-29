@@ -12,15 +12,26 @@ import { dataParser } from 'views/MainPage/dataParser';
 import { FilterContainer } from './styles';
 import type { TransformFn } from 'interfaces/TransformFn';
 import { Endpoints } from 'interfaces/API_Constants.d';
+import { Select } from 'components/Select';
+import useFetch from 'hooks/useFetch';
+import { BASE_URL } from 'utils/URL';
+
+type Filters = {
+  Programme: string;
+  Year: string;
+};
 
 function Courses() {
-  const [filters, setFilters] = useState({
+  const [filters, setFilters] = useState<Filters>({
     Programme: '',
     Year: ''
   });
   const [courses, setCourses] = useState<CourseData.DataWithLocale[]>([]);
   const [filteredCourses, setFilteredCourses] = useState<CourseData.DataWithLocale[]>([]);
   const [matches, setMatches] = useState(true);
+
+  const { data: programmes } = useFetch<string[]>(BASE_URL + Endpoints.programmes);
+  const { data: years } = useFetch<string[]>(BASE_URL + Endpoints.classYears);
 
   const filterCourses = (transformFn: TransformFn) => {
     const result = transformFn([...courses]);
@@ -42,8 +53,12 @@ function Courses() {
     setFilteredCourses(newCourses);
   };
 
-  const handleGetCourses = () => {
-    POST(Endpoints.courses, filters).then(resp => {
+  const handleGetCourses = (filterYear: string) => {
+    const coursesFiter = {
+      Programme: filters.Programme,
+      Year: filterYear
+    };
+    POST(Endpoints.courses, coursesFiter).then(resp => {
       const parsedData = dataParser(resp, 'course_name_en');
       setCourses(parsedData);
       setFilteredCourses(parsedData);
@@ -61,6 +76,19 @@ function Courses() {
 
   return (
     <>
+      <FilterContainer>
+        <Select
+          label='Programme'
+          options={programmes}
+          name='Programme'
+          onChange={handleFilterChange}
+        >
+          <option value=''>Select</option>
+        </Select>
+        <Select label='Year' options={years} name='Year' onChange={handleFilterChange}>
+          <option value=''>Select</option>
+        </Select>
+      </FilterContainer>
       <Section id='courses'>
         <FilterContainer>
           <FilterBar

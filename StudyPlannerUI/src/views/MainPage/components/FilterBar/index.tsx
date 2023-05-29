@@ -1,28 +1,42 @@
 // FilterBar.tsx
-import React, { ChangeEvent } from 'react';
+import React, { ChangeEvent, useMemo } from 'react';
 import { Select } from 'components/Select';
 import Tooltip from 'components/Tooltip';
 import { GetButton, SelectWrapper } from './style';
 import { GET } from 'utils/fetch';
 import { Endpoints } from 'interfaces/API_Constants.d';
 
+type Filters = {
+  Programme: string;
+  Year: string;
+};
+
 interface FilterBarProps {
-  filters: Record<string, string>;
+  filters: Filters;
   onFilterChange: (e: ChangeEvent<HTMLSelectElement>) => void;
-  onGetCourses: () => void;
+  onGetCourses: (filters: string) => void;
 }
 
 type Filter = 'Year' | 'Class';
 
-export const FilterBar: React.FC<FilterBarProps> = ({
-  filters,
-  onFilterChange,
-  onGetCourses
-}) => {
+export const FilterBar: React.FC<FilterBarProps> = ({ filters, onGetCourses }) => {
   const [filterValues, setFilterValues] = React.useState<string[]>([]);
+  const [coursesFilter, setFilterCourses] = React.useState<string>(filters.Year);
+
+  React.useEffect(() => {
+    if (coursesFilter !== '') {
+      return;
+    }
+    setFilterCourses(filters.Year);
+  }, [filters]);
+
+  React.useEffect(() => {
+    fetchFilterValues('Class');
+  }, []);
 
   const handleChange = (e: ChangeEvent<HTMLSelectElement>) => {
-    onFilterChange(e);
+    const { value } = e.target;
+    setFilterCourses(value);
   };
 
   const fetchFilterValues = async (filter: Filter) => {
@@ -35,12 +49,16 @@ export const FilterBar: React.FC<FilterBarProps> = ({
     setFilterValues(data);
   };
 
+  const disableGetCourses = useMemo(() => {
+    return filters.Programme === '' || filters.Year === '';
+  }, [filters]);
+
   return (
     <SelectWrapper>
       <Select
         label='Filter by'
         options={['Class', 'Year']}
-        defaultValue=''
+        defaultValue='Class'
         name='Year'
         onChange={e => fetchFilterValues(e.target.value as Filter)}
       >
@@ -52,17 +70,16 @@ export const FilterBar: React.FC<FilterBarProps> = ({
         <Select
           label='Year/Class'
           options={filterValues || []}
-          defaultValue=''
+          value={coursesFilter || filters.Year}
           name='Year'
           onChange={handleChange}
-          disabled={!filterValues.length}
         >
           <option value='' disabled>
             Select
           </option>
         </Select>
       </Tooltip>
-      <GetButton disabled={filters.Year === ''} onClick={() => onGetCourses()}>
+      <GetButton disabled={disableGetCourses} onClick={() => onGetCourses(coursesFilter)}>
         Get Courses
       </GetButton>
     </SelectWrapper>
