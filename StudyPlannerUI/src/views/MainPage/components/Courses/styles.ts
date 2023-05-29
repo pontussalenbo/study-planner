@@ -8,6 +8,7 @@ export const StatsButton = styled(StyledButton)`
 
 export const FilterContainer = styled.div`
   display: flex;
+  gap: 1rem;
   width: max-content;
 `;
 
