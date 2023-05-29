@@ -16,9 +16,13 @@ interface IPaginationProps {
   pageSize: number;
 }
 
-function Pagination(props: IPaginationProps): JSX.Element | null {
-  const { onPageChange, totalCount, siblingCount = 1, currentPage, pageSize } = props;
-
+function Pagination({
+  onPageChange,
+  totalCount,
+  currentPage,
+  pageSize,
+  siblingCount = 1
+}: IPaginationProps): JSX.Element | null {
   const paginationRange = usePagination({
     currentPage,
     totalCount,
