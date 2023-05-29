@@ -1,4 +1,4 @@
-import { memo, useContext, useState } from 'react';
+import { memo, useContext, useEffect, useState } from 'react';
 import CourseTableRow from './TableRow';
 import {
   CenteredHeader,
@@ -20,7 +20,13 @@ function Table({ courses }: CourseTableRowProps) {
 
   const { addCourse } = useContext(MyContext) as CtxType;
 
-  const { slice } = useTable<CourseData.DataWithLocale>(courses, page, 7);
+  const { slice, range } = useTable<CourseData.DataWithLocale>(courses, page, 7);
+  /* set page to the last if we out of bounds */
+  useEffect(() => {
+    if (page > range.length) {
+      setPage(range.length);
+    }
+  }, [page, range.length]);
 
   const handlePageChange = (page: number): void => {
     setPage(page);
