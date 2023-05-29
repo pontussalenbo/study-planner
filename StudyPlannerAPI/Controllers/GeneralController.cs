@@ -27,21 +27,24 @@ public class GeneralController : ControllerBase
     [Route(Routes.PROGRAMMES)]
     public async Task<IActionResult> GetProgrammes()
     {
-        return await this.PerformEndpointAction(generalInfoManager.GetProgrammes, logger);
+        return await this.PerformEndpointAction(
+            async () => new JsonResult(await generalInfoManager.GetProgrammes()), logger);
     }
 
     [HttpGet]
     [Route(Routes.ACADEMIC_YEARS)]
     public async Task<IActionResult> GetAcademicYears()
     {
-        return await this.PerformEndpointAction(generalInfoManager.GetAcademicYears, logger);
+        return await this.PerformEndpointAction(
+            async () => new JsonResult(await generalInfoManager.GetAcademicYears()), logger);
     }
 
     [HttpGet]
     [Route(Routes.CLASS_YEARS)]
     public async Task<IActionResult> GetClassYears()
     {
-        return await this.PerformEndpointAction(generalInfoManager.GetClassYears, logger);
+        return await this.PerformEndpointAction(
+            async () => new JsonResult(await generalInfoManager.GetClassYears()), logger);
     }
 
     [HttpGet]
@@ -52,8 +55,8 @@ public class GeneralController : ControllerBase
         if (validationResult.IsValid)
         {
             return await this.PerformEndpointAction(
-                async () => await generalInfoManager.GetMasters(programmeMasterParams.Programme,
-                    programmeMasterParams.Year), logger);
+                async () => new JsonResult(await generalInfoManager.GetMasters(programmeMasterParams.Programme,
+                    programmeMasterParams.Year)), logger);
         }
 
         var errors = validationResult.Errors.Select(e => new ValidationError(e.ErrorCode, e.ErrorMessage));

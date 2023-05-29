@@ -27,13 +27,10 @@ public class HealthCheckManager : IHealthCheckManager
                 Constants.CONNECTION_STRING);
         var connectionResult = databaseQueryManager.ValidateConnection();
 
-        Console.WriteLine(connectionResult);
-
         databaseQueryManager = (IDatabaseQueryManager)DatabaseUtil.ConfigureDatabaseManager(databaseQueryManager,
             configuration,
             Constants.CONNECTION_STRING_LINKS);
         connectionResult = connectionResult && databaseQueryManager.ValidateConnection();
-        Console.WriteLine(connectionResult);
 
         return connectionResult;
     }

@@ -18,7 +18,7 @@ public class HealthCheckController : ControllerBase
     public IActionResult GetHealthStatus()
     {
         return healthCheckManager.IsHealthy
-            ? new StatusCodeResult(StatusCodes.Status200OK)
+            ? Ok()
             : new StatusCodeResult(StatusCodes.Status500InternalServerError);
     }
 }

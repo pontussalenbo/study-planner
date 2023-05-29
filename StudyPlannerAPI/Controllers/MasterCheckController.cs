@@ -32,8 +32,12 @@ public class MasterCheckController : ControllerBase
         if (validationResult.IsValid)
         {
             return await this.PerformEndpointAction(
-                async () => await masterRequirementValidator.ValidateCourseSelection(masterCheckParams.Programme,
-                    masterCheckParams.Year, masterCheckParams.SelectedCourses, masterCheckParams.MasterCodes), logger);
+                async () =>
+                {
+                    var result = await masterRequirementValidator.ValidateCourseSelection(masterCheckParams.Programme,
+                        masterCheckParams.Year, masterCheckParams.SelectedCourses, masterCheckParams.MasterCodes);
+                    return new JsonResult(result);
+                }, logger);
         }
 
         var errors = validationResult.Errors.Select(e => new ValidationError(e.ErrorCode, e.ErrorMessage));

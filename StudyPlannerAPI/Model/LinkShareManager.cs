@@ -1,5 +1,4 @@
 ﻿using System.Text;
-using Microsoft.AspNetCore.Mvc;
 using StudyPlannerAPI.Database;
 using StudyPlannerAPI.Database.DTO;
 
@@ -25,7 +24,7 @@ public class LinkShareManager : ILinkShareManager
         this.logger = logger;
     }
 
-    public async Task<IActionResult> GetPlanFromUniqueBlob(string uniqueBlob)
+    public async Task<LinkShareDTO> GetPlanFromUniqueBlob(string uniqueBlob)
     {
         var queryBuilder = new StringBuilder();
         var parameters = new List<string> { uniqueBlob };
@@ -37,10 +36,10 @@ public class LinkShareManager : ILinkShareManager
                WHERE {Columns.STUDY_PLAN_ID} = @p0");
         var query = queryBuilder.ToString();
         var studyPlanDTOList = await databaseQueryManager.ExecuteQuery<StudyPlanDTO>(query, parameters.ToArray());
-        if (studyPlanDTOList.Count == 0)
-        {
-            return new StatusCodeResult(StatusCodes.Status400BadRequest);
-        }
+        //if (studyPlanDTOList.Count == 0)
+        //{
+        //    return new StatusCodeResult(StatusCodes.Status400BadRequest);
+        //}
 
         var studyPlanDTO = studyPlanDTOList.First();
 
@@ -68,16 +67,16 @@ public class LinkShareManager : ILinkShareManager
         var result = new LinkShareDTO
         {
             Programme = studyPlanDTO.programme_code,
-            StudyPlanName = studyPlanDTO.study_plan_name,
+            StudyPlanName = studyPlanDTO.study_plan_name ?? string.Empty,
             Year = studyPlanDTO.year,
             MasterCodes = masterCodes,
             SelectedCourses = courses
         };
 
-        return new JsonResult(result);
+        return result;
     }
 
-    public async Task<IActionResult> GetUniqueBlobFromPlan(string programme, string year, List<string> masters,
+    public async Task<UniqueBlobDTO> GetUniqueBlobFromPlan(string programme, string year, List<string> masters,
         List<SelectedCourseDTO> selectedCourses,
         string studyPlanName)
     {
@@ -99,7 +98,7 @@ public class LinkShareManager : ILinkShareManager
 
         if (studyPlanId == string.Empty)
         {
-            return new StatusCodeResult(StatusCodes.Status400BadRequest);
+            return null;
         }
 
         // Add masters
@@ -139,7 +138,7 @@ public class LinkShareManager : ILinkShareManager
         query = queryBuilder.ToString();
         await Task.Run(() => databaseMutationManager.ExecuteScalar<dynamic>(query, parameters.ToArray()));
 
-        var result = new UniqueBlobDTO { StudyPlanId = studyPlanId };
-        return new JsonResult(result);
+        return new UniqueBlobDTO { StudyPlanId = studyPlanId };
+        //return new JsonResult(result);
     }
 }

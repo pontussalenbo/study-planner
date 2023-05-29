@@ -32,8 +32,12 @@ public class CourseController : ControllerBase
         if (validationResult.IsValid)
         {
             return await this.PerformEndpointAction(
-                async () => await courseInfoManager.GetCourses(courseParams.Programme,
-                    courseParams.Year, courseParams.Master ?? string.Empty), logger);
+                async () =>
+                {
+                    var result = await courseInfoManager.GetCourses(courseParams.Programme,
+                        courseParams.Year, courseParams.Master ?? string.Empty);
+                    return new JsonResult(result);
+                }, logger);
         }
 
         var errors = validationResult.Errors.Select(e => new ValidationError(e.ErrorCode, e.ErrorMessage));

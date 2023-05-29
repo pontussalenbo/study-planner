@@ -14,12 +14,12 @@ namespace StudyPlannerAPI.Controllers;
 public class LinkShareController : ControllerBase
 {
     private readonly ILinkShareManager linkShareManager;
-    private readonly IValidator<LinkShareParams> linkShareValidator;
+    private readonly IValidator<StudyPlanParams> linkShareValidator;
     private readonly IValidator<UniqueBlobDTO> uniqueBlobValidator;
     private readonly ILogger<LinkShareController> logger;
 
     public LinkShareController(ILinkShareManager linkShareManager, ILogger<LinkShareController> logger,
-        IValidator<LinkShareParams> linkShareValidator, IValidator<UniqueBlobDTO> uniqueBlobValidator)
+        IValidator<StudyPlanParams> linkShareValidator, IValidator<UniqueBlobDTO> uniqueBlobValidator)
     {
         this.linkShareManager = linkShareManager;
         this.logger = logger;
@@ -29,16 +29,20 @@ public class LinkShareController : ControllerBase
 
     [HttpPost]
     [Consumes(MediaTypeNames.Application.Json)]
-    public async Task<IActionResult> GetUniqueShareLink([FromBody] LinkShareParams linkShareParams)
+    public async Task<IActionResult> GetUniqueShareLink([FromBody] StudyPlanParams studyPlanParams)
     {
-        var validationResult = await linkShareValidator.ValidateAsync(linkShareParams);
+        var validationResult = await linkShareValidator.ValidateAsync(studyPlanParams);
         if (validationResult.IsValid)
         {
             return await this.PerformEndpointAction(async () =>
-                await linkShareManager.GetUniqueBlobFromPlan(linkShareParams.Programme, linkShareParams.Year,
-                    linkShareParams.MasterCodes,
-                    linkShareParams.SelectedCourses,
-                    linkShareParams.StudyPlanName ?? Constants.STUDY_PLAN_NAME_DEFAULT), logger);
+            {
+                var result = await linkShareManager.GetUniqueBlobFromPlan(studyPlanParams.Programme,
+                    studyPlanParams.Year,
+                    studyPlanParams.MasterCodes,
+                    studyPlanParams.SelectedCourses,
+                    studyPlanParams.StudyPlanName ?? Constants.STUDY_PLAN_NAME_DEFAULT);
+                return new JsonResult(result);
+            }, logger);
         }
 
         var errors = validationResult.Errors.Select(e => new ValidationError(e.ErrorCode, e.ErrorMessage));
@@ -51,8 +55,11 @@ public class LinkShareController : ControllerBase
         var validationResult = await uniqueBlobValidator.ValidateAsync(uniqueBlobDTO);
         if (validationResult.IsValid)
         {
-            return await this.PerformEndpointAction(
-                async () => await linkShareManager.GetPlanFromUniqueBlob(uniqueBlobDTO.StudyPlanId), logger);
+            return await this.PerformEndpointAction(async () =>
+            {
+                var result = await linkShareManager.GetPlanFromUniqueBlob(uniqueBlobDTO.StudyPlanId);
+                return new JsonResult(result);
+            }, logger);
         }
 
         var errors = validationResult.Errors.Select(e => new ValidationError(e.ErrorCode, e.ErrorMessage));

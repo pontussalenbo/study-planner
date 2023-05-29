@@ -1,5 +1,4 @@
 ﻿using System.Text;
-using Microsoft.AspNetCore.Mvc;
 using StudyPlannerAPI.Database;
 using StudyPlannerAPI.Database.DTO;
 using StudyPlannerAPI.Model.Util;
@@ -20,7 +19,7 @@ public class MasterRequirementValidator : IMasterRequirementValidator
         this.logger = logger;
     }
 
-    public async Task<IActionResult> ValidateCourseSelection(string programme,
+    public async Task<IList<MasterValidationResult>> ValidateCourseSelection(string programme,
         string year, List<string> selectedCourses, List<string> masterCodes)
     {
         if (masterCodes.Count == 0) // if there are no provided master codes, compute for all
@@ -51,7 +50,7 @@ public class MasterRequirementValidator : IMasterRequirementValidator
             result.Add(validationResult);
         }
 
-        return new JsonResult(result);
+        return result;
     }
 
     private async Task<MasterValidationResult> ValidateMaster(string programme, string masterCode, string year,

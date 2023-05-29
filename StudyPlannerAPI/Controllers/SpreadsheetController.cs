@@ -39,7 +39,8 @@ public class SpreadsheetController : ControllerBase
                     studyPlanParams.Programme,
                     studyPlanParams.Year,
                     studyPlanParams.MasterCodes,
-                    studyPlanParams.SelectedCourses);
+                    studyPlanParams.SelectedCourses,
+                    studyPlanParams.StudyPlanName);
                 return new FileStreamResult(stream, MediaTypeNames.Application.Octet);
             }, logger);
         }

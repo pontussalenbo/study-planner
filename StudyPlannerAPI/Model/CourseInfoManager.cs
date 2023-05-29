@@ -1,5 +1,4 @@
 ﻿using System.Text;
-using Microsoft.AspNetCore.Mvc;
 using StudyPlannerAPI.Database;
 using StudyPlannerAPI.Database.DTO;
 using StudyPlannerAPI.Model.Util;
@@ -17,7 +16,7 @@ public class CourseInfoManager : ICourseInfoManager
                 Constants.CONNECTION_STRING);
     }
 
-    public async Task<IActionResult> GetCourses(string programme, string year, string master)
+    public async Task<IList<CourseDTO>> GetCourses(string programme, string year, string master)
     {
         var queryBuilder = new StringBuilder();
         var condStmtBuilder = new StringBuilder();
@@ -34,7 +33,8 @@ public class CourseInfoManager : ICourseInfoManager
         parameters.Add(programme);
 
         condStmtBuilder.AppendLine($"AND {column} = @p{parameters.Count}");
-        condStmtBuilder.AppendLine($"AND ({Columns.ELECTABILITY} = '{Constants.ELECTIVE}' OR {Columns.ELECTABILITY} = '{Constants.EXTERNAL_ELECTIVE}')");
+        condStmtBuilder.AppendLine(
+            $"AND ({Columns.ELECTABILITY} = '{Constants.ELECTIVE}' OR {Columns.ELECTABILITY} = '{Constants.EXTERNAL_ELECTIVE}')");
         parameters.Add(year);
 
         if (master != string.Empty)
@@ -49,7 +49,7 @@ public class CourseInfoManager : ICourseInfoManager
         var query = queryBuilder.ToString();
         var result = await databaseQueryManager.ExecuteQuery<CourseDTO>(query, parameters.ToArray());
         result = await AppendCoursePeriods(result, programme, year);
-        return new JsonResult(result);
+        return result;
     }
 
     private async Task<IList<CourseDTO>> AppendCoursePeriods(IList<CourseDTO> courses, string programme,

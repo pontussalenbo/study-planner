@@ -17,12 +17,16 @@ public class SpreadsheetManager : ISpreadsheetManager
     }
 
 
-    public Task<Stream> CreateSpreadsheetFromPlan(string programme, string year, List<string> masters,
-        List<SelectedCourseDTO> courses)
+    public async Task<Stream> CreateSpreadsheetFromPlan(string programme, string year, List<string> masters,
+        List<SelectedCourseDTO> courses, string name)
     {
         // Obtain master requirement results
+        var masterReq = await masterRequirementValidator.ValidateCourseSelection(programme, year,
+            courses.Select(c => c.course_code).ToList(), masters);
 
         // Obtain unique sharable link
+        var uniqueBlob = (await linkShareManager.GetUniqueBlobFromPlan(programme, year, masters, courses, name))
+            .StudyPlanId;
 
         // Format excel file w.r.t chosen year & periods
 

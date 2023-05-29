@@ -1,9 +1,8 @@
-﻿using Microsoft.AspNetCore.Mvc;
-
-namespace StudyPlannerAPI.Model;
+﻿namespace StudyPlannerAPI.Model;
 
 public interface IMasterRequirementValidator
 {
-    Task<IActionResult> ValidateCourseSelection(string programme, string year, List<string> selectedCourses,
+    Task<IList<MasterValidationResult>> ValidateCourseSelection(string programme, string year,
+        List<string> selectedCourses,
         List<string> masterCodes);
 }

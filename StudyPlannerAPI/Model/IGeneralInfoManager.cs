@@ -1,11 +1,11 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using StudyPlannerAPI.Database.DTO;
 
 namespace StudyPlannerAPI.Model;
 
 public interface IGeneralInfoManager
 {
-    public Task<IActionResult> GetProgrammes();
-    public Task<IActionResult> GetAcademicYears();
-    public Task<IActionResult> GetClassYears();
-    public Task<IActionResult> GetMasters(string programme, string year);
+    public Task<IList<string>> GetProgrammes();
+    public Task<IList<string>> GetAcademicYears();
+    public Task<IList<string>> GetClassYears();
+    public Task<IList<MasterDTO>> GetMasters(string programme, string year);
 }
