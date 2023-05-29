@@ -16,6 +16,11 @@ import { Select } from 'components/Select';
 import useFetch from 'hooks/useFetch';
 import { BASE_URL } from 'utils/URL';
 
+type Filters = {
+  Programme: string;
+  Year: string;
+};
+
 function Courses() {
   const [filters, setFilters] = useState<Filters>({
     Programme: '',
@@ -71,6 +76,19 @@ function Courses() {
 
   return (
     <>
+      <FilterContainer>
+        <Select
+          label='Programme'
+          options={programmes}
+          name='Programme'
+          onChange={handleFilterChange}
+        >
+          <option value=''>Select</option>
+        </Select>
+        <Select label='Year' options={years} name='Year' onChange={handleFilterChange}>
+          <option value=''>Select</option>
+        </Select>
+      </FilterContainer>
       <Section id='courses'>
         <FilterContainer>
           <FilterBar
