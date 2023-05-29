@@ -7,6 +7,11 @@ import { GET } from 'utils/fetch';
 import { Endpoints } from 'interfaces/API_Constants.d';
 import { Filters } from 'interfaces/Types';
 
+type Filters = {
+  Programme: string;
+  Year: string;
+};
+
 interface FilterBarProps {
   filters: Filters;
   onFilterChange: (e: ChangeEvent<HTMLSelectElement>) => void;
@@ -15,11 +20,7 @@ interface FilterBarProps {
 
 type Filter = 'Year' | 'Class';
 
-export const FilterBar: React.FC<FilterBarProps> = ({
-  filters,
-  onFilterChange,
-  onGetCourses
-}) => {
+export const FilterBar: React.FC<FilterBarProps> = ({ filters, onGetCourses }) => {
   const [filterValues, setFilterValues] = React.useState<string[]>([]);
   const [coursesFilter, setFilterCourses] = React.useState<string>(filters.Year);
 
@@ -79,7 +80,7 @@ export const FilterBar: React.FC<FilterBarProps> = ({
           </option>
         </Select>
       </Tooltip>
-      <GetButton disabled={filters.Year === ''} onClick={() => onGetCourses()}>
+      <GetButton disabled={disableGetCourses} onClick={() => onGetCourses(coursesFilter)}>
         Get Courses
       </GetButton>
     </SelectWrapper>
