@@ -7,11 +7,6 @@ import { GET } from 'utils/fetch';
 import { Endpoints } from 'interfaces/API_Constants.d';
 import { Filters } from 'interfaces/Types';
 
-type Filters = {
-  Programme: string;
-  Year: string;
-};
-
 interface FilterBarProps {
   filters: Filters;
   onFilterChange: (e: ChangeEvent<HTMLSelectElement>) => void;
