@@ -67,7 +67,7 @@ module.exports = {
       }
     },
     {
-      files: ['src/**/*.ts'],
+      files: ['src/**/*.ts', "vite.config.ts", 'cypress.config.ts', '.eslintrc.cjs'],
       rules: {
         'indent': ['error', 4, { 'SwitchCase': 1 }],
       }
