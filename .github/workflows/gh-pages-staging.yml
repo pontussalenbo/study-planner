@@ -7,7 +7,7 @@ name: Deploy React App to GitHub Pages
 on:
   # Runs on pushes targeting the default branch
   push:
-    branches: ["ui-staging"]
+    branches: ["ui-dev"]
     paths:
       - "StudyPlannerUI/src/**"
 
