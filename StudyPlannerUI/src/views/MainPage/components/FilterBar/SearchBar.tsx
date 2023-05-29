@@ -1,5 +1,5 @@
 import { Select } from 'components/Select';
-import { TransformFn } from 'interfaces/TransformFn';
+import { Filters, TransformFn } from 'interfaces/Types';
 import React, { ChangeEvent, useEffect, useState } from 'react';
 import { GET, POST } from 'utils/fetch';
 import { dataParser } from 'views/MainPage/dataParser';
@@ -15,12 +15,14 @@ import { useMemo } from 'react';
 interface SearchBarProps {
   matches: boolean;
   filter: (transformFn: TransformFn) => void | Promise<void>;
+  filters: Filters;
   update: (newCourses: CourseData.DataWithLocale[]) => void;
 }
 
 // Your component
 const SearchBar: React.FC<SearchBarProps> = ({
   matches,
+  filters,
   filter,
   update
 }: SearchBarProps) => {
@@ -28,10 +30,13 @@ const SearchBar: React.FC<SearchBarProps> = ({
   const [masters, setMasters] = useState<API.Masters[]>([]);
 
   useEffect(() => {
-    //TODO: replace with real filter
-    const params = new URLSearchParams({ Programme: 'D', Year: 'H19' });
+    const { Programme, Year } = filters;
+    if (!Programme || !Year) {
+      return;
+    }
+    const params = new URLSearchParams({ Programme, Year });
     GET(Endpoints.masters, params).then(data => setMasters(data));
-  }, []);
+  }, [filters]);
 
   const shouldError = useMemo(() => !matches && query.length > 0, [matches, query]);
 
@@ -56,8 +61,10 @@ const SearchBar: React.FC<SearchBarProps> = ({
   };
 
   const handleMasterFilter = (master: string) => {
-    // TODO: replace with real filter
-    const body = { Programme: 'D', Year: 'H19', Master: master || undefined };
+    const { Programme, Year } = filters;
+    // TODO: This considers your Study Class, not selected course year
+    const body = { Programme, Year, Master: master || undefined };
+
     POST(Endpoints.courses, body)
       .then(data => dataParser(data, 'course_name_en'))
       .then(data => update(data));

@@ -9,8 +9,7 @@ import { memo, useContext, useEffect, useMemo, useState } from 'react';
 import { CtxType, MyContext } from 'hooks/CourseContext';
 import { GetStatsBar, StatsWrapper } from './styles';
 import Tooltip from 'components/Tooltip';
-import { Select } from 'components/Select';
-import StyledButtonWithIcon, { StyledButton } from 'components/Button';
+import StyledButtonWithIcon from 'components/Button';
 import { GET, POST } from 'utils/fetch';
 import { CREDITS_TOTAL_KEY, Endpoints } from 'interfaces/API_Constants.d';
 
