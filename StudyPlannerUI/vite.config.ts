@@ -21,7 +21,6 @@ function renderChunks(deps: Record<string, string>): Record<string, string[]> {
 }
 
 export default defineConfig(({ mode }) => ({
-    base:"/study-planner/",
     build: {
         outDir: 'build',
         rollupOptions: {
@@ -33,60 +32,62 @@ export default defineConfig(({ mode }) => ({
                 }
             }
         }
-      }
-    }
-  },
-  test: {
-    css: false,
-    include: ['src/**/tests/*'],
-    globals: true,
-    environment: 'jsdom',
-    setupFiles: 'src/setupTests.ts',
-    clearMocks: true,
-    coverage: {
-      provider: 'istanbul',
-      enabled: true,
-      '100': true,
-      reporter: ['text', 'lcov'],
-      reportsDirectory: 'coverage'
-    }
-  },
-  plugins: [
-    tsconfigPaths(),
-    svgr(),
-    react(),
-    ...(mode === 'test'
-      ? []
-      : [
-        eslintPlugin(),
-        VitePWA({
-          registerType: 'autoUpdate',
-          includeAssets: [
-            'favicon.png',
-            'robots.txt',
-            'apple-touch-icon.png',
-            'icons/*.svg',
-            'fonts/*.woff2'
-          ],
-          manifest: {
-            theme_color: '#BD34FE',
-            icons: [
-              {
-                src: '/android-chrome-192x192.png',
-                sizes: '192x192',
-                type: 'image/png',
-                purpose: 'any maskable'
-              },
-              {
-                src: '/android-chrome-512x512.png',
-                sizes: '512x512',
-                type: 'image/png'
-              }
-            ]
-          }
-        })
-      ]),
-    visualizer({
+    },
+    test: {
+        css: false,
+        include: ['src/**/tests/*'],
+        globals: true,
+        environment: 'jsdom',
+        setupFiles: 'src/setupTests.ts',
+        clearMocks: true,
+        coverage: {
+            provider: 'istanbul',
+            enabled: true,
+            '100': true,
+            reporter: ['text', 'lcov'],
+            reportsDirectory: 'coverage'
+        }
+    },
+    plugins: [
+        tsconfigPaths(),
+        svgr(),
+        react(),
+        ...(mode === 'test'
+            ? []
+            : [
+                eslintPlugin(),
+                VitePWA({
+                    registerType: 'autoUpdate',
+                    includeAssets: [
+                        'favicon.png',
+                        'robots.txt',
+                        'apple-touch-icon.png',
+                        'icons/*.svg',
+                        'fonts/*.woff2'
+                    ],
+                    manifest: {
+                        theme_color: '#BD34FE',
+                        icons: [
+                            {
+                                src: '/android-chrome-192x192.png',
+                                sizes: '192x192',
+                                type: 'image/png',
+                                purpose: 'any maskable'
+                            },
+                            {
+                                src: '/android-chrome-512x512.png',
+                                sizes: '512x512',
+                                type: 'image/png'
+                            }
+                        ]
+                    }
+                })
+            ])
+    ]
+}));
+
+/**
+ *     visualizer({
       template: 'treemap', // or sunburst
       open: true,
       gzipSize: true,
