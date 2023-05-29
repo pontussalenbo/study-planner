@@ -16,11 +16,6 @@ import { Select } from 'components/Select';
 import useFetch from 'hooks/useFetch';
 import { BASE_URL } from 'utils/URL';
 
-type Filters = {
-  Programme: string;
-  Year: string;
-};
-
 function Courses() {
   const [filters, setFilters] = useState<Filters>({
     Programme: '',
@@ -97,7 +92,12 @@ function Courses() {
             onGetCourses={handleGetCourses}
           />
         </FilterContainer>
-        <SearchBar matches={matches} filter={filterCourses} update={updateCourses} />
+        <SearchBar
+          matches={matches}
+          filters={filters}
+          filter={filterCourses}
+          update={updateCourses}
+        />
         <Row>
           <Col lg={8}>
             <Table courses={filteredCourses} />
