@@ -8,6 +8,5 @@ public class ControllerServiceInstaller : IServiceInstaller
             .AddJsonOptions(options => { options.JsonSerializerOptions.PropertyNamingPolicy = null; });
         services.AddEndpointsApiExplorer();
         services.AddSwaggerGen();
-        services.AddCors();
     }
 }

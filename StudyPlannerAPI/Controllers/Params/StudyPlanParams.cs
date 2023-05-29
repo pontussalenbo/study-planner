@@ -2,7 +2,7 @@
 
 namespace StudyPlannerAPI.Controllers.Params;
 
-public class LinkShareParams
+public class StudyPlanParams
 {
     public string Programme { get; set; }
     public string Year { get; set; }

@@ -11,5 +11,6 @@ public class ApplicationServiceInstaller : IServiceInstaller
         services.AddScoped<ILinkShareManager, LinkShareManager>();
         services.AddScoped<IGeneralInfoManager, GeneralInfoManager>();
         services.AddScoped<IHealthCheckManager, HealthCheckManager>();
+        services.AddScoped<ISpreadsheetManager, SpreadsheetManager>();
     }
 }

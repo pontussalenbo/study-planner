@@ -11,7 +11,7 @@ public class ValidationServiceInstaller : IServiceInstaller
     {
         services.AddScoped<IValidator<CourseParams>, CourseParamsValidator>();
         services.AddScoped<IValidator<MasterCheckParams>, MasterCheckParamsValidator>();
-        services.AddScoped<IValidator<LinkShareParams>, LinkShareParamsValidator>();
+        services.AddScoped<IValidator<StudyPlanParams>, StudyPlanParamsValidator>();
         services.AddScoped<IValidator<UniqueBlobDTO>, UniqueBlobValidator>();
         services.AddScoped<IValidator<ProgrammeMastersParams>, ProgrammeMastersParamsValidator>();
     }

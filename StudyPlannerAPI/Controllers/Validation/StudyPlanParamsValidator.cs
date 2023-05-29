@@ -5,29 +5,29 @@ using StudyPlannerAPI.Model.Util;
 
 namespace StudyPlannerAPI.Controllers.Validation;
 
-public class LinkShareParamsValidator : AbstractValidator<LinkShareParams>
+public class StudyPlanParamsValidator : AbstractValidator<StudyPlanParams>
 {
-    public LinkShareParamsValidator()
+    public StudyPlanParamsValidator()
     {
         RuleFor(lsp => lsp.Year)
             .NotNull()
             .WithErrorCode(ErrorCodes.PARAM_NULL)
-            .WithMessage(ErrorUtil.ParamNull(nameof(LinkShareParams.Year)));
+            .WithMessage(ErrorUtil.ParamNull(nameof(StudyPlanParams.Year)));
 
         RuleFor(lsp => lsp.Programme)
             .NotNull()
             .WithErrorCode(ErrorCodes.PARAM_NULL)
-            .WithMessage(ErrorUtil.ParamNull(nameof(LinkShareParams.Programme)));
+            .WithMessage(ErrorUtil.ParamNull(nameof(StudyPlanParams.Programme)));
 
         RuleFor(lsp => lsp.Year)
             .Must(ModelUtil.IsYearPatternValid)
             .When(lsp => lsp.Year != null)
             .WithErrorCode(ErrorCodes.INVALID_FORMAT)
-            .WithMessage(ErrorUtil.InvalidFormat(nameof(LinkShareParams.Year)));
+            .WithMessage(ErrorUtil.InvalidFormat(nameof(StudyPlanParams.Year)));
 
         RuleFor(lsp => lsp.SelectedCourses)
             .Must(courses => courses.Count > 0)
             .WithErrorCode(ErrorCodes.COUNT_LEQ_ZERO)
-            .WithMessage(ErrorUtil.LeqZero(nameof(LinkShareParams.SelectedCourses)));
+            .WithMessage(ErrorUtil.LeqZero(nameof(StudyPlanParams.SelectedCourses)));
     }
 }
