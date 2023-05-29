@@ -33,7 +33,7 @@ interface SearchInputProps {
 }
 
 export const SearchInput = styled.input<SearchInputProps>`
-  min-width: 250px;
+  min-width: 300px;
   width: auto;
   outline: ${({ error, theme }) =>
     error ? '1px solid red' : `2px solid ${theme.secondary}`}};
@@ -46,7 +46,7 @@ export const SearchInput = styled.input<SearchInputProps>`
 
   border-radius: 4px;
   height: 30px;
-  padding: 5px;
+  padding: 10px;
 `;
 
 export const SearchError = styled.span`

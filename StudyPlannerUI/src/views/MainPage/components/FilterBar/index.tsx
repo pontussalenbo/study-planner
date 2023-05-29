@@ -5,11 +5,7 @@ import Tooltip from 'components/Tooltip';
 import { GetButton, SelectWrapper } from './style';
 import { GET } from 'utils/fetch';
 import { Endpoints } from 'interfaces/API_Constants.d';
-
-type Filters = {
-  Programme: string;
-  Year: string;
-};
+import { Filters } from 'interfaces/Types';
 
 interface FilterBarProps {
   filters: Filters;

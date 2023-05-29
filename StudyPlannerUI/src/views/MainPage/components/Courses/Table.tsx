@@ -15,18 +15,21 @@ interface CourseTableRowProps {
   courses: CourseData.DataWithLocale[];
 }
 
+const sliceLength = 7;
+
 function Table({ courses }: CourseTableRowProps) {
   const [page, setPage] = useState(1);
 
   const { addCourse } = useContext(MyContext) as CtxType;
 
-  const { slice, range } = useTable<CourseData.DataWithLocale>(courses, page, 7);
-  /* set page to the last if we out of bounds */
   useEffect(() => {
-    if (page > range.length) {
-      setPage(range.length);
+    const newMaxPage = Math.ceil(courses.length / sliceLength);
+    if (page > newMaxPage) {
+      setPage(newMaxPage);
     }
-  }, [page, range.length]);
+  }, [page, courses.length]);
+
+  const { slice } = useTable<CourseData.DataWithLocale>(courses, page, sliceLength);
 
   const handlePageChange = (page: number): void => {
     setPage(page);
