@@ -21,6 +21,7 @@ function renderChunks(deps: Record<string, string>): Record<string, string[]> {
 }
 
 export default defineConfig(({ mode }) => ({
+    base:"/study-planner/",
     build: {
         outDir: 'build',
         rollupOptions: {
