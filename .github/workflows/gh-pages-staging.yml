@@ -12,6 +12,7 @@ on:
       - "StudyPlannerUI/src/**"
       - "StudyPlannerUI/public/**"
       - ".github/workflows/gh-pages-staging.yml"
+      - "StudyPlannerUI/vite.config.ts"
 
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
