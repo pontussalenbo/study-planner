@@ -26,6 +26,7 @@ module.exports = {
     ],
     'rules': {
         'no-inline-styles/no-inline-styles': 2,
+        'max-len': [ 'error', { 'code': 110 } ],
         'react/require-default-props': 'off',
         'indent': [
 		  'error',
@@ -70,6 +71,8 @@ module.exports = {
             files: ['src/**/*.ts', 'vite.config.ts', 'cypress.config.ts', '.eslintrc.cjs'],
             rules: {
                 'indent': ['error', 4, { 'SwitchCase': 1 }],
+                '@typescript-eslint/indent': ['error', 4, { 'SwitchCase': 1 }],
+
             }
         },
         {
