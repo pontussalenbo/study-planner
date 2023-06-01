@@ -7,6 +7,7 @@ export const SelectWrapper = styled.div`
     'select';
   grid-template-rows: min-content min-content;
   gap: 8px;
+  max-width: 200px;
 `;
 
 export const Label = styled.label`
@@ -21,4 +22,11 @@ export const Select = styled.select`
   border-radius: 4px;
   border: 1px solid ${({ theme }) => theme.secondary};
   min-width: 100px;
+`;
+
+export const OptionalText = styled.span`
+  font-size: 0.7rem;
+  margin-left: 3px;
+  font-weight: 300;
+  font-style: italic;
 `;
