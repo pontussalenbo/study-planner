@@ -1,6 +1,6 @@
 import { useContext, useState } from 'react';
 import { StyledCell } from './Table.style';
-import { AlertButton, StyledButton } from 'components/Button';
+import StyledButtonWithIcon, { AlertButton } from 'components/Button';
 import { MyContext, CtxType } from 'hooks/CourseContext';
 import { Select } from '../Courses/styles';
 
@@ -74,12 +74,13 @@ const CourseTableRow: React.FC<CourseTableRowProps> = ({ course, handleAddCourse
         {selected ? (
           <AlertButton onClick={handleRemoveClick}>&#45; Remove</AlertButton>
         ) : (
-          <StyledButton
+          <StyledButtonWithIcon
             disabled={!selectedPeriod && course.periods.length > 1}
             onClick={handleButtonClick}
+            text={false}
           >
             &#43; Select
-          </StyledButton>
+          </StyledButtonWithIcon>
         )}
       </StyledCell>
     </tr>
