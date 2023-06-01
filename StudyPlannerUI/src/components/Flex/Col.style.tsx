@@ -12,6 +12,8 @@ export interface ColProps {
 }
 
 const Col = styled.div<ColProps>`
+  display: flex;
+  flex-direction: column;
   position: relative;
   width: 100%;
   padding-right: 15px;
