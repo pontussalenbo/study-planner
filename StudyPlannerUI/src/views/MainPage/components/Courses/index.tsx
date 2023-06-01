@@ -1,20 +1,20 @@
+import { ChangeEvent, useState } from 'react';
 import Col from 'components/Flex/Col.style';
 import Row from 'components/Flex/Row.style';
 import { Section } from 'components/Section';
-import React, { ChangeEvent, useState } from 'react';
-import CreditsTable from './CreditsTable';
-import { FilterBar } from '../FilterBar';
-import SearchBar from '../FilterBar/SearchBar';
-import Table from './Table';
-import { CreditsWrapper } from '../styles';
-import { POST } from 'utils/fetch';
-import { dataParser } from 'views/MainPage/dataParser';
-import { FilterContainer } from './styles';
-import type { Filters, TransformFn } from 'interfaces/Types';
-import { Endpoints } from 'interfaces/API_Constants.d';
 import { Select } from 'components/Select';
 import useFetch from 'hooks/useFetch';
+import { Endpoints } from 'interfaces/API_Constants.d';
+import type { Filters, TransformFn } from 'interfaces/Types';
 import { BASE_URL } from 'utils/URL';
+import { POST } from 'utils/fetch';
+import { dataParser } from 'views/MainPage/dataParser';
+import { FilterBar } from '../FilterBar';
+import SearchBar from '../FilterBar/SearchBar';
+import { CreditsWrapper } from '../styles';
+import CreditsTable from './CreditsTable';
+import Table from './Table';
+import { FilterContainer } from './styles';
 
 function Courses() {
   const [filters, setFilters] = useState<Filters>({
@@ -72,12 +72,7 @@ function Courses() {
   return (
     <>
       <FilterContainer>
-        <Select
-          label='Programme'
-          options={programmes}
-          name='Programme'
-          onChange={handleFilterChange}
-        >
+        <Select label='Programme' options={programmes} name='Programme' onChange={handleFilterChange}>
           <option value=''>Select</option>
         </Select>
         <Select label='Year' options={years} name='Year' onChange={handleFilterChange}>
@@ -87,22 +82,18 @@ function Courses() {
       <Section id='courses'>
         <FilterContainer>
           <FilterBar
+            update={updateCourses}
             filters={filters}
             onFilterChange={handleFilterChange}
             onGetCourses={handleGetCourses}
           />
         </FilterContainer>
-        <SearchBar
-          matches={matches}
-          filters={filters}
-          filter={filterCourses}
-          update={updateCourses}
-        />
+        <SearchBar matches={matches} filter={filterCourses} />
         <Row>
-          <Col lg={8}>
+          <Col lg={7}>
             <Table courses={filteredCourses} />
           </Col>
-          <Col md={6} lg={4}>
+          <Col lg={5}>
             <CreditsWrapper>
               <CreditsTable filters={filters} />
             </CreditsWrapper>

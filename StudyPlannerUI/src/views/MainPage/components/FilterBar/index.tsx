@@ -2,22 +2,31 @@
 import React, { ChangeEvent, useMemo } from 'react';
 import { Select } from 'components/Select';
 import Tooltip from 'components/Tooltip';
-import { GetButton, SelectWrapper } from './style';
-import { GET } from 'utils/fetch';
+import { SelectWrapper } from './style';
+import { GET, POST } from 'utils/fetch';
 import { Endpoints } from 'interfaces/API_Constants.d';
 import { Filters } from 'interfaces/Types';
+import StyledButtonWithIcon from 'components/Button';
+import { ReactComponent as ReloadIcon } from 'components/icons/reload-outline.svg';
+import { dataParser } from 'views/MainPage/dataParser';
 
 interface FilterBarProps {
   filters: Filters;
   onFilterChange: (e: ChangeEvent<HTMLSelectElement>) => void;
   onGetCourses: (filters: string) => void;
+  update: (courses: CourseData.DataWithLocale[]) => void;
 }
 
 type Filter = 'Year' | 'Class';
 
-export const FilterBar: React.FC<FilterBarProps> = ({ filters, onGetCourses }) => {
+export const FilterBar: React.FC<FilterBarProps> = ({ filters, onGetCourses, update }) => {
   const [filterValues, setFilterValues] = React.useState<string[]>([]);
   const [coursesFilter, setFilterCourses] = React.useState<string>(filters.Year);
+  const [masters, setMasters] = React.useState<API.Masters[]>([]);
+
+  React.useEffect(() => {
+    fetchFilterValues('Class');
+  }, []);
 
   React.useEffect(() => {
     if (coursesFilter !== '') {
@@ -27,8 +36,13 @@ export const FilterBar: React.FC<FilterBarProps> = ({ filters, onGetCourses }) =
   }, [filters]);
 
   React.useEffect(() => {
-    fetchFilterValues('Class');
-  }, []);
+    const { Programme, Year } = filters;
+    if (!Programme || !Year) {
+      return;
+    }
+    const params = new URLSearchParams({ Programme, Year });
+    GET(Endpoints.masters, params).then(data => setMasters(data));
+  }, [filters]);
 
   const handleChange = (e: ChangeEvent<HTMLSelectElement>) => {
     const { value } = e.target;
@@ -48,6 +62,20 @@ export const FilterBar: React.FC<FilterBarProps> = ({ filters, onGetCourses }) =
   const disableGetCourses = useMemo(() => {
     return filters.Programme === '' || filters.Year === '';
   }, [filters]);
+
+  const handleMasterFilter = (master: string) => {
+    const { Programme, Year } = filters;
+    // TODO: This considers your Study Class, not selected course year
+    const body = { Programme, Year, Master: master || undefined };
+
+    POST(Endpoints.courses, body)
+      .then(data => dataParser(data, 'course_name_en'))
+      .then(data => update(data));
+  };
+
+  const handleMasterChange = (event: ChangeEvent<HTMLSelectElement>) => {
+    handleMasterFilter(event.target.value);
+  };
 
   return (
     <SelectWrapper>
@@ -75,9 +103,22 @@ export const FilterBar: React.FC<FilterBarProps> = ({ filters, onGetCourses }) =
           </option>
         </Select>
       </Tooltip>
-      <GetButton disabled={disableGetCourses} onClick={() => onGetCourses(coursesFilter)}>
+      <Select defaultValue='' label='By Master' optional onChange={handleMasterChange}>
+        <option value=''>All (Default)</option>
+        {masters.map(master => (
+          <option key={master.master_code} value={master.master_code}>
+            {master.master_name_en}
+          </option>
+        ))}
+      </Select>
+      <StyledButtonWithIcon
+        disabled={disableGetCourses}
+        onClick={() => onGetCourses(coursesFilter)}
+        text={true}
+        icon={<ReloadIcon fill='white' width='0.7rem' />}
+      >
         Get Courses
-      </GetButton>
+      </StyledButtonWithIcon>
     </SelectWrapper>
   );
 };

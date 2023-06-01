@@ -1,8 +1,9 @@
-import { useContext, useMemo, useState } from 'react';
+import { useCallback, useContext, useMemo, useState, memo, ChangeEvent } from 'react';
 import { StyledCell } from '../Table/Table.style';
 import { MyContext, CtxType } from 'hooks/CourseContext';
-import { ActionButton, RemoveButton } from '../styles';
-import { Select } from './styles';
+import { AddButton, Select, RemoveButton } from './styles';
+import { ReactComponent as AddIcon } from 'components/icons/add.svg';
+import { ReactComponent as RemoveIcon } from 'components/icons/remove-outline.svg';
 
 interface CourseTableRowProps {
   course: CourseData.DataWithLocale;
@@ -34,23 +35,26 @@ const CourseTableRow: React.FC<CourseTableRowProps> = ({ course, handleAddCourse
     return courseCodes.has(course.course_code);
   }, [courseCodes, course.course_code]);
 
-  const handlePeriodChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
-    const periodIndex = parseInt(event.target.value);
-    setSelectedPeriod(course.periods[periodIndex]);
-  };
+  const handlePeriodChange = useCallback(
+    (event: ChangeEvent<HTMLSelectElement>) => {
+      const periodIndex = parseInt(event.target.value);
+      setSelectedPeriod(course.periods[periodIndex]);
+    },
+    [course.periods]
+  );
 
-  const handleButtonClick = () => {
+  const handleButtonClick = useCallback(() => {
     const selectedCourse: CourseData.SelectedCourse = {
       ...course,
       selectedPeriod,
       selectedYear: 4
     };
     handleAddCourse(selectedCourse, 4, selectedPeriod);
-  };
+  }, [course, handleAddCourse, selectedPeriod]);
 
-  const handleRemoveClick = () => {
+  const handleRemoveClick = useCallback(() => {
     removeCourse(course.course_code);
-  };
+  }, [course.course_code, removeCourse]);
 
   return (
     <tr>
@@ -76,18 +80,26 @@ const CourseTableRow: React.FC<CourseTableRowProps> = ({ course, handleAddCourse
       </StyledCell>
       <StyledCell>
         {isSelected ? (
-          <RemoveButton onClick={handleRemoveClick}>&#45; Remove</RemoveButton>
+          <RemoveButton
+            onClick={handleRemoveClick}
+            text={false}
+            icon={<RemoveIcon fill='white' width='0.8rem' />}
+          >
+            Remove
+          </RemoveButton>
         ) : (
-          <ActionButton
+          <AddButton
             disabled={!selectedPeriod && course.periods.length > 1}
             onClick={handleButtonClick}
+            text={false}
+            icon={<AddIcon fill='white' width='0.8rem' />}
           >
-            &#43; Select
-          </ActionButton>
+            Select
+          </AddButton>
         )}
       </StyledCell>
     </tr>
   );
 };
 
-export default CourseTableRow;
+export default memo(CourseTableRow);

@@ -22,14 +22,11 @@ function Table({ courses }: CourseTableRowProps) {
 
   const { addCourse } = useContext(MyContext) as CtxType;
 
-  useEffect(() => {
-    const newMaxPage = Math.ceil(courses.length / sliceLength);
-    if (page > newMaxPage) {
-      setPage(newMaxPage);
-    }
-  }, [page, courses.length]);
-
   const { slice } = useTable<CourseData.DataWithLocale>(courses, page, sliceLength);
+
+  useEffect(() => {
+    setPage(1);
+  }, [courses]);
 
   const handlePageChange = (page: number): void => {
     setPage(page);
@@ -51,21 +48,17 @@ function Table({ courses }: CourseTableRowProps) {
           </thead>
           <TableBody>
             {slice.map(course => (
-              <CourseTableRow
-                key={course.course_code}
-                course={course}
-                handleAddCourse={addCourse}
-              />
+              <CourseTableRow key={course.course_code} course={course} handleAddCourse={addCourse} />
             ))}
           </TableBody>
         </StyledTable>
+        <Pagination
+          currentPage={page}
+          totalCount={courses.length}
+          pageSize={7}
+          onPageChange={handlePageChange}
+        />
       </StyledTableContainer>
-      <Pagination
-        currentPage={page}
-        totalCount={courses.length}
-        pageSize={7}
-        onPageChange={handlePageChange}
-      />
     </>
   );
 }
