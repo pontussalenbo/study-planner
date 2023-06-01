@@ -6,6 +6,7 @@ export const StyledTableContainer = styled.div`
     max-width: 100%;
     overflow-x: auto;
     height: auto;
+    margin-bottom: 1rem;
 `;
 
 export const StyledTable = styled.table`
