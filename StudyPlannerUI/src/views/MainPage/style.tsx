@@ -8,6 +8,7 @@ export const Container = styled.div`
 `;
 
 export const Wrapper = styled.div`
+  min-width: 75%;
   margin: 0 2rem;
   margin-top: 5rem;
   @media screen and (max-width: 768px) {

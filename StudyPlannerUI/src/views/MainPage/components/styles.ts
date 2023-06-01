@@ -3,13 +3,11 @@ import { TableRow } from 'components/Table/Table.style';
 import styled from 'styled-components';
 
 interface IColoredTableRow {
-    fullfilled: boolean;
+    fullfilled?: boolean;
 }
 
 export const ColoredTableRow = styled(TableRow)<IColoredTableRow>`
-    background-color: ${props =>
-        props.fullfilled ? props.theme.fulfilled : props.theme.notFulfilled} !important;
-    color: black;
+    background-color: ${props => props.fullfilled && props.theme.fulfilled} !important;
 `;
 
 export const CreditsWrapper = styled.div`
