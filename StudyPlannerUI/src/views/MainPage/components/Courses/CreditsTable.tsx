@@ -1,11 +1,5 @@
-import {
-  StyledCell,
-  StyledHeader,
-  StyledTable,
-  StyledTableContainer,
-  TableBody
-} from '../Table/Table.style';
-import { memo, useContext, useEffect, useMemo, useState } from 'react';
+import { StyledCell, StyledHeader, StyledTable, StyledTableContainer, TableBody } from '../Table/Table.style';
+import { memo, useCallback, useContext, useEffect, useMemo, useState } from 'react';
 import { CtxType, MyContext } from 'hooks/CourseContext';
 import { GetStatsBar, StatsWrapper } from './styles';
 import Tooltip from 'components/Tooltip';
@@ -29,7 +23,7 @@ function CreditsTable({ filters }: ICreditsTable): JSX.Element {
   const [stats, setStats] = useState<API.MasterStatus[]>([]);
 
   useEffect(() => {
-    const classSelected = filters.Year.startsWith('H');
+    const classSelected = filters?.Year?.startsWith('H');
     if (classSelected) {
       setClassYear(filters.Year);
     }
@@ -39,24 +33,28 @@ function CreditsTable({ filters }: ICreditsTable): JSX.Element {
 
   const selectedCourses = useMemo(() => [...courses[4], ...courses[5]], [courses]);
 
-  const getMasters = async () => {
+  const getMasters = useCallback(async () => {
+    if (!classYear) return;
     const params = {
-      programme: filters.Programme,
+      programme: filters?.Programme,
       year: classYear
     };
     const data = await GET(Endpoints.masters, new URLSearchParams(params));
-    setMasters(data);
-  };
+    return data;
+  }, [classYear, filters]);
 
-  const getMasterStats = async () => {
+  const getMasterStats = useCallback(async () => {
     const courseCodes = selectedCourses.map(course => course.course_code);
     const body = { ...filters, selectedCourses: courseCodes };
-    POST(Endpoints.masterCheck, body).then(data => setStats(data));
-  };
+    const data = await POST(Endpoints.masterCheck, body);
+    return data;
+  }, [filters, selectedCourses]);
 
-  const handleUpdate = () => {
-    getMasters().then(() => getMasterStats());
-  };
+  const handleUpdate = useCallback(async () => {
+    const [masters, stats] = await Promise.all([getMasters(), getMasterStats()]);
+    setMasters(masters);
+    setStats(stats);
+  }, [getMasters, getMasterStats]);
 
   const sortMasters = (masters: API.Masters[]) => {
     const sortedMasters = [...masters];
@@ -79,7 +77,7 @@ function CreditsTable({ filters }: ICreditsTable): JSX.Element {
   const enoughCourses = useMemo(() => selectedCourses.length >= 4, [courses]);
 
   return (
-    <StatsWrapper>
+    <>
       <GetStatsBar>
         <Tooltip enabled={!enoughCourses} text='Needs atleast 4 courses'>
           <StyledButtonWithIcon disabled={!enoughCourses} onClick={handleUpdate}>
@@ -100,8 +98,7 @@ function CreditsTable({ filters }: ICreditsTable): JSX.Element {
           </thead>
           <TableBody>
             {sortedMasters.map(master => {
-              const masterStat =
-                stats.find(stat => stat.Master === master.master_code) ?? null;
+              const masterStat = stats.find(stat => stat.Master === master.master_code) ?? null;
               const totalCredits = masterStat
                 ? masterStat.G1Credits + masterStat.G2Credits + masterStat.AdvancedCredits
                 : 0;
@@ -121,7 +118,7 @@ function CreditsTable({ filters }: ICreditsTable): JSX.Element {
           </TableBody>
         </StyledTable>
       </StyledTableContainer>
-    </StatsWrapper>
+    </>
   );
 }
 
