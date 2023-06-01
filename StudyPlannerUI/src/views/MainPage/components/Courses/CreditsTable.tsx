@@ -1,11 +1,13 @@
-import { StyledCell, StyledHeader, StyledTable, StyledTableContainer, TableBody } from '../Table/Table.style';
 import { memo, useCallback, useContext, useEffect, useMemo, useState } from 'react';
+import { StyledCell, StyledHeader, StyledTable, StyledTableContainer, TableBody } from '../Table/Table.style';
 import { CtxType, MyContext } from 'hooks/CourseContext';
-import { GetStatsBar, StatsWrapper } from './styles';
 import Tooltip from 'components/Tooltip';
 import StyledButtonWithIcon from 'components/Button';
 import { GET, POST } from 'utils/fetch';
 import { CREDITS_TOTAL_KEY, Endpoints } from 'interfaces/API_Constants.d';
+import { ReloadIcon } from 'components/icons';
+import { GetStatsBar } from './styles';
+import { ColoredTableRow } from '../styles';
 
 interface Filters {
   Programme: string;
@@ -73,15 +75,18 @@ function CreditsTable({ filters }: ICreditsTable): JSX.Element {
   };
 
   const sortedMasters = useMemo(() => sortMasters(masters), [masters]);
-
   const enoughCourses = useMemo(() => selectedCourses.length >= 4, [courses]);
 
   return (
     <>
       <GetStatsBar>
         <Tooltip enabled={!enoughCourses} text='Needs atleast 4 courses'>
-          <StyledButtonWithIcon disabled={!enoughCourses} onClick={handleUpdate}>
-            Get stats
+          <StyledButtonWithIcon
+            disabled={!enoughCourses}
+            onClick={handleUpdate}
+            icon={<ReloadIcon fill='white' width='0.8rem' />}
+          >
+            Check Masters
           </StyledButtonWithIcon>
         </Tooltip>
       </GetStatsBar>
@@ -106,13 +111,16 @@ function CreditsTable({ filters }: ICreditsTable): JSX.Element {
                 return null;
               }
               return (
-                <tr key={master.master_code}>
+                <ColoredTableRow
+                  fullfilled={masterStat ? masterStat.RequirementsFulfilled : false}
+                  key={master.master_code}
+                >
                   <StyledCell>{master.master_name_en}</StyledCell>
                   <StyledCell>{masterStat?.G1Credits}</StyledCell>
                   <StyledCell>{masterStat?.G2Credits}</StyledCell>
                   <StyledCell>{masterStat?.AdvancedCredits}</StyledCell>
                   <StyledCell>{totalCredits}</StyledCell>
-                </tr>
+                </ColoredTableRow>
               );
             })}
           </TableBody>
