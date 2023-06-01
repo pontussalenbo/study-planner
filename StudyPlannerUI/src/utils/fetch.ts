@@ -1,5 +1,8 @@
 import { BASE_URL } from './URL';
 
+// TODO: Implement object export methods to get each respective endpoint
+// TODO: Pretty unbareable to handle at large scale, but it's a start
+
 export async function POST<T = any>(endpoint: string, data: unknown): Promise<T> {
     const body = JSON.stringify(data);
     try {
@@ -26,10 +29,7 @@ export async function POST<T = any>(endpoint: string, data: unknown): Promise<T>
  *
  * @throws {APIError} If an error occurs during the fetch operation, it will throw an error of type APIError.
  */
-export async function GET<T = any>(
-    endpoint: string,
-    params?: URLSearchParams
-): Promise<T> {
+export async function GET<T = any>(endpoint: string, params?: URLSearchParams): Promise<T> {
     try {
         const url = new URL(BASE_URL + endpoint);
 
@@ -63,9 +63,9 @@ export async function GET<T = any>(
  * any error-specific data that doesn't fit into the `message` or `code` properties.
  */
 interface IAPIError {
-  message: string;
-  code: number;
-  rest: Record<string, unknown>;
+    message: string;
+    code: number;
+    rest: Record<string, unknown>;
 }
 class APIError extends Error implements IAPIError {
     public readonly code;

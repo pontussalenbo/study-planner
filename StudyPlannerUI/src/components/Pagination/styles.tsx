@@ -3,7 +3,7 @@ import styled, { css } from 'styled-components';
 export const PaginationContainer = styled.ul`
   display: flex;
   list-style-type: none;
-  width: 100%;
+  width: auto;
   justify-content: center;
 `;
 

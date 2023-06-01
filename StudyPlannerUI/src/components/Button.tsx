@@ -1,6 +1,4 @@
 import styled from 'styled-components';
-import Add from './icons/Add';
-
 import { ButtonHTMLAttributes } from 'react';
 
 interface StyledButtonProps {
@@ -10,7 +8,8 @@ interface StyledButtonProps {
 export const StyledButton = styled.button<StyledButtonProps>`
   background-color: ${({ theme }) => theme.button};
   border-color: ${({ theme }) => theme.buttonBorder};
-  min-width: 88px;
+  width: max-content;
+  height: max-content;
   padding: 8px 12px;
   padding-left 8px;
   padding-right: 12px;
@@ -33,7 +32,7 @@ export const AlertButton = styled(StyledButton)`
   font-size: 1em;
 `;
 
-const Button = styled.button`
+export const Button = styled.button`
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -60,14 +59,31 @@ const IconWrapper = styled.span`
   margin-right: 4px;
 `;
 
-type ButtonWithIconProps = React.ComponentProps<typeof Button>;
+const Text = styled.span`
+  @media (max-width: 420px) {
+    display: none;
+  }
+`;
 
-const StyledButtonWithIcon = ({ children, ...rest }: ButtonWithIconProps) => (
+const Container = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+`;
+
+interface IButtonWithIconProps extends ButtonHTMLAttributes<HTMLButtonElement> {
+  children: React.ReactNode;
+  icon?: React.ReactNode;
+  text?: boolean;
+}
+
+const StyledButtonWithIcon = ({ children, icon, text = true, ...rest }: IButtonWithIconProps) => (
   <StyledButton {...rest}>
-    <IconWrapper>
-      <Add fill='white' />
-    </IconWrapper>
-    {children}
+    <Container>
+      {icon && <IconWrapper>{icon}</IconWrapper>}
+      {text ? children : <Text>{children}</Text>}
+    </Container>
   </StyledButton>
 );
 

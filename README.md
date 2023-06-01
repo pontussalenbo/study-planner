@@ -1,5 +1,5 @@
 <p align="center">
-  <a href="https://studyplanner.se"><img src="" alt="Logo" height=170></a>
+  <a href="https://studyplanner.se"><img src="https://github-production-user-asset-6210df.s3.amazonaws.com/45301555/242436813-54269264-13b7-42db-af82-47c39b48c8ba.svg?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAIWNJYAX4CSVEH53A%2F20230531%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20230531T233337Z&X-Amz-Expires=300&X-Amz-Signature=7db8c76f354b49d5c5bdeb4c74c91302bb98732bd8f359266853710197aff43e&X-Amz-SignedHeaders=host&actor_id=45301555&key_id=0&repo_id=590166546" alt="Logo" height=170></a>
 </p>
 
 <h1 align="center">Study Planner</h1>
@@ -36,3 +36,13 @@ This project is devolped and maintained by [Pontus Salenbo](https://github.com/p
 
 - [x] Make context dispatch more efficient (useReducer?)
 - [x] Fix Todos with real filters
+- [ ] Loading spinner (?)
+
+
+### Backend
+- [ ] Generate excel file for study plan
+- [ ] Error logging for frontend
+
+### Misc
+- [ ] Update READEME's
+- [ ] Add License [[#30](https://github.com/pontussalenbo/study-planner/issues/30)]
