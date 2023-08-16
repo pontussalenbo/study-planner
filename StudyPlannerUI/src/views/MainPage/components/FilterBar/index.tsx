@@ -1,67 +1,71 @@
 // FilterBar.tsx
-import React, { ChangeEvent, useMemo } from 'react';
-import { Select } from 'components/Select';
+import React, { ChangeEvent, useState } from 'react';
+import { MultiSelect } from 'components/Select';
 import Tooltip from 'components/Tooltip';
-import { SelectWrapper } from './style';
 import { GET, POST } from 'utils/fetch';
 import { Endpoints } from 'interfaces/API_Constants.d';
 import { Filters } from 'interfaces/Types';
 import StyledButtonWithIcon from 'components/Button';
 import { ReactComponent as ReloadIcon } from 'components/icons/reload-outline.svg';
 import { dataParser } from 'views/MainPage/dataParser';
+import { Option } from 'components/Select';
 
 interface FilterBarProps {
   filters: Filters;
-  onFilterChange: (e: ChangeEvent<HTMLSelectElement>) => void;
+  onFilterChange: (value: string, name: keyof Filters) => void;
   onGetCourses: (filters: string) => void;
   update: (courses: CourseData.DataWithLocale[]) => void;
 }
 
-type Filter = 'Year' | 'Class';
+enum FilterType {
+  Year = 'Year',
+  Class = 'Class',
+  None = ''
+}
 
 export const FilterBar: React.FC<FilterBarProps> = ({ filters, onGetCourses, update }) => {
   const [filterValues, setFilterValues] = React.useState<string[]>([]);
-  const [coursesFilter, setFilterCourses] = React.useState<string>(filters.Year);
+  const [filterType, setFilterType] = React.useState<FilterType>(FilterType.None);
+  const [classYearFilter, setClassYearFilter] = React.useState<string>('');
   const [masters, setMasters] = React.useState<API.Masters[]>([]);
+  const [multiSelectValue, setMultiSelectValue] = useState<string[]>([]);
 
   React.useEffect(() => {
-    fetchFilterValues('Class');
-  }, []);
-
-  React.useEffect(() => {
-    if (coursesFilter !== '') {
-      return;
+    if (filters.Year && classYearFilter === '') {
+      setClassYearFilter(filters.Year);
     }
-    setFilterCourses(filters.Year);
-  }, [filters]);
+
+    if (filterType === FilterType.Year) {
+      setClassYearFilter('');
+    }
+  }, [filters.Year, filterType]);
+
+  React.useEffect(() => {
+    if (filterType) {
+      fetchFilterValues(filterType);
+    }
+  }, [filterType]);
 
   React.useEffect(() => {
     const { Programme, Year } = filters;
-    if (!Programme || !Year) {
-      return;
+
+    if (Programme && Year) {
+      const params = new URLSearchParams({ Programme, Year });
+      GET(Endpoints.masters, params).then(data => setMasters(data));
     }
-    const params = new URLSearchParams({ Programme, Year });
-    GET(Endpoints.masters, params).then(data => setMasters(data));
   }, [filters]);
 
-  const handleChange = (e: ChangeEvent<HTMLSelectElement>) => {
-    const { value } = e.target;
-    setFilterCourses(value);
-  };
-
-  const fetchFilterValues = async (filter: Filter) => {
+  const fetchFilterValues = async (filter: FilterType) => {
     const urls = {
       Class: Endpoints.classYears,
       Year: Endpoints.academicYears
     };
 
-    const data = await GET(urls[filter]);
-    setFilterValues(data);
+    if (filter) {
+      const data = await GET(urls[filter]);
+      setFilterValues(data);
+    }
   };
-
-  const disableGetCourses = useMemo(() => {
-    return filters.Programme === '' || filters.Year === '';
-  }, [filters]);
 
   const handleMasterFilter = (master: string) => {
     const { Programme, Year } = filters;
@@ -77,48 +81,63 @@ export const FilterBar: React.FC<FilterBarProps> = ({ filters, onGetCourses, upd
     handleMasterFilter(event.target.value);
   };
 
+  const hasProgramme = filters.Programme !== '';
+  const hasYear = filters.Year !== '';
+  const hasFilterBy = filterType !== '';
+
+  const disableMasterSelection = !hasProgramme || !hasYear;
+  const disableGetCourses = filters.Programme === '' || classYearFilter === '';
+
+  const masterTooltip = !hasProgramme ? 'Please select a Programme' : 'Please select a Year';
+
   return (
-    <SelectWrapper>
-      <Select
-        label='Filter by'
-        options={['Class', 'Year']}
-        defaultValue='Class'
-        name='Year'
-        onChange={e => fetchFilterValues(e.target.value as Filter)}
-      >
-        <option value='' disabled>
-          Select
-        </option>
-      </Select>
-      <Tooltip text='Please select a filter' enabled={!filterValues.length}>
-        <Select
-          label='Year/Class'
-          options={filterValues || []}
-          value={coursesFilter || filters.Year}
-          name='Year'
-          onChange={handleChange}
+    <>
+      <MultiSelect value={filterType} label='Filter by' onChange={setFilterType}>
+        <Option value='Class'>Class</Option>
+        <Option value='Year'>Year</Option>
+      </MultiSelect>
+
+      <Tooltip text='Please select a filter' enabled={!hasFilterBy}>
+        <MultiSelect
+          enabled={hasFilterBy}
+          label={filterType}
+          value={classYearFilter}
+          onChange={setClassYearFilter}
         >
-          <option value='' disabled>
-            Select
-          </option>
-        </Select>
+          <Option value=''>Select</Option>
+          {filterValues.map(filter => (
+            <Option key={filter} value={filter}>
+              {filter}
+            </Option>
+          ))}
+        </MultiSelect>
       </Tooltip>
-      <Select defaultValue='' label='By Master' optional onChange={handleMasterChange}>
-        <option value=''>All (Default)</option>
-        {masters.map(master => (
-          <option key={master.master_code} value={master.master_code}>
-            {master.master_name_en}
-          </option>
-        ))}
-      </Select>
+
+      <Tooltip text={masterTooltip} enabled={disableMasterSelection}>
+        <MultiSelect
+          enabled={!disableMasterSelection}
+          label='masters'
+          multiple
+          value={multiSelectValue}
+          onChange={setMultiSelectValue}
+        >
+          <Option value=''>All (Default)</Option>
+          {masters.map(master => (
+            <Option key={master.master_code} value={master.master_code}>
+              {master.master_name_en}
+            </Option>
+          ))}
+        </MultiSelect>
+      </Tooltip>
+
       <StyledButtonWithIcon
         disabled={disableGetCourses}
-        onClick={() => onGetCourses(coursesFilter)}
-        text={true}
-        icon={<ReloadIcon fill='white' width='0.7rem' />}
+        onClick={() => onGetCourses(classYearFilter)}
+        text
+        icon={<ReloadIcon width='0.7rem' />}
       >
         Get Courses
       </StyledButtonWithIcon>
-    </SelectWrapper>
+    </>
   );
 };

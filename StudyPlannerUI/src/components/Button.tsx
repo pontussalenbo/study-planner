@@ -6,57 +6,52 @@ interface StyledButtonProps {
 }
 
 export const StyledButton = styled.button<StyledButtonProps>`
-  background-color: ${({ theme }) => theme.button};
-  border-color: ${({ theme }) => theme.buttonBorder};
-  width: max-content;
-  height: max-content;
+  display: inline-flex;
+  background-color: ${({ theme }) => theme.primaryContainer};
+  color: ${({ theme }) => theme.onPrimaryContainer};
+  border-color: ${({ theme }) => theme.onPrimaryContainer};
+
+  min-width: 90px;
+  font-size: 1em;
   padding: 8px 12px;
-  padding-left 8px;
-  padding-right: 12px;
   border-radius: 4px;
-  color: white;
-  font-size: 0.8rem;
-  &:hover {
-    filter: brightness(1.2);
-    // border-color: #0062cc;
+  
+  ${({ disabled, theme }) =>
+    !disabled &&
+    ` &:hover {
+      background-color: ${theme.inversePrimary};
+      color: ${theme.onSecondaryContainer};
+      box-shadow: 0px 0px 3px 0px ${theme.shadow};
+    }
+    &:active {
+      scale: 0.97;
+      background-color: ${theme.onPrimary};
+      color: ${theme.onSecondaryContainer};
+    }`}
   }
-  ${({ disabled }) => disabled && 'opacity: 0.5; cursor: not-allowed;'}
+ 
+  ${({ disabled, theme }) =>
+    disabled &&
+    `background-color: ${theme.surfaceVariant};
+    opacity: 0.5; 
+    color: ${theme.onSurfaceVariant};
+    cursor: not-allowed;`}
 `;
 
 export const AlertButton = styled(StyledButton)`
-  background-color: #dc3545;
-  border-color: #dc3545;
+  background-color: ${({ theme }) => theme.errorContainer};
+  color: ${({ theme }) => theme.onErrorContainer};
   &:hover {
-    border-color: #bd2130;
-  }
-  font-size: 1em;
-`;
-
-export const Button = styled.button`
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  background-color: #007bff;
-  color: white;
-  font-size: 1em;
-  padding: 0.5em 1em;
-  border: none;
-  border-radius: 0.25em;
-  cursor: pointer;
-  transition: background-color 0.3s ease-in-out;
-
-  &:hover,
-  &:focus {
-    background-color: #0056b3;
-    outline: none;
+    background-color: ${({ theme }) => theme.errorContainer};
+    color: ${({ theme }) => theme.onErrorContainer};
   }
 `;
 
 const IconWrapper = styled.span`
   display: inline-flex;
+  flex-direction: row;
   align-items: center;
   justify-content: center;
-  margin-right: 4px;
 `;
 
 const Text = styled.span`
@@ -69,6 +64,7 @@ const Container = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
+  gap: 4px;
   height: 100%;
 `;
 

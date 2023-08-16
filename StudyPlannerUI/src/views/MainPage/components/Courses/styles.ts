@@ -8,8 +8,11 @@ export const StatsButton = styled(StyledButton)`
 
 export const FilterContainer = styled.div`
     display: flex;
+    align-items: stretch;
+    flex-wrap: wrap;
     gap: 1rem;
     width: 100%;
+    margin-bottom: 1rem;
 `;
 
 export const StatsWrapper = styled.div`
@@ -43,5 +46,24 @@ export const AddButton = styled(StyledButtonWithIcon)`
 `;
 
 export const RemoveButton = styled(AddButton)`
-    background: ${({ theme }) => theme.alert};
+    background-color: ${({ theme }) => theme.errorContainer} !important;
+    color: ${({ theme }) => theme.onErrorContainer} !important;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+
+    &:hover {
+        background-color: ${({ theme }) => theme.errorContainer} !important;
+    }
+
+    &:active {
+        background-color: ${({ theme }) => theme.tertiary};
+    }
+
+    &:disabled {
+        background-color: ${({ theme }) => theme.surfaceVariant};
+        color: ${({ theme }) => theme.onSurfaceVariant};
+        cursor: not-allowed;
+    }
 `;

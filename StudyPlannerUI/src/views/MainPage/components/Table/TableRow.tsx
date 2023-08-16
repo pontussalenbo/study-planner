@@ -11,6 +11,7 @@ interface CourseTableRowProps {
     selectedYear: 4 | 5,
     selectedPeriod: API.Period | null
   ) => void;
+  style?: React.CSSProperties;
 }
 
 interface Period {
@@ -23,7 +24,7 @@ const getDisplayPeriod = (period: Period) => {
   return end ? `${period.start} \u2192 ${end}` : period.start;
 };
 
-const CourseTableRow: React.FC<CourseTableRowProps> = ({ course, handleAddCourse }) => {
+const CourseTableRow: React.FC<CourseTableRowProps> = ({ course, handleAddCourse, style }) => {
   const [selectedPeriod, setSelectedPeriod] = useState<API.Period | null>(null);
   const [selected, setSelected] = useState(false);
   const { removeCourse } = useContext(MyContext) as CtxType;
@@ -49,7 +50,7 @@ const CourseTableRow: React.FC<CourseTableRowProps> = ({ course, handleAddCourse
   };
 
   return (
-    <tr>
+    <tr style={style}>
       <StyledCell>{course.course_code}</StyledCell>
       <StyledCell>{course.course_name}</StyledCell>
       <StyledCell>{course.credits}</StyledCell>

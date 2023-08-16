@@ -14,8 +14,8 @@ const arrowStyles = css`
     display: inline-block;
     width: 0.4em;
     height: 0.4em;
-    border-right: 0.12em solid ${({ theme }) => theme.text};
-    border-top: 0.12em solid ${({ theme }) => theme.text};
+    border-right: 0.12em solid ${({ theme }) => theme.outline};
+    border-top: 0.12em solid ${({ theme }) => theme.outline};
   }
 `;
 
@@ -43,7 +43,7 @@ export const PaginationItem = styled.li<{ disabled?: boolean; selected?: boolean
   line-height: 1.43;
   font-size: 13px;
   min-width: 32px;
-  color: ${({ theme }) => theme.text};
+  color: ${({ theme }) => theme.onBackground};
 
   ${({ disabled }) =>
     disabled &&
@@ -59,7 +59,7 @@ export const PaginationItem = styled.li<{ disabled?: boolean; selected?: boolean
   ${({ selected }) =>
     selected &&
     css`
-      background-color: ${({ theme }) => theme.header};
+      background-color: ${({ theme }) => theme.secondaryContainer};
     `}
 
     &:hover {
@@ -76,6 +76,6 @@ export const PaginationItemDots = styled(PaginationItem)`
 `;
 
 export const PageNumber = styled.a`
-  color: ${({ theme }) => theme.text};
+  color: ${({ theme }) => theme.onBackground};
   text-decoration: none;
 `;

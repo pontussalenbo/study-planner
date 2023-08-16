@@ -8,6 +8,10 @@ import { CREDITS_TOTAL_KEY, Endpoints } from 'interfaces/API_Constants.d';
 import { ReloadIcon } from 'components/icons';
 import { GetStatsBar } from './styles';
 import { ColoredTableRow } from '../styles';
+import Row from 'components/Flex/Row.style';
+import Col from 'components/Flex/Col.style';
+import FlexContainer from 'components/Layout';
+import styled from 'styled-components';
 
 interface Filters {
   Programme: string;
@@ -17,6 +21,113 @@ interface Filters {
 interface ICreditsTable {
   filters: Filters;
 }
+
+interface CourseProps {
+  name: string;
+  masters: string[];
+}
+
+const CourseName = styled.div`
+  font-weight: bold;
+  margin-right: 10px;
+`;
+
+const Pill = styled.div`
+  background-color: ${({ theme }) => theme.tertiary};
+  color: ${({ theme }) => theme.onTertiary}};
+  padding: 4px 8px;
+  border-radius: 6px;
+  margin-right: 4px;
+`;
+
+const Course: React.FC<CourseProps> = ({ name, masters }) => (
+  <FlexContainer margin='10px' gap='0.5em'>
+    <CourseName>{name}</CourseName>
+    {masters.map(master => (
+      <Pill key={master}>{master}</Pill>
+    ))}
+  </FlexContainer>
+);
+
+interface CourseData {
+  name: string;
+  masters: string[];
+}
+
+interface CourseContainerProps {
+  courses: CourseData[];
+}
+
+function toHex(num: number) {
+  return Math.round(num * 255).toString(16);
+}
+
+const Container = styled.div`
+  background-color: ${({ theme }) => theme.tertiary + toHex(0.2)}};
+  };
+  border-radius: 10px;
+  padding: 10px;
+`;
+
+const CourseContainer: React.FC<CourseContainerProps> = ({ courses }) => (
+  <Container>
+    {courses.map(course => (
+      <Course key={course.name} name={course.name} masters={course.masters} />
+    ))}
+  </Container>
+);
+
+const mockData = [
+  {
+    name: 'Course A',
+    masters: ['Master 1', 'Master 2']
+  },
+  {
+    name: 'Course B',
+    masters: ['Master 3']
+  },
+  {
+    name: 'Course A',
+    masters: ['Master 1', 'Master 2']
+  },
+  {
+    name: 'Course B',
+    masters: ['Master 3']
+  },
+  {
+    name: 'Course B',
+    masters: ['Master 3']
+  },
+  {
+    name: 'Course B',
+    masters: ['Master 3']
+  },
+  {
+    name: 'Course B',
+    masters: ['Master 3']
+  },
+  {
+    name: 'Course A',
+    masters: ['Master 1', 'Master 2']
+  },
+  {
+    name: 'Course B',
+    masters: ['Master 3']
+  },
+  {
+    name: 'Course A',
+    masters: ['Master 1', 'Master 2']
+  },
+  {
+    name: 'Course A',
+    masters: ['Master 1', 'Master 2']
+  },
+  {
+    name: 'Course A',
+    masters: ['Master 1', 'Master 2']
+  }
+  // ... add more courses
+];
 
 function CreditsTable({ filters }: ICreditsTable): JSX.Element {
   const [masters, setMasters] = useState<API.Masters[]>([]);
@@ -126,6 +237,11 @@ function CreditsTable({ filters }: ICreditsTable): JSX.Element {
           </TableBody>
         </StyledTable>
       </StyledTableContainer>
+      <Row>
+        <Col xs={12}>
+          <CourseContainer courses={mockData} />
+        </Col>
+      </Row>
     </>
   );
 }

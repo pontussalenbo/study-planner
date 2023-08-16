@@ -1,8 +1,7 @@
-import { ChangeEvent, useState } from 'react';
+import { useState } from 'react';
 import Col from 'components/Flex/Col.style';
 import Row from 'components/Flex/Row.style';
-import { Section } from 'components/Section';
-import { Select } from 'components/Select';
+import { MultiSelect, Option } from 'components/Select';
 import useFetch from 'hooks/useFetch';
 import { Endpoints } from 'interfaces/API_Constants.d';
 import type { Filters, TransformFn } from 'interfaces/Types';
@@ -11,10 +10,16 @@ import { POST } from 'utils/fetch';
 import { dataParser } from 'views/MainPage/dataParser';
 import { FilterBar } from '../FilterBar';
 import SearchBar from '../FilterBar/SearchBar';
-import { CreditsWrapper } from '../styles';
 import CreditsTable from './CreditsTable';
-import Table from './Table';
 import { FilterContainer } from './styles';
+import { Heading2 } from 'components/Typography/Heading2';
+import SelectedCoursesTable from '../SelectedCourses/SelectedCourses';
+import VirtualizedTable from './InfiniteScroll';
+import styled from 'styled-components';
+
+const MainFilter = styled(FilterContainer)`
+  margin-bottom: 3rem;
+`;
 
 function Courses() {
   const [filters, setFilters] = useState<Filters>({
@@ -53,6 +58,7 @@ function Courses() {
       Programme: filters.Programme,
       Year: filterYear
     };
+
     POST(Endpoints.courses, coursesFiter).then(resp => {
       const parsedData = dataParser(resp, 'course_name_en');
       setCourses(parsedData);
@@ -61,45 +67,77 @@ function Courses() {
     });
   };
 
-  const handleFilterChange = (e: ChangeEvent<HTMLSelectElement>) => {
-    const { name, value } = e.target;
+  const handleFilterChange = (value: string, name: keyof Filters) => {
     setFilters(prev => ({
       ...prev,
       [name]: value
     }));
   };
 
+  const handleProgrammeChange = (value: string) => {
+    handleFilterChange(value, 'Programme');
+  };
+
+  const handleYearChange = (value: string) => {
+    handleFilterChange(value, 'Year');
+  };
+
   return (
     <>
-      <FilterContainer>
-        <Select label='Programme' options={programmes} name='Programme' onChange={handleFilterChange}>
-          <option value=''>Select</option>
-        </Select>
-        <Select label='Year' options={years} name='Year' onChange={handleFilterChange}>
-          <option value=''>Select</option>
-        </Select>
-      </FilterContainer>
-      <Section id='courses'>
-        <FilterContainer>
-          <FilterBar
-            update={updateCourses}
-            filters={filters}
-            onFilterChange={handleFilterChange}
-            onGetCourses={handleGetCourses}
-          />
-        </FilterContainer>
-        <SearchBar matches={matches} filter={filterCourses} />
-        <Row>
-          <Col lg={7}>
-            <Table courses={filteredCourses} />
-          </Col>
-          <Col lg={5}>
-            <CreditsWrapper>
-              <CreditsTable filters={filters} />
-            </CreditsWrapper>
-          </Col>
-        </Row>
-      </Section>
+      <Row>
+        <Col xs={12}>
+          <Heading2>Study Period</Heading2>
+          <MainFilter>
+            <MultiSelect value={filters.Programme} label='Programme' onChange={handleProgrammeChange}>
+              <Option value=''>Select</Option>
+              {programmes?.map(programme => (
+                <Option key={programme} value={programme}>
+                  {programme}
+                </Option>
+              ))}
+            </MultiSelect>
+            <MultiSelect value={filters.Year} label='Year' onChange={handleYearChange}>
+              <Option value=''>Select</Option>
+              {years?.map(year => (
+                <Option key={year} value={year}>
+                  {year}
+                </Option>
+              ))}
+            </MultiSelect>
+          </MainFilter>
+          <Heading2>Courses</Heading2>
+          <FilterContainer>
+            <FilterBar
+              onFilterChange={handleFilterChange}
+              onGetCourses={handleGetCourses}
+              update={updateCourses}
+              filters={filters}
+            />
+          </FilterContainer>
+
+          <SearchBar matches={matches} filter={filterCourses} />
+        </Col>
+
+        <Col xs={12} lg={7}>
+          <VirtualizedTable courses={filteredCourses} />
+        </Col>
+
+        <Col xs={12} lg={5}>
+          <CreditsTable filters={filters} />
+        </Col>
+      </Row>
+
+      <Row>
+        <Col xs={12} lg={6}>
+          <Heading2>Fourth Year</Heading2>
+          <SelectedCoursesTable year={4} />
+        </Col>
+
+        <Col xs={12} lg={6}>
+          <Heading2>Fifth Year</Heading2>
+          <SelectedCoursesTable year={5} />
+        </Col>
+      </Row>
     </>
   );
 }

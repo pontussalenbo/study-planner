@@ -18,9 +18,9 @@ const Circle = styled.div`
   align-items: center;
   width: 50px;
   height: 50px;
-  background-color: #e1e4e8;
+  background-color: ${({ theme }) => theme.primary}};
   &:hover {
-    background-color: #d1d5da;
+    background-color: ${({ theme }) => theme.surfaceTint}};
   }
   border-radius: 50%;
 `;
@@ -28,7 +28,7 @@ const Circle = styled.div`
 const ArrowIcon = styled.svg<{ isPointingDown: boolean }>`
   transform: ${props => (props.isPointingDown ? 'rotate(-180deg)' : 'rotate(0deg)')};
   transition: transform 0.5s ease-in-out;
-  fill: #586069;
+  fill: ${({ theme }) => theme.onPrimary};
 `;
 
 const ScrollArrow = () => {
@@ -67,12 +67,7 @@ const ScrollArrow = () => {
   return isScrollable ? (
     <ArrowButton onClick={handleClick}>
       <Circle>
-        <ArrowIcon
-          isPointingDown={isPointingDown}
-          width='30'
-          height='40'
-          viewBox='0 0 24 24'
-        >
+        <ArrowIcon isPointingDown={isPointingDown} width='30' height='40' viewBox='0 0 24 24'>
           <path d='M12 3l-6 9h5v9h2v-9h5z' />
         </ArrowIcon>
       </Circle>
