@@ -22,5 +22,5 @@ export const ActionButton = styled(StyledButton)`
 `;
 
 export const RemoveButton = styled(ActionButton)`
-    background: ${({ theme }) => theme.alert};
+    background: ${({ theme }) => theme.error};
 `;

@@ -13,10 +13,9 @@ export const GetButton = styled(StyledButton)`
 
 export const SelectWrapper = styled.div`
   display: flex;
-  align-items: flex-end;
   gap: 1rem;
-  margin-bottom: 1rem;
   max-width: 100%;
+  align-items: flex-end;
   flex-wrap: wrap;
 `;
 
@@ -41,19 +40,20 @@ interface SearchInputProps {
 
 export const SearchInput = styled.input<SearchInputProps>`
   margin-top: 10px;
-  width: ${({ placeholder }) => (placeholder ? `${placeholder.length + 3}ch` : '100%')};
-  outline: ${({ error, theme }) => (error ? '1px solid red' : `2px solid ${theme.secondary}`)}};
-
-
+  width: 300px;
+  border-width: 0px;
+  background-color: ${({ theme }) => theme.surfaceVariant};
+  color: ${({ theme }) => theme.onSurfaceVariant};
   @media (max-width: 768px) {
     width: 100%;
   }
-  
+
   &:focus {
-    box-shadow: ${({ theme }) => theme.boxShadow};
-    border: none;
-    outline: 2px solid ${({ error, theme }) => (error ? 'red' : theme.button)};
+    box-shadow: ${({ theme }) => theme.shadow};
+    outline: 1px solid ${({ error, theme }) => (error ? theme.error : theme.surfaceTint)};
   }
+
+  caret-color: ${({ theme }) => theme.surfaceTint};
 
   border-radius: 4px;
   height: 30px;
@@ -64,7 +64,7 @@ export const SearchError = styled.span`
   position: absolute;
   top: 35px;
   right: 10px;
-  color: red;
+  color: ${({ theme }) => theme.error};
   font-size: 10px;
   font-weight: 600;
   font-style: italic;

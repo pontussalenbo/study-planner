@@ -15,7 +15,8 @@ export const TableHeader = styled.th`
   font-weight: 500;
   text-align: left;
   font-size: 1rem;
-  color: #2c3e50;
+  background-color: ${({ theme }) => theme.primary};
+  color: ${({ theme }) => theme.onPrimary};
 `;
 
 export const TableRow = styled.tr`

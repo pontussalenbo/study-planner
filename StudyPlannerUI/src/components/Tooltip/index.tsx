@@ -4,11 +4,13 @@ import styled from 'styled-components';
 const TooltipContainer = styled.div<{ top: string; left: string }>`
   visibility: hidden;
   position: absolute;
+  top: 100%;
+  font-size: 0.8rem;
   margin-top: 10px;
   // top: ${props => props.top};
   // left: ${props => props.left};
   background-color: ${({ theme }) => theme.secondary};
-  color: ${({ theme }) => theme.text};
+  color: ${({ theme }) => theme.onSecondary};
   padding: 10px;
   border-radius: 5px;
   z-index: 100;
@@ -30,7 +32,7 @@ const TooltipContainer = styled.div<{ top: string; left: string }>`
 `;
 
 const TooltipWrapper = styled.div`
-  display: inline-block;
+  display: inline-flex;
   position: relative;
   visibility: visible;
   opacity: 1;

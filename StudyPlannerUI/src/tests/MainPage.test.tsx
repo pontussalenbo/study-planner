@@ -5,15 +5,8 @@
 //TODO : Fix?
 
 import { describe, expect } from 'vitest';
-import {
-  render,
-  screen,
-  waitForElementToBeRemoved,
-  fireEvent
-} from '@testing-library/react';
-import userEvent from '@testing-library/user-event';
+import { render, screen, waitForElementToBeRemoved, fireEvent } from '@testing-library/react';
 import MainPage from 'views/MainPage';
-import { useFetch } from 'hooks/useFetchCourses';
 
 vi.mock('hooks/useFetchCourses', () => {
   return { useFetch: vi.fn() };

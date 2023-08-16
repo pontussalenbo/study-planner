@@ -1,8 +1,8 @@
 /* eslint-disable @typescript-eslint/explicit-function-return-type */
 import { createGlobalStyle } from 'styled-components';
-import { Theme } from './Theme';
+import { CustomTheme } from './Theme';
 
-const GlobalStyles = createGlobalStyle<{ theme: Theme }>`
+const GlobalStyles = createGlobalStyle<{ theme: CustomTheme }>`
 /* Box sizing rules */
 *,
 *::before,
@@ -23,8 +23,8 @@ body {
   font-family: sans-serif;
   font-size: 1rem;
   line-height: 1;
-  background-color: ${({ theme }) => theme.primary};
-  color: ${({ theme }) => theme.text};
+  background-color: ${({ theme }) => theme.background};
+  color: ${({ theme }) => theme.onBackground};
 }
 h1,
 h2,
@@ -92,7 +92,8 @@ select {
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
     scroll-behavior: auto !important;
-  }
+  }import { customTheme } from 'style/Theme';
+
 }
 `;
 

@@ -1,13 +1,7 @@
-import { Select } from 'components/Select';
-import { Filters, TransformFn } from 'interfaces/Types';
-import React, { ChangeEvent, useEffect, useState } from 'react';
-import { GET, POST } from 'utils/fetch';
-import { dataParser } from 'views/MainPage/dataParser';
-import { InputWithLabel, SearchBarContainer, SearchError, SearchInput, SearchInputWrapper } from './style';
-import { Endpoints } from 'interfaces/API_Constants.d';
+import { TransformFn } from 'interfaces/Types';
+import React, { ChangeEvent, useState } from 'react';
+import { InputWithLabel, SearchError } from './style';
 import { useMemo } from 'react';
-import styled from 'styled-components';
-import { breakpoints } from 'utils/breakpoints';
 
 interface SearchBarProps {
   matches: boolean;

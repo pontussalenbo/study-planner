@@ -6,12 +6,7 @@ import {
   StyledTableContainer,
   TableBody
 } from '../Table/Table.style';
-import {
-  CtxType,
-  MyContext,
-  useSelectedCourses,
-  useSelectedCoursesDispatch
-} from 'hooks/CourseContext';
+import { CtxType, MyContext } from 'hooks/CourseContext';
 import { useContext, useMemo } from 'react';
 import { ArrowButton, ButtonIcon, RemoveButton } from './styles';
 interface CreditsTableProps {
@@ -39,17 +34,12 @@ function SelectedCoursesTable({ year }: CreditsTableProps): JSX.Element {
               <StyledCell>{course.course_code}</StyledCell>
               <StyledCell>{course.course_name}</StyledCell>
               <StyledCell>
-                <ArrowButton
-                  onClick={() => changeYear(course.course_code, year === 4 ? 5 : 4)}
-                >
+                <ArrowButton onClick={() => changeYear(course.course_code, year === 4 ? 5 : 4)}>
                   {year === 4 ? '\u2192' : '\u2190'}
                 </ArrowButton>
               </StyledCell>
               <StyledCell>
-                <RemoveButton
-                  type='button'
-                  onClick={() => removeCourse(course.course_code, year)}
-                >
+                <RemoveButton type='button' onClick={() => removeCourse(course.course_code, year)}>
                   <ButtonIcon>&#8722;</ButtonIcon> Remove
                 </RemoveButton>
               </StyledCell>
