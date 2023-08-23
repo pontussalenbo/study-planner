@@ -101,12 +101,14 @@ public class MasterRequirementValidator : IMasterRequirementValidator
         var g1Credits = queryResult.Where(c => c.level == Constants.G1_CREDITS).Sum(c => c.credits);
         var g2Credits = queryResult.Where(c => c.level == Constants.G2_CREDITS).Sum(c => c.credits);
         var totalCredits = queryResult.Sum(c => c.credits);
+        var coursesInMaster = queryResult.Select(c => c.course_code).ToList();
         var result = new MasterValidationResult
         {
             Master = masterCode,
             AdvancedCredits = advancedCredits,
             G1Credits = g1Credits,
             G2Credits = g2Credits,
+            SelectedCourses = coursesInMaster,
             RequirementsFulfilled = masterCode != Constants.SUMMARY
                 ? advancedCredits >= Constants.REQUIRED_A_CREDITS_MASTER &&
                   totalCredits >= Constants.REQUIRED_CREDITS_MASTER
