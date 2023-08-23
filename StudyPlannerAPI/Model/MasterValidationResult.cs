@@ -8,4 +8,5 @@ public class MasterValidationResult
     public float G2Credits { get; set; }
     public float AdvancedCredits { get; set; }
     public bool RequirementsFulfilled { get; set; }
+    public List<string> SelectedCourses { get; set; }
 }
