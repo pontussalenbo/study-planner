@@ -35,13 +35,15 @@ public class SpreadsheetController : ControllerBase
         {
             return await this.PerformEndpointAction(async () =>
             {
-                var stream = await spreadsheetManager.CreateSpreadsheetFromPlan(
+                await using var stream = await spreadsheetManager.CreateSpreadsheetFromPlan(
                     studyPlanParams.Programme,
                     studyPlanParams.Year,
                     studyPlanParams.MasterCodes,
                     studyPlanParams.SelectedCourses,
                     studyPlanParams.StudyPlanName);
-                return new FileStreamResult(stream, MediaTypeNames.Application.Octet);
+
+                return new InMemoryFileResult(stream.ToArray(), MediaTypeNames.Application.Octet,
+                    $"{studyPlanParams.StudyPlanName}.xlsx");
             }, logger);
         }
 

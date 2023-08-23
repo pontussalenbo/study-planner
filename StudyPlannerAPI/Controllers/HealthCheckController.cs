@@ -19,6 +19,6 @@ public class HealthCheckController : ControllerBase
     {
         return healthCheckManager.IsHealthy
             ? Ok()
-            : new StatusCodeResult(StatusCodes.Status500InternalServerError);
+            : StatusCode(StatusCodes.Status500InternalServerError);
     }
 }

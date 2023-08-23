@@ -1,7 +1,10 @@
 ﻿using System.Text;
 using StudyPlannerAPI.Database;
 using StudyPlannerAPI.Database.DTO;
-using StudyPlannerAPI.Model.Util;
+using static StudyPlannerAPI.Database.Columns;
+using static StudyPlannerAPI.Database.Tables;
+using static StudyPlannerAPI.Constants;
+using static StudyPlannerAPI.Database.DatabaseUtil;
 
 namespace StudyPlannerAPI.Model;
 
@@ -12,8 +15,8 @@ public class CourseInfoManager : ICourseInfoManager
     public CourseInfoManager(IDatabaseQueryManager databaseQueryManager, IConfiguration configuration)
     {
         this.databaseQueryManager =
-            (IDatabaseQueryManager)DatabaseUtil.ConfigureDatabaseManager(databaseQueryManager, configuration,
-                Constants.CONNECTION_STRING);
+            (IDatabaseQueryManager)ConfigureDatabaseManager(databaseQueryManager, configuration,
+                CONNECTION_STRING);
     }
 
     public async Task<IList<CourseDTO>> GetCourses(string programme, string year, string master)
@@ -26,20 +29,20 @@ public class CourseInfoManager : ICourseInfoManager
         var column = ModelUtil.YearPatternToColumn(year);
 
         queryBuilder.AppendLine(
-            @$"SELECT DISTINCT({Columns.COURSE_CODE}), {Columns.COURSE_NAME_SV}, {Columns.COURSE_NAME_EN}, {Columns.CREDITS}, {Columns.LEVEL}
-               FROM {table} JOIN {Tables.COURSES} USING({Columns.COURSE_CODE})");
+            @$"SELECT DISTINCT({COURSE_CODE}), {COURSE_NAME_SV}, {COURSE_NAME_EN}, {CREDITS}, {LEVEL}
+               FROM {table} JOIN {COURSES} USING({COURSE_CODE})");
 
-        condStmtBuilder.AppendLine($"WHERE {Columns.PROGRAMME_CODE} = @p{parameters.Count}");
+        condStmtBuilder.AppendLine($"WHERE {PROGRAMME_CODE} = {QueryParam(parameters.Count)}");
         parameters.Add(programme);
 
-        condStmtBuilder.AppendLine($"AND {column} = @p{parameters.Count}");
+        condStmtBuilder.AppendLine($"AND {column} = {QueryParam(parameters.Count)}");
         condStmtBuilder.AppendLine(
-            $"AND ({Columns.ELECTABILITY} = '{Constants.ELECTIVE}' OR {Columns.ELECTABILITY} = '{Constants.EXTERNAL_ELECTIVE}')");
+            $"AND ({ELECTABILITY} = '{ELECTIVE}' OR {ELECTABILITY} = '{EXTERNAL_ELECTIVE}')");
         parameters.Add(year);
 
         if (master != string.Empty)
         {
-            condStmtBuilder.AppendLine($"AND {Columns.MASTER_CODE} = @p{parameters.Count}");
+            condStmtBuilder.AppendLine($"AND {MASTER_CODE} = {QueryParam(parameters.Count)}");
             parameters.Add(master);
         }
 
@@ -64,20 +67,20 @@ public class CourseInfoManager : ICourseInfoManager
         var condColumn = ModelUtil.YearPatternToColumn(year);
 
         queryBuilder.AppendLine(
-            @$"SELECT {Columns.COURSE_CODE}, {Columns.PERIOD_START}, {Columns.PERIOD_END}
+            @$"SELECT {COURSE_CODE}, {PERIOD_START}, {PERIOD_END}
                FROM {table}
-                   JOIN {joinTable} USING({Columns.COURSE_CODE}, {condColumn})");
+                   JOIN {joinTable} USING({COURSE_CODE}, {condColumn})");
 
-        condStmtBuilder.AppendLine($"WHERE {condColumn} = @p{parameters.Count}");
+        condStmtBuilder.AppendLine($"WHERE {condColumn} = {QueryParam(parameters.Count)}");
         parameters.Add(year);
 
-        condStmtBuilder.AppendLine($"AND {Columns.PROGRAMME_CODE} = @p{parameters.Count}");
+        condStmtBuilder.AppendLine($"AND {PROGRAMME_CODE} =  {QueryParam(parameters.Count)}");
         parameters.Add(programme);
 
         for (var i = 0; i < courses.Count; i++)
         {
             var op = i == 0 ? "AND (" : "OR";
-            condStmtBuilder.AppendLine($"{op} {Columns.COURSE_CODE} = '{courses[i].course_code}'");
+            condStmtBuilder.AppendLine($"{op} {COURSE_CODE} = '{courses[i].course_code}'");
             if (i == courses.Count - 1)
             {
                 condStmtBuilder.Append(')');

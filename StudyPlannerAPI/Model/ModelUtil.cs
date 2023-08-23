@@ -1,7 +1,8 @@
 ﻿using System.Text.RegularExpressions;
-using StudyPlannerAPI.Database;
+using static StudyPlannerAPI.Database.Tables;
+using static StudyPlannerAPI.Database.Columns;
 
-namespace StudyPlannerAPI.Model.Util;
+namespace StudyPlannerAPI.Model;
 
 public static partial class ModelUtil
 {
@@ -15,13 +16,13 @@ public static partial class ModelUtil
         var matches = AcademicYearRegex().Matches(year);
         if (matches.Count > 0)
         {
-            return Tables.PROGRAMME_MASTER_COURSE_YEAR;
+            return PROGRAMME_MASTER_COURSE_YEAR;
         }
 
         matches = ClassYearRegex().Matches(year);
         if (matches.Count > 0)
         {
-            return Tables.PROGRAMME_MASTER_COURSE_CLASS;
+            return PROGRAMME_MASTER_COURSE_CLASS;
         }
 
         return string.Empty;
@@ -32,13 +33,13 @@ public static partial class ModelUtil
         var matches = AcademicYearRegex().Matches(year);
         if (matches.Count > 0)
         {
-            return Columns.ACADEMIC_YEAR;
+            return ACADEMIC_YEAR;
         }
 
         matches = ClassYearRegex().Matches(year);
         if (matches.Count > 0)
         {
-            return Columns.CLASS_YEAR;
+            return CLASS_YEAR;
         }
 
         return string.Empty;
@@ -49,13 +50,13 @@ public static partial class ModelUtil
         var matches = AcademicYearRegex().Matches(year);
         if (matches.Count > 0)
         {
-            return Tables.COURSE_PERIOD_YEAR;
+            return COURSE_PERIOD_YEAR;
         }
 
         matches = ClassYearRegex().Matches(year);
         if (matches.Count > 0)
         {
-            return Tables.COURSE_PERIOD_CLASS;
+            return COURSE_PERIOD_CLASS;
         }
 
         return string.Empty;

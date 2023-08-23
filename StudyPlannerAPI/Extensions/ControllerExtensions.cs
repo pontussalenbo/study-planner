@@ -14,7 +14,7 @@ public static class ControllerExtensions
         catch (Exception e)
         {
             logger.LogError("Encountered {exception}: {message}", e.GetType().Name, e.Message);
-            return new StatusCodeResult(StatusCodes.Status500InternalServerError);
+            return controllerBase.StatusCode(StatusCodes.Status500InternalServerError);
         }
     }
 }

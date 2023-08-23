@@ -15,4 +15,9 @@ public static class DatabaseUtil
         databaseManager.SetConnectionString(connectionString);
         return databaseManager;
     }
+
+    public static string QueryParam(int i)
+    {
+        return $"@p{i}";
+    }
 }

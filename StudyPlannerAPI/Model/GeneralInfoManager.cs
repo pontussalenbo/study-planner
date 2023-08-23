@@ -1,6 +1,9 @@
 ﻿using StudyPlannerAPI.Database;
 using StudyPlannerAPI.Database.DTO;
-using StudyPlannerAPI.Model.Util;
+using static StudyPlannerAPI.Database.Columns;
+using static StudyPlannerAPI.Database.Tables;
+using static StudyPlannerAPI.Constants;
+
 
 namespace StudyPlannerAPI.Model;
 
@@ -12,13 +15,13 @@ public class GeneralInfoManager : IGeneralInfoManager
     {
         this.databaseQueryManager =
             (IDatabaseQueryManager)DatabaseUtil.ConfigureDatabaseManager(databaseQueryManager, configuration,
-                Constants.CONNECTION_STRING);
+                CONNECTION_STRING);
     }
 
     public async Task<IList<string>> GetProgrammes()
     {
         const string query =
-            $"SELECT {Columns.PROGRAMME_CODE} FROM {Tables.PROGRAMMES} ORDER BY {Columns.PROGRAMME_CODE}";
+            $"SELECT {PROGRAMME_CODE} FROM {PROGRAMMES} ORDER BY {PROGRAMME_CODE}";
         var result = (await databaseQueryManager.ExecuteQuery<ProgrammeCodeDTO>(query)).Select(pc => pc.programme_code)
             .ToList();
 
@@ -28,7 +31,7 @@ public class GeneralInfoManager : IGeneralInfoManager
     public async Task<IList<string>> GetAcademicYears()
     {
         const string query =
-            $"SELECT DISTINCT({Columns.ACADEMIC_YEAR}) FROM {Tables.PROGRAMME_MASTER_COURSE_YEAR} ORDER BY {Columns.ACADEMIC_YEAR}";
+            $"SELECT DISTINCT({ACADEMIC_YEAR}) FROM {PROGRAMME_MASTER_COURSE_YEAR} ORDER BY {ACADEMIC_YEAR}";
         var result = (await databaseQueryManager.ExecuteQuery<AcademicYearDTO>(query)).Select(ay => ay.academic_year)
             .ToList();
 
@@ -38,7 +41,7 @@ public class GeneralInfoManager : IGeneralInfoManager
     public async Task<IList<string>> GetClassYears()
     {
         const string query =
-            $"SELECT DISTINCT({Columns.CLASS_YEAR}) FROM {Tables.PROGRAMME_MASTER_COURSE_CLASS} ORDER BY {Columns.CLASS_YEAR}";
+            $"SELECT DISTINCT({CLASS_YEAR}) FROM {PROGRAMME_MASTER_COURSE_CLASS} ORDER BY {CLASS_YEAR}";
         var result = (await databaseQueryManager.ExecuteQuery<ClassYearDTO>(query)).Select(cy => cy.class_year)
             .ToList();
 
@@ -55,7 +58,7 @@ public class GeneralInfoManager : IGeneralInfoManager
             year
         };
         var query =
-            $"SELECT DISTINCT({Columns.MASTER_CODE}), {Columns.MASTER_NAME_EN}, {Columns.MASTER_NAME_SV} FROM {table} JOIN {Tables.MASTERS} USING({Columns.MASTER_CODE}) WHERE {Columns.PROGRAMME_CODE} = @p0 AND {column} = @p1";
+            $"SELECT DISTINCT({MASTER_CODE}), {MASTER_NAME_EN}, {MASTER_NAME_SV} FROM {table} JOIN {MASTERS} USING({MASTER_CODE}) WHERE {PROGRAMME_CODE} = @p0 AND {column} = @p1";
         var result = await databaseQueryManager.ExecuteQuery<MasterDTO>(query, parameters.ToArray());
 
         return result;
