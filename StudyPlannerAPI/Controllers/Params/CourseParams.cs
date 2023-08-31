@@ -4,5 +4,5 @@ public class CourseParams
 {
     public string Programme { get; set; }
     public string Year { get; set; }
-    public string Master { get; set; }
+    public List<string> MasterCodes { get; set; } = new();
 }
