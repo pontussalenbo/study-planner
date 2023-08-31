@@ -33,7 +33,7 @@ public class CourseController : ControllerBase
         {
             return await this.PerformEndpointAction(
                 async () => await courseInfoManager.GetCourses(courseParams.Programme,
-                    courseParams.Year, courseParams.Master ?? string.Empty), logger);
+                    courseParams.Year, courseParams.MasterCodes), logger);
         }
 
         var errors = validationResult.Errors.Select(e => new ValidationError(e.ErrorCode, e.ErrorMessage));

@@ -17,7 +17,7 @@ public class CourseInfoManager : ICourseInfoManager
                 Constants.CONNECTION_STRING);
     }
 
-    public async Task<IActionResult> GetCourses(string programme, string year, string master)
+    public async Task<IActionResult> GetCourses(string programme, string year, List<string> masters)
     {
         var queryBuilder = new StringBuilder();
         var condStmtBuilder = new StringBuilder();
@@ -34,17 +34,24 @@ public class CourseInfoManager : ICourseInfoManager
         parameters.Add(programme);
 
         condStmtBuilder.AppendLine($"AND {column} = @p{parameters.Count}");
-        condStmtBuilder.AppendLine($"AND ({Columns.ELECTABILITY} = '{Constants.ELECTIVE}' OR {Columns.ELECTABILITY} = '{Constants.EXTERNAL_ELECTIVE}')");
+        condStmtBuilder.AppendLine(
+            $"AND ({Columns.ELECTABILITY} = '{Constants.ELECTIVE}' OR {Columns.ELECTABILITY} = '{Constants.EXTERNAL_ELECTIVE}')");
         parameters.Add(year);
 
-        if (master != string.Empty)
+        if (masters.Count > 0)
         {
-            condStmtBuilder.AppendLine($"AND {Columns.MASTER_CODE} = @p{parameters.Count}");
-            parameters.Add(master);
+            condStmtBuilder.AppendLine(" AND (");
+            foreach (var master in masters)
+            {
+                var op = master == masters.First() ? string.Empty : "OR";
+                condStmtBuilder.AppendLine($" {op} {Columns.MASTER_CODE} = @p{parameters.Count}");
+                parameters.Add(master);
+            }
+
+            condStmtBuilder.AppendLine(")");
         }
 
         queryBuilder.AppendLine(condStmtBuilder.ToString());
-
 
         var query = queryBuilder.ToString();
         var result = await databaseQueryManager.ExecuteQuery<CourseDTO>(query, parameters.ToArray());
