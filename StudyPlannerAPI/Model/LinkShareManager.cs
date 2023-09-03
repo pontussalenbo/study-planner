@@ -16,11 +16,11 @@ public class LinkShareManager : ILinkShareManager
         IConfiguration configuration)
     {
         this.databaseQueryManager = (IDatabaseQueryManager)DatabaseUtil.ConfigureDatabaseManager(databaseQueryManager,
-            configuration, Constants.CONNECTION_STRING_LINKS);
+            configuration, Constants.CONNECTION_STRING);
 
         this.databaseMutationManager = (IDatabaseMutationManager)DatabaseUtil.ConfigureDatabaseManager(
             databaseMutationManager, configuration,
-            Constants.CONNECTION_STRING_LINKS);
+            Constants.CONNECTION_STRING);
 
         this.logger = logger;
     }
@@ -34,33 +34,26 @@ public class LinkShareManager : ILinkShareManager
         queryBuilder.AppendLine(
             @$"SELECT {Columns.STUDY_PLAN_NAME}, {Columns.PROGRAMME_CODE}, {Columns.YEAR}
                FROM {Tables.STUDY_PLAN}
-               WHERE {Columns.STUDY_PLAN_ID} = @p0");
+               WHERE {Columns.STUDY_PLAN_ID} = @p0 OR {Columns.STUDY_PLAN_READ_ONLY_ID} = @p0");
         var query = queryBuilder.ToString();
-        var studyPlanDTOList = await databaseQueryManager.ExecuteQuery<StudyPlanDTO>(query, parameters.ToArray());
+        var studyPlanDTOList =
+            (await databaseQueryManager.ExecuteQuery<StudyPlanDTO>(query, parameters.ToArray())).ToList();
         if (studyPlanDTOList.Count == 0)
         {
-            return new StatusCodeResult(StatusCodes.Status400BadRequest);
+            return new BadRequestResult();
         }
 
         var studyPlanDTO = studyPlanDTOList.First();
-
-        // Get masters
-        queryBuilder.Clear();
-        queryBuilder.AppendLine(
-            @$"SELECT {Columns.MASTER_CODE}
-               FROM {Tables.STUDY_PLAN_MASTER}
-               WHERE {Columns.STUDY_PLAN_ID} = @p0");
-        query = queryBuilder.ToString();
-        var masterCodes =
-            (await databaseQueryManager.ExecuteQuery<MasterCodeDTO>(query, parameters.ToArray()))
-            .Select(dto => dto.master_code).ToList();
 
         // Get courses
         queryBuilder.Clear();
         queryBuilder.AppendLine(
             @$"SELECT {Columns.COURSE_CODE}, {Columns.STUDY_YEAR}, {Columns.PERIOD_START}, {Columns.PERIOD_END}
                FROM {Tables.STUDY_PLAN_COURSE}
-               WHERE {Columns.STUDY_PLAN_ID} = @p0");
+               WHERE {Columns.STUDY_PLAN_ID} = @p0
+                   OR {Columns.STUDY_PLAN_ID} IN (SELECT {Columns.STUDY_PLAN_ID}
+                                                  FROM {Tables.STUDY_PLAN}
+                                                  WHERE {Columns.STUDY_PLAN_READ_ONLY_ID} = @p0)");
         query = queryBuilder.ToString();
         var courses =
             (await databaseQueryManager.ExecuteQuery<SelectedCourseDTO>(query, parameters.ToArray())).ToList();
@@ -70,16 +63,14 @@ public class LinkShareManager : ILinkShareManager
             Programme = studyPlanDTO.programme_code,
             StudyPlanName = studyPlanDTO.study_plan_name,
             Year = studyPlanDTO.year,
-            MasterCodes = masterCodes,
             SelectedCourses = courses
         };
 
         return new JsonResult(result);
     }
 
-    public async Task<IActionResult> GetUniqueBlobFromPlan(string programme, string year, List<string> masters,
-        List<SelectedCourseDTO> selectedCourses,
-        string studyPlanName)
+    public async Task<IActionResult> GetUniqueBlobFromPlan(string programme, string year,
+        List<SelectedCourseDTO> selectedCourses, string studyPlanName)
     {
         var queryBuilder = new StringBuilder();
         queryBuilder.AppendLine(
@@ -94,29 +85,27 @@ public class LinkShareManager : ILinkShareManager
         };
         var query = queryBuilder.ToString();
         var studyPlanId =
-            await Task.Run(() => databaseMutationManager.ExecuteScalar<string>(query, parameters.ToArray())) ??
-            string.Empty;
+            await Task.Run(() => databaseMutationManager.ExecuteScalar<string>(query, parameters.ToArray()))
+            ?? string.Empty;
 
         if (studyPlanId == string.Empty)
         {
-            return new StatusCodeResult(StatusCodes.Status400BadRequest);
+            return new BadRequestResult();
         }
 
-        // Add masters
+        // Retrieve read-only id
+        // (Due to the nature of IDbCommand, we can't return more than one value when inserting and thus have
+        // to do it this way)
         queryBuilder.Clear();
         parameters.Clear();
         queryBuilder.AppendLine(
-            $"INSERT INTO {Tables.STUDY_PLAN_MASTER}({Columns.STUDY_PLAN_ID}, {Columns.MASTER_CODE}) VALUES");
-        queryBuilder.AppendLine($"(\"{studyPlanId}\", @p0)");
-        parameters.Add(masters[0]); // Should never fail
-        for (var i = 1; i < masters.Count; i++)
-        {
-            queryBuilder.AppendLine($",(\"{studyPlanId}\", @p{i})");
-            parameters.Add(masters[i]);
-        }
-
+            $"SELECT {Columns.STUDY_PLAN_READ_ONLY_ID} FROM {Tables.STUDY_PLAN} WHERE {Columns.STUDY_PLAN_ID} = @p0");
+        parameters.Add(studyPlanId);
         query = queryBuilder.ToString();
-        await Task.Run(() => databaseMutationManager.ExecuteScalar<dynamic>(query, parameters.ToArray()));
+        var studyPlanReadOnlyId =
+            (await Task.Run(() =>
+                databaseQueryManager.ExecuteQuery<StudyPlanIdDTO>(query, parameters.ToArray())))[0]
+            .study_plan_read_only_id; // Should never fail
 
         // Add courses
         queryBuilder.Clear();
@@ -139,7 +128,11 @@ public class LinkShareManager : ILinkShareManager
         query = queryBuilder.ToString();
         await Task.Run(() => databaseMutationManager.ExecuteScalar<dynamic>(query, parameters.ToArray()));
 
-        var result = new UniqueBlobDTO { StudyPlanId = studyPlanId };
+        var result = new UniqueBlobDTO
+        {
+            StudyPlanId = studyPlanId,
+            StudyPlanReadOnlyId = studyPlanReadOnlyId
+        };
         return new JsonResult(result);
     }
 }
