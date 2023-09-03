@@ -9,3 +9,5 @@ CREATE TABLE courses (
     level VARCHAR(2) NOT NULL,
     PRIMARY KEY (course_code)
 );
+
+PRAGMA foreign_keys = ON;

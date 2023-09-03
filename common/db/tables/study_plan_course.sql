@@ -11,3 +11,5 @@ CREATE TABLE study_plan_course(
     FOREIGN KEY (study_plan_id) REFERENCES study_plan(study_plan_id),
     FOREIGN KEY (course_code) REFERENCES courses(course_code)
 );
+
+PRAGMA foreign_keys = ON;

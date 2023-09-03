@@ -10,3 +10,5 @@ CREATE TABLE course_period_year(
     FOREIGN KEY (course_code) REFERENCES courses (course_code),
     FOREIGN KEY (academic_year) REFERENCES programme_master_course_year (academic_year)
 );
+
+PRAGMA foreign_keys = ON;
