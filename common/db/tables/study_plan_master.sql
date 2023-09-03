@@ -8,3 +8,5 @@ CREATE TABLE study_plan_master(
     FOREIGN KEY (study_plan_id) REFERENCES study_plan(study_plan_id),
     FOREIGN KEY (master_code) REFERENCES masters(master_code)
 );
+
+PRAGMA foreign_keys = ON;

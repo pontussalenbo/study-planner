@@ -7,3 +7,5 @@ CREATE TABLE programmes (
     programme_name_en TEXT,
     PRIMARY KEY (programme_code)
 );
+
+PRAGMA foreign_keys = ON;

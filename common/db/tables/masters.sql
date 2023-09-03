@@ -7,3 +7,5 @@ CREATE TABLE masters (
     master_name_en TEXT,
     PRIMARY KEY (master_code)
 );
+
+PRAGMA foreign_keys = ON;
