@@ -36,7 +36,6 @@ public class LinkShareController : ControllerBase
         {
             return await this.PerformEndpointAction(async () =>
                 await linkShareManager.GetUniqueBlobFromPlan(linkShareParams.Programme, linkShareParams.Year,
-                    linkShareParams.MasterCodes,
                     linkShareParams.SelectedCourses,
                     linkShareParams.StudyPlanName ?? Constants.STUDY_PLAN_NAME_DEFAULT), logger);
         }
