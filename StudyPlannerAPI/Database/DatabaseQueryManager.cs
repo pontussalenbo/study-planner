@@ -32,6 +32,7 @@ public class DatabaseQueryManager : IDatabaseQueryManager
         data = await Task.Run(() =>
         {
             Connection.Open();
+            //Connection.BeginTransaction(IsolationLevel.ReadCommitted);
             using var reader = command.ExecuteReader();
             while (reader.Read())
             {

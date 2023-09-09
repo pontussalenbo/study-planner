@@ -37,7 +37,8 @@ public class LinkShareController : ControllerBase
             return await this.PerformEndpointAction(async () =>
                 await linkShareManager.GetUniqueBlobFromPlan(linkShareParams.Programme, linkShareParams.Year,
                     linkShareParams.SelectedCourses,
-                    linkShareParams.StudyPlanName ?? Constants.STUDY_PLAN_NAME_DEFAULT), logger);
+                    linkShareParams.StudyPlanName ?? Constants.STUDY_PLAN_NAME_DEFAULT,
+                    linkShareParams.UniqueBlob ?? string.Empty), logger);
         }
 
         var errors = validationResult.Errors.Select(e => new ValidationError(e.ErrorCode, e.ErrorMessage));
