@@ -34,7 +34,8 @@ public class LinkShareManager : ILinkShareManager
         queryBuilder.AppendLine(
             @$"SELECT {Columns.STUDY_PLAN_NAME}, {Columns.PROGRAMME_CODE}, {Columns.YEAR}
                FROM {Tables.STUDY_PLAN}
-               WHERE {Columns.STUDY_PLAN_ID} = @p0 OR {Columns.STUDY_PLAN_READ_ONLY_ID} = @p0");
+               WHERE {Columns.STUDY_PLAN_ID} = @p0
+               OR {Columns.STUDY_PLAN_READ_ONLY_ID} = @p0");
         var query = queryBuilder.ToString();
         var studyPlanDTOList =
             (await databaseQueryManager.ExecuteQuery<StudyPlanDTO>(query, parameters.ToArray())).ToList();
@@ -70,7 +71,96 @@ public class LinkShareManager : ILinkShareManager
     }
 
     public async Task<IActionResult> GetUniqueBlobFromPlan(string programme, string year,
-        List<SelectedCourseDTO> selectedCourses, string studyPlanName)
+        List<SelectedCourseDTO> selectedCourses, string studyPlanName, string uniqueBlob)
+    {
+        var studyPlanId = uniqueBlob;
+
+        if (await IsReadOnly(studyPlanId))
+        {
+            return new BadRequestResult();
+        }
+
+        if (StudyPlanExists(studyPlanId))
+        {
+            DeleteStudyPlanCourses(studyPlanId);
+            UpdateStudyPlanName(studyPlanName, studyPlanId);
+        }
+        else
+        {
+            studyPlanId = CreateStudyPlan(studyPlanName, year, programme);
+            if (studyPlanId == string.Empty)
+            {
+                return new BadRequestResult();
+            }
+        }
+
+        AddStudyPlanCourses(studyPlanId, selectedCourses);
+        var studyPlanReadOnlyId = await GetReadOnlyId(studyPlanId);
+
+        var result = new UniqueBlobDTO
+        {
+            StudyPlanId = studyPlanId,
+            StudyPlanReadOnlyId = studyPlanReadOnlyId
+        };
+        return new JsonResult(result);
+    }
+
+    private async Task<bool> IsReadOnly(string studyPlanId)
+    {
+        var queryBuilder = new StringBuilder();
+        queryBuilder.AppendLine(@$"SELECT {Columns.STUDY_PLAN_READ_ONLY_ID}
+                                   FROM {Tables.STUDY_PLAN} 
+                                   WHERE {Columns.STUDY_PLAN_READ_ONLY_ID} = @p0");
+        var parameters = new List<object>
+        {
+            studyPlanId
+        };
+        var query = queryBuilder.ToString();
+        var resultList = await databaseQueryManager.ExecuteQuery<dynamic>(query, parameters.ToArray());
+        return resultList.Count > 0;
+    }
+
+    private bool StudyPlanExists(string studyPlanId)
+    {
+        var queryBuilder = new StringBuilder();
+        queryBuilder.AppendLine(
+            $@"SELECT {Columns.STUDY_PLAN_ID} FROM {Tables.STUDY_PLAN} WHERE {Columns.STUDY_PLAN_ID} = @p0");
+        var query = queryBuilder.ToString();
+        var parameters = new List<object> { studyPlanId };
+        var result = databaseQueryManager.ExecuteQuery<int>(query, parameters.ToArray()).Result;
+        return result.Count > 0;
+    }
+
+    private void DeleteStudyPlanCourses(string studyPlanId)
+    {
+        var queryBuilder = new StringBuilder();
+        var parameters = new List<object> { studyPlanId };
+        queryBuilder.AppendLine($@"DELETE FROM {Tables.STUDY_PLAN_COURSE} WHERE {Columns.STUDY_PLAN_ID} = @p0");
+        var query = queryBuilder.ToString();
+        databaseMutationManager.ExecuteScalar(query, parameters.ToArray());
+    }
+
+    private void UpdateStudyPlanName(string studyPlanName, string studyPlanId)
+    {
+        if (studyPlanName == string.Empty)
+        {
+            return;
+        }
+
+        var queryBuilder = new StringBuilder();
+        queryBuilder.AppendLine($@"UPDATE {Tables.STUDY_PLAN}
+                                   SET {Columns.STUDY_PLAN_NAME} = @p0
+                                   WHERE {Columns.STUDY_PLAN_ID} = @p1");
+        var parameters = new List<object>
+        {
+            studyPlanName,
+            studyPlanId
+        };
+        var query = queryBuilder.ToString();
+        databaseMutationManager.ExecuteScalar(query, parameters.ToArray());
+    }
+
+    private string CreateStudyPlan(string studyPlanName, string year, string programme)
     {
         var queryBuilder = new StringBuilder();
         queryBuilder.AppendLine(
@@ -84,35 +174,31 @@ public class LinkShareManager : ILinkShareManager
             programme
         };
         var query = queryBuilder.ToString();
-        var studyPlanId =
-            await Task.Run(() => databaseMutationManager.ExecuteScalar<string>(query, parameters.ToArray()))
-            ?? string.Empty;
+        var studyPlanId = databaseMutationManager.ExecuteScalar<string>(query, parameters.ToArray()) ?? string.Empty;
+        return studyPlanId;
+    }
 
-        if (studyPlanId == string.Empty)
-        {
-            return new BadRequestResult();
-        }
-
-        // Retrieve read-only id
-        // (Due to the nature of IDbCommand, we can't return more than one value when inserting and thus have
-        // to do it this way)
-        queryBuilder.Clear();
-        parameters.Clear();
+    private async Task<string> GetReadOnlyId(string studyPlanId)
+    {
+        var queryBuilder = new StringBuilder();
         queryBuilder.AppendLine(
             $"SELECT {Columns.STUDY_PLAN_READ_ONLY_ID} FROM {Tables.STUDY_PLAN} WHERE {Columns.STUDY_PLAN_ID} = @p0");
-        parameters.Add(studyPlanId);
-        query = queryBuilder.ToString();
+        var parameters = new List<object> { studyPlanId };
+        var query = queryBuilder.ToString();
         var studyPlanReadOnlyId =
             (await Task.Run(() =>
                 databaseQueryManager.ExecuteQuery<StudyPlanIdDTO>(query, parameters.ToArray())))[0]
             .study_plan_read_only_id; // Should never fail
+        return studyPlanReadOnlyId;
+    }
 
-        // Add courses
-        queryBuilder.Clear();
-        parameters.Clear();
+    private void AddStudyPlanCourses(string studyPlanId, List<SelectedCourseDTO> selectedCourses)
+    {
+        var queryBuilder = new StringBuilder();
         queryBuilder.AppendLine(
             $"INSERT INTO {Tables.STUDY_PLAN_COURSE}({Columns.STUDY_PLAN_ID}, {Columns.COURSE_CODE}, {Columns.STUDY_YEAR}, {Columns.PERIOD_START}, {Columns.PERIOD_END}) VALUES");
 
+        var parameters = new List<object>();
         var paramCount = 0;
         foreach (var course in selectedCourses)
         {
@@ -125,14 +211,7 @@ public class LinkShareManager : ILinkShareManager
             parameters.Add(course.period_end);
         }
 
-        query = queryBuilder.ToString();
-        await Task.Run(() => databaseMutationManager.ExecuteScalar<dynamic>(query, parameters.ToArray()));
-
-        var result = new UniqueBlobDTO
-        {
-            StudyPlanId = studyPlanId,
-            StudyPlanReadOnlyId = studyPlanReadOnlyId
-        };
-        return new JsonResult(result);
+        var query = queryBuilder.ToString();
+        databaseMutationManager.ExecuteScalar(query, parameters.ToArray());
     }
 }
