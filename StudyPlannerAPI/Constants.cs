@@ -9,7 +9,6 @@ public class Constants
     public const string ORIGINS = "Origins";
 
     public const string CONNECTION_STRING = "ConnectionString";
-    public const string CONNECTION_STRING_LINKS = "ConnectionStringLinks";
     public const string CONNECTION_STRING_PREFIX = "Data Source=";
 
     public const string A_CREDITS = "A";
