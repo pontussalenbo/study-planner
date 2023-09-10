@@ -1,5 +1,5 @@
-﻿using System.Text;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
+using SqlKata;
 using StudyPlannerAPI.Database;
 using StudyPlannerAPI.Database.DTO;
 using StudyPlannerAPI.Model.Util;
@@ -8,42 +8,38 @@ namespace StudyPlannerAPI.Model;
 
 public class MasterRequirementValidator : IMasterRequirementValidator
 {
-    private readonly IDatabaseQueryManager databaseQueryManager;
+    private readonly IDatabaseManager db;
     private readonly ILogger<MasterRequirementValidator> logger;
 
-    public MasterRequirementValidator(IDatabaseQueryManager databaseQueryManager, IConfiguration configuration,
+    public MasterRequirementValidator(IDatabaseManager databaseManager, IConfiguration configuration,
         ILogger<MasterRequirementValidator> logger)
     {
-        this.databaseQueryManager =
-            (IDatabaseQueryManager)DatabaseUtil.ConfigureDatabaseManager(databaseQueryManager, configuration,
-                Constants.CONNECTION_STRING);
+        db = DatabaseUtil.ConfigureDatabaseManager(databaseManager, configuration, Constants.CONNECTION_STRING);
         this.logger = logger;
     }
 
     public async Task<IActionResult> ValidateCourseSelection(string programme,
         string year, List<string> selectedCourses, List<string> masterCodes)
     {
-        if (masterCodes.Count == 0) // if there are no provided master codes, compute for all
+        if (masterCodes.Count == 0) // If there are no provided master codes, compute for all applicable
         {
             var table = ModelUtil.YearPatternToTable(year);
             var column = ModelUtil.YearPatternToColumn(year);
-            var parameters = new List<string>
-            {
-                programme,
-                year
-            };
-            var query =
-                $"SELECT DISTINCT({Columns.MASTER_CODE}) FROM {table} JOIN {Tables.MASTERS} USING({Columns.MASTER_CODE}) WHERE {Columns.PROGRAMME_CODE} = @p0 AND {column} = @p1";
-            var queryResult = await databaseQueryManager.ExecuteQuery<MasterCodeDTO>(query, parameters.ToArray());
-            masterCodes = queryResult.Select(dto => dto.master_code).ToList();
+            var query = new Query(table)
+                .Join(Tables.MASTERS, $"{Tables.MASTERS}.{Columns.MASTER_CODE}", $"{table}.{Columns.MASTER_CODE}")
+                .Select($"{table}.{Columns.MASTER_CODE}")
+                .Distinct()
+                .Where(Columns.PROGRAMME_CODE, programme)
+                .Where(column, year);
+            masterCodes = await db.ExecuteQuery<string>(query);
         }
 
+        masterCodes.Add(Constants.SUMMARY);
         if (!masterCodes.Contains(Constants.GENERAL))
         {
             masterCodes.Add(Constants.GENERAL);
         }
 
-        masterCodes.Add(Constants.SUMMARY);
         var result = new List<MasterValidationResult>();
         foreach (var masterCode in masterCodes)
         {
@@ -55,54 +51,44 @@ public class MasterRequirementValidator : IMasterRequirementValidator
     }
 
     private async Task<MasterValidationResult> ValidateMaster(string programme, string masterCode, string year,
-        List<string> selectedCourses)
+        IReadOnlyCollection<string> selectedCourses)
     {
-        var queryBuilder = new StringBuilder();
-        var condStmtBuilder = new StringBuilder();
-        var parameters = new List<string>
-        {
-            programme,
-            year
-        };
-
-        queryBuilder.AppendLine(
-            @$"SELECT DISTINCT({Columns.COURSE_CODE}), {Columns.CREDITS}, {Columns.LEVEL}
-               FROM {Tables.PROGRAMME_MASTER_COURSE_CLASS} JOIN {Tables.COURSES} USING({Columns.COURSE_CODE})
-               WHERE {Columns.PROGRAMME_CODE} = @p0 AND {Columns.CLASS_YEAR} = @p1");
+        var query = new Query(Tables.PROGRAMME_MASTER_COURSE_CLASS)
+            .Join(Tables.COURSES,
+                $"{Tables.COURSES}.{Columns.COURSE_CODE}",
+                $"{Tables.PROGRAMME_MASTER_COURSE_CLASS}.{Columns.COURSE_CODE}")
+            .Select($"{Tables.COURSES}.{Columns.COURSE_CODE}")
+            .Distinct()
+            .Select(Columns.CREDITS, Columns.LEVEL)
+            .Where(Columns.PROGRAMME_CODE, programme)
+            .Where(Columns.CLASS_YEAR, year);
 
         if (masterCode == Constants.SUMMARY)
         {
-            queryBuilder.AppendLine($"AND ({Columns.ELECTABILITY} = @p2 OR {Columns.ELECTABILITY} = @p3)");
-            parameters.Add(Constants.ELECTIVE);
-            parameters.Add(Constants.EXTERNAL_ELECTIVE);
+            query = query.Where(q =>
+                q.Where(Columns.ELECTABILITY, Constants.ELECTIVE)
+                    .OrWhere(Columns.ELECTABILITY, Constants.EXTERNAL_ELECTIVE));
         }
         else
         {
-            queryBuilder.AppendLine($"AND {Columns.MASTER_CODE} = @p{parameters.Count}");
-            parameters.Add(masterCode);
+            query = query.Where(Columns.MASTER_CODE, masterCode);
         }
 
-        condStmtBuilder.AppendLine(" AND (");
-        foreach (var course in selectedCourses)
+        query = query.Where(q =>
         {
-            var op = course == selectedCourses.First() ? string.Empty : "OR";
-            condStmtBuilder.Append($" {op} {Columns.COURSE_CODE} = @p{parameters.Count}");
-            parameters.Add(course);
-        }
+            const string col = $"{Tables.COURSES}.{Columns.COURSE_CODE}";
+            q = q.Where(col, selectedCourses.First());
+            return selectedCourses.Skip(1).Aggregate(q, (current, courseCode) => current.OrWhere(col, courseCode));
+        });
 
-        condStmtBuilder.Append(')');
-
-        queryBuilder.AppendLine(condStmtBuilder.ToString());
-        var query = queryBuilder.ToString();
-        var queryResult =
-            await databaseQueryManager.ExecuteQuery<CourseDTO>(query, parameters.ToArray());
+        var queryResult = await db.ExecuteQuery<CourseDTO>(query);
 
         var advancedCredits = queryResult.Where(c => c.level == Constants.A_CREDITS).Sum(c => c.credits);
         var g1Credits = queryResult.Where(c => c.level == Constants.G1_CREDITS).Sum(c => c.credits);
         var g2Credits = queryResult.Where(c => c.level == Constants.G2_CREDITS).Sum(c => c.credits);
         var totalCredits = queryResult.Sum(c => c.credits);
         var coursesInMaster = queryResult.Select(c => c.course_code).ToList();
-        var result = new MasterValidationResult
+        return new MasterValidationResult
         {
             Master = masterCode,
             AdvancedCredits = advancedCredits,
@@ -115,6 +101,5 @@ public class MasterRequirementValidator : IMasterRequirementValidator
                 : advancedCredits >= Constants.REQUIRED_A_CREDITS_TOTAL &&
                   totalCredits >= Constants.REQUIRED_CREDITS_TOTAL
         };
-        return result;
     }
 }

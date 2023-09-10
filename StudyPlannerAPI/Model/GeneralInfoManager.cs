@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using SqlKata;
 using StudyPlannerAPI.Database;
 using StudyPlannerAPI.Database.DTO;
 using StudyPlannerAPI.Model.Util;
@@ -7,39 +8,39 @@ namespace StudyPlannerAPI.Model;
 
 public class GeneralInfoManager : IGeneralInfoManager
 {
-    private readonly IDatabaseQueryManager databaseQueryManager;
+    private readonly IDatabaseManager db;
 
-    public GeneralInfoManager(IDatabaseQueryManager databaseQueryManager, IConfiguration configuration)
+    public GeneralInfoManager(IDatabaseManager databaseManager, IConfiguration configuration)
     {
-        this.databaseQueryManager =
-            (IDatabaseQueryManager)DatabaseUtil.ConfigureDatabaseManager(databaseQueryManager, configuration,
-                Constants.CONNECTION_STRING);
+        db = DatabaseUtil.ConfigureDatabaseManager(databaseManager, configuration, Constants.CONNECTION_STRING);
     }
 
     public async Task<IActionResult> GetProgrammes()
     {
-        const string query =
-            $"SELECT {Columns.PROGRAMME_CODE} FROM {Tables.PROGRAMMES} ORDER BY {Columns.PROGRAMME_CODE}";
-        var result = (await databaseQueryManager.ExecuteQuery<ProgrammeCodeDTO>(query)).Select(pc => pc.programme_code);
-
+        var query = new Query(Tables.PROGRAMMES)
+            .Select(Columns.PROGRAMME_CODE)
+            .OrderBy(Columns.PROGRAMME_CODE);
+        var result = await db.ExecuteQuery<string>(query);
         return new JsonResult(result);
     }
 
     public async Task<IActionResult> GetAcademicYears()
     {
-        const string query =
-            $"SELECT DISTINCT({Columns.ACADEMIC_YEAR}) FROM {Tables.PROGRAMME_MASTER_COURSE_YEAR} ORDER BY {Columns.ACADEMIC_YEAR}";
-        var result = (await databaseQueryManager.ExecuteQuery<AcademicYearDTO>(query)).Select(ay => ay.academic_year);
-
+        var query = new Query(Tables.PROGRAMME_MASTER_COURSE_YEAR)
+            .Select(Columns.ACADEMIC_YEAR)
+            .Distinct()
+            .OrderBy(Columns.ACADEMIC_YEAR);
+        var result = await db.ExecuteQuery<string>(query);
         return new JsonResult(result);
     }
 
     public async Task<IActionResult> GetClassYears()
     {
-        const string query =
-            $"SELECT DISTINCT({Columns.CLASS_YEAR}) FROM {Tables.PROGRAMME_MASTER_COURSE_CLASS} ORDER BY {Columns.CLASS_YEAR}";
-        var result = (await databaseQueryManager.ExecuteQuery<ClassYearDTO>(query)).Select(cy => cy.class_year);
-
+        var query = new Query(Tables.PROGRAMME_MASTER_COURSE_CLASS)
+            .Select(Columns.CLASS_YEAR)
+            .Distinct()
+            .OrderBy(Columns.CLASS_YEAR);
+        var result = await db.ExecuteQuery<string>(query);
         return new JsonResult(result);
     }
 
@@ -47,14 +48,14 @@ public class GeneralInfoManager : IGeneralInfoManager
     {
         var table = ModelUtil.YearPatternToTable(year);
         var column = ModelUtil.YearPatternToColumn(year);
-        var parameters = new List<string>
-        {
-            programme,
-            year
-        };
-        var query =
-            $"SELECT DISTINCT({Columns.MASTER_CODE}), {Columns.MASTER_NAME_EN}, {Columns.MASTER_NAME_SV} FROM {table} JOIN {Tables.MASTERS} USING({Columns.MASTER_CODE}) WHERE {Columns.PROGRAMME_CODE} = @p0 AND {column} = @p1";
-        var result = await databaseQueryManager.ExecuteQuery<MasterDTO>(query, parameters.ToArray());
+        var query = new Query(table)
+            .Join(Tables.MASTERS, $"{Tables.MASTERS}.{Columns.MASTER_CODE}", $"{table}.{Columns.MASTER_CODE}")
+            .Select($"{table}.{Columns.MASTER_CODE}")
+            .Distinct()
+            .Select(Columns.MASTER_NAME_EN, Columns.MASTER_NAME_SV)
+            .Where(Columns.PROGRAMME_CODE, programme)
+            .Where(column, year);
+        var result = await db.ExecuteQuery<MasterDTO>(query);
 
         return new JsonResult(result);
     }

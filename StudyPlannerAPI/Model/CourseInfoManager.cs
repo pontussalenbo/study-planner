@@ -1,5 +1,5 @@
-﻿using System.Text;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
+using SqlKata;
 using StudyPlannerAPI.Database;
 using StudyPlannerAPI.Database.DTO;
 using StudyPlannerAPI.Model.Util;
@@ -8,101 +8,80 @@ namespace StudyPlannerAPI.Model;
 
 public class CourseInfoManager : ICourseInfoManager
 {
-    private readonly IDatabaseQueryManager databaseQueryManager;
+    private readonly IDatabaseManager db;
+    private readonly ILogger<CourseInfoManager> logger;
 
-    public CourseInfoManager(IDatabaseQueryManager databaseQueryManager, IConfiguration configuration)
+    public CourseInfoManager(IDatabaseManager databaseManager, IConfiguration configuration,
+        ILogger<CourseInfoManager> logger)
     {
-        this.databaseQueryManager =
-            (IDatabaseQueryManager)DatabaseUtil.ConfigureDatabaseManager(databaseQueryManager, configuration,
-                Constants.CONNECTION_STRING);
+        db = DatabaseUtil.ConfigureDatabaseManager(databaseManager, configuration, Constants.CONNECTION_STRING);
+        this.logger = logger;
     }
 
     public async Task<IActionResult> GetCourses(string programme, string year, List<string> masters)
     {
-        var queryBuilder = new StringBuilder();
-        var condStmtBuilder = new StringBuilder();
-        var parameters = new List<string>();
-
         var table = ModelUtil.YearPatternToTable(year);
         var column = ModelUtil.YearPatternToColumn(year);
-
-        queryBuilder.AppendLine(
-            @$"SELECT DISTINCT({Columns.COURSE_CODE}), {Columns.COURSE_NAME_SV}, {Columns.COURSE_NAME_EN}, {Columns.CREDITS}, {Columns.LEVEL}
-               FROM {table} JOIN {Tables.COURSES} USING({Columns.COURSE_CODE})");
-
-        condStmtBuilder.AppendLine($"WHERE {Columns.PROGRAMME_CODE} = @p{parameters.Count}");
-        parameters.Add(programme);
-
-        condStmtBuilder.AppendLine($"AND {column} = @p{parameters.Count}");
-        condStmtBuilder.AppendLine(
-            $"AND ({Columns.ELECTABILITY} = '{Constants.ELECTIVE}' OR {Columns.ELECTABILITY} = '{Constants.EXTERNAL_ELECTIVE}')");
-        parameters.Add(year);
+        var query = new Query(table)
+            .Join(Tables.COURSES, $"{Tables.COURSES}.{Columns.COURSE_CODE}", $"{table}.{Columns.COURSE_CODE}")
+            .Select($"{table}.{Columns.COURSE_CODE}").Distinct()
+            .Select(Columns.COURSE_NAME_EN, Columns.COURSE_NAME_SV, Columns.CREDITS, Columns.LEVEL)
+            .Where(Columns.PROGRAMME_CODE, programme)
+            .Where(column, year)
+            .Where(q =>
+                q.Where(Columns.ELECTABILITY, Constants.ELECTIVE)
+                    .OrWhere(Columns.ELECTABILITY, Constants.EXTERNAL_ELECTIVE));
 
         if (masters.Count > 0)
         {
-            condStmtBuilder.AppendLine(" AND (");
-            foreach (var master in masters)
+            query = query.Where(sq =>
             {
-                var op = master == masters.First() ? string.Empty : "OR";
-                condStmtBuilder.AppendLine($" {op} {Columns.MASTER_CODE} = @p{parameters.Count}");
-                parameters.Add(master);
-            }
-
-            condStmtBuilder.AppendLine(")");
+                sq = sq.Where(Columns.MASTER_CODE, masters.First());
+                return masters.Skip(1).Aggregate(sq,
+                    (current, master) => current.OrWhere(Columns.MASTER_CODE, master));
+            });
         }
 
-        queryBuilder.AppendLine(condStmtBuilder.ToString());
-
-        var query = queryBuilder.ToString();
-        var result = await databaseQueryManager.ExecuteQuery<CourseDTO>(query, parameters.ToArray());
+        var result = await db.ExecuteQuery<CourseDTO>(query);
         result = await AppendCoursePeriods(result, programme, year);
         return new JsonResult(result);
     }
 
-    private async Task<IList<CourseDTO>> AppendCoursePeriods(IList<CourseDTO> courses, string programme,
+    private async Task<List<CourseDTO>> AppendCoursePeriods(List<CourseDTO> courses, string programme,
         string year)
     {
-        var queryBuilder = new StringBuilder();
-        var condStmtBuilder = new StringBuilder();
-        var parameters = new List<string>();
+        if (courses.Count == 0)
+        {
+            return courses;
+        }
 
         var table = ModelUtil.YearPatternToPeriodTable(year);
         var joinTable = ModelUtil.YearPatternToTable(year);
         var condColumn = ModelUtil.YearPatternToColumn(year);
 
-        queryBuilder.AppendLine(
-            @$"SELECT {Columns.COURSE_CODE}, {Columns.PERIOD_START}, {Columns.PERIOD_END}
-               FROM {table}
-                   JOIN {joinTable} USING({Columns.COURSE_CODE}, {condColumn})");
+        var query = new Query(table)
+            .Join(joinTable, j =>
+                j.On($"{joinTable}.{Columns.COURSE_CODE}", $"{table}.{Columns.COURSE_CODE}")
+                    .On($"{joinTable}.{condColumn}", $"{table}.{condColumn}")
+            )
+            .Select($"{table}.{Columns.COURSE_CODE}", Columns.PERIOD_START, Columns.PERIOD_END)
+            .Where($"{table}.{condColumn}", year)
+            .Where(Columns.PROGRAMME_CODE, programme);
 
-        condStmtBuilder.AppendLine($"WHERE {condColumn} = @p{parameters.Count}");
-        parameters.Add(year);
-
-        condStmtBuilder.AppendLine($"AND {Columns.PROGRAMME_CODE} = @p{parameters.Count}");
-        parameters.Add(programme);
-
-        for (var i = 0; i < courses.Count; i++)
+        query = query.Where(q =>
         {
-            var op = i == 0 ? "AND (" : "OR";
-            condStmtBuilder.AppendLine($"{op} {Columns.COURSE_CODE} = '{courses[i].course_code}'");
-            if (i == courses.Count - 1)
-            {
-                condStmtBuilder.Append(')');
-            }
-        }
+            var col = $"{table}.{Columns.COURSE_CODE}";
+            q = q.Where(col, courses.First().course_code);
+            return courses.Skip(1).Aggregate(q,
+                (current, courseCode) => current.OrWhere(col, courseCode.course_code));
+        });
 
-        queryBuilder.AppendLine(condStmtBuilder.ToString());
-        var query = queryBuilder.ToString();
-        var coursePeriods = await databaseQueryManager.ExecuteQuery<CoursePeriodDTO>(query, parameters.ToArray());
-
+        var coursePeriods = await db.ExecuteQuery<CoursePeriodDTO>(query);
         foreach (var course in courses)
         {
             var periods = coursePeriods.Where(cp => cp.course_code == course.course_code)
                 .Select(cp => new PeriodDTO(cp.period_start, cp.period_end));
-            foreach (var period in periods)
-            {
-                course.periods.Add(period);
-            }
+            course.periods.UnionWith(periods);
         }
 
         return courses;

@@ -6,14 +6,12 @@ public class HealthCheckManager : IHealthCheckManager
 {
     private readonly IConfiguration configuration;
     private readonly ILogger<HealthCheckManager> logger;
-    private IDatabaseQueryManager databaseQueryManager;
+    private IDatabaseManager db;
 
-    public HealthCheckManager(IDatabaseQueryManager databaseQueryManager, IConfiguration configuration,
+    public HealthCheckManager(IDatabaseManager databaseManager, IConfiguration configuration,
         ILogger<HealthCheckManager> logger)
     {
-        this.databaseQueryManager =
-            (IDatabaseQueryManager)DatabaseUtil.ConfigureDatabaseManager(databaseQueryManager, configuration,
-                Constants.CONNECTION_STRING);
+        db = DatabaseUtil.ConfigureDatabaseManager(databaseManager, configuration, Constants.CONNECTION_STRING);
         this.configuration = configuration;
         this.logger = logger;
     }
@@ -22,19 +20,7 @@ public class HealthCheckManager : IHealthCheckManager
 
     private bool CheckHealth()
     {
-        databaseQueryManager =
-            (IDatabaseQueryManager)DatabaseUtil.ConfigureDatabaseManager(databaseQueryManager, configuration,
-                Constants.CONNECTION_STRING);
-        var connectionResult = databaseQueryManager.ValidateConnection();
-
-        Console.WriteLine(connectionResult);
-
-        databaseQueryManager = (IDatabaseQueryManager)DatabaseUtil.ConfigureDatabaseManager(databaseQueryManager,
-            configuration,
-            Constants.CONNECTION_STRING_LINKS);
-        connectionResult = connectionResult && databaseQueryManager.ValidateConnection();
-        Console.WriteLine(connectionResult);
-
-        return connectionResult;
+        db = DatabaseUtil.ConfigureDatabaseManager(db, configuration, Constants.CONNECTION_STRING);
+        return db.ValidateConnection();
     }
 }
