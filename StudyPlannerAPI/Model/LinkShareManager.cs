@@ -19,6 +19,8 @@ public class LinkShareManager : ILinkShareManager
 
     public async Task<IActionResult> GetPlanFromUniqueBlob(string uniqueBlob)
     {
+        var isReadOnly = await IsReadOnly(uniqueBlob);
+
         // Get plan info
         var query = new Query(Tables.STUDY_PLAN)
             .Select(Columns.STUDY_PLAN_NAME, Columns.PROGRAMME_CODE, Columns.YEAR)
@@ -48,7 +50,8 @@ public class LinkShareManager : ILinkShareManager
             Programme = studyPlanDTO.programme_code,
             StudyPlanName = studyPlanDTO.study_plan_name,
             Year = studyPlanDTO.year,
-            SelectedCourses = courses
+            SelectedCourses = courses,
+            IsReadOnly = isReadOnly
         };
 
         return new JsonResult(result);

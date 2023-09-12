@@ -7,6 +7,8 @@ public class LinkShareDTO
 
     public string Year { get; set; } = string.Empty;
 
+    public bool IsReadOnly { get; set; } = false;
+
     //public List<string> MasterCodes { get; set; } = new();
     public List<SelectedCourseDTO> SelectedCourses { get; set; } = new();
 }
