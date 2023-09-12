@@ -73,9 +73,9 @@ public class MasterRequirementValidator : IMasterRequirementValidator
 
         var queryResult = await db.ExecuteQuery<CourseDTO>(query);
 
-        var advancedCredits = queryResult.Where(c => c.level == Constants.A_CREDITS).Sum(c => c.credits);
-        var g1Credits = queryResult.Where(c => c.level == Constants.G1_CREDITS).Sum(c => c.credits);
-        var g2Credits = queryResult.Where(c => c.level == Constants.G2_CREDITS).Sum(c => c.credits);
+        var advancedCredits = queryResult.Where(c => c.level == Constants.A).Sum(c => c.credits);
+        var g1Credits = queryResult.Where(c => c.level == Constants.G1).Sum(c => c.credits);
+        var g2Credits = queryResult.Where(c => c.level == Constants.G2).Sum(c => c.credits);
         var totalCredits = queryResult.Sum(c => c.credits);
         var coursesInMaster = queryResult.Select(c => c.course_code).ToList();
 
