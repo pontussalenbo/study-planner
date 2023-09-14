@@ -1,4 +1,5 @@
 export const CREDITS_TOTAL_KEY = 'General';
+export const MASTERS_SUMMARY_NAME = 'summary';
 
 export const Endpoints = {
     courses: '/courses',

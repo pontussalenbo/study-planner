@@ -30,6 +30,9 @@ export const GetStatsBar = styled.div`
     gap: 1rem;
     align-items: flex-end;
     margin-bottom: 10px;
+    @media (${device.lg}) {
+        margin-top: -3rem;
+    }
 `;
 
 export const AddButton = styled(StyledButtonWithIcon)`

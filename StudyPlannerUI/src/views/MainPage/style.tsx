@@ -9,9 +9,9 @@ export const Container = styled.div`
 
 export const Wrapper = styled.div`
   min-width: 350px;
+  width: 100%;
   padding: 1rem;
-  margin-top: 5rem;
-  @media screen and (max-width: 768px) {
-    width: 95%;
+  @media (min-width: 768px) {
+    padding: 1rem 2rem;
   }
 `;

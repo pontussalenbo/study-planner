@@ -1,6 +1,8 @@
+const DEFAULT_LANG = 'course_name_en';
+
 export function dataParser(
     data: API.CourseData[] | null,
-    locale: CourseData.COURSE_NAME
+    locale: CourseData.COURSE_NAME = DEFAULT_LANG
 ): CourseData.DataWithLocale[] {
     if (!data) return [];
 

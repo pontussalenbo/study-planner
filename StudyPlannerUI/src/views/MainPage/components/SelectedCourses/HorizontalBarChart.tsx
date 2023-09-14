@@ -1,14 +1,9 @@
 import { CtxType, MyContext } from 'hooks/CourseContext';
 import { memo, useContext } from 'react';
-import {
-  Bar,
-  BarChart,
-  CartesianGrid,
-  ResponsiveContainer,
-  XAxis,
-  YAxis
-} from 'recharts';
+import { Bar, BarChart, CartesianGrid, ResponsiveContainer, XAxis, YAxis } from 'recharts';
 import { Wrapper } from './styles';
+import { sortCourses } from 'utils/sortCourses';
+import { Tokens } from 'style/tokens';
 
 interface HorizontalBarChartProps {
   year: 4 | 5;
@@ -16,8 +11,7 @@ interface HorizontalBarChartProps {
 
 function HorizontalBarChart({ year }: HorizontalBarChartProps): JSX.Element {
   const { courses } = useContext(MyContext) as CtxType;
-
-  const chartData = courses[year].map(course => {
+  const chartData = sortCourses(courses[year]).map(course => {
     // If there is a selected period, use that, otherwise use the first period (and only one)
     const start = course.selectedPeriod?.start || course.periods[0].start;
     const end = (course.selectedPeriod?.end ?? course.periods[0].end) + 1;
@@ -51,7 +45,7 @@ function HorizontalBarChart({ year }: HorizontalBarChartProps): JSX.Element {
             type='number'
           />
           <YAxis width={100} tick={{ fill: 'white' }} type='category' dataKey='name' />
-          <Bar barSize={30} dataKey='period' fill='green' />
+          <Bar barSize={30} dataKey='period' fill={Tokens.primary50} />
         </BarChart>
       </ResponsiveContainer>
     </Wrapper>
