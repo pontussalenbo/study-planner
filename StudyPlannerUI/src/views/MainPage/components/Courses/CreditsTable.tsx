@@ -1,17 +1,15 @@
 import { memo, useCallback, useContext, useEffect, useMemo, useState } from 'react';
-import { StyledCell, StyledHeader, StyledTable, StyledTableContainer, TableBody } from '../Table/Table.style';
 import { CtxType, MyContext } from 'hooks/CourseContext';
 import Tooltip from 'components/Tooltip';
 import StyledButtonWithIcon from 'components/Button';
 import { GET, POST } from 'utils/fetch';
-import { CREDITS_TOTAL_KEY, Endpoints } from 'interfaces/API_Constants.d';
+import { CREDITS_TOTAL_KEY, Endpoints, MASTERS_SUMMARY_NAME } from 'interfaces/API_Constants.d';
 import { ReloadIcon } from 'components/icons';
 import { GetStatsBar } from './styles';
-import { ColoredTableRow } from '../styles';
-import Row from 'components/Flex/Row.style';
-import Col from 'components/Flex/Col.style';
-import FlexContainer from 'components/Layout';
 import styled from 'styled-components';
+import { ListContainer, NameCell, TableCell } from './InfiniteScroll.style';
+import { TableRow } from './InfiniteScroll.style';
+import { generateColors } from 'utils/rgbConverter';
 
 interface Filters {
   Programme: string;
@@ -22,150 +20,185 @@ interface ICreditsTable {
   filters: Filters;
 }
 
+// TODO: Move all styled components to separate files
+
+const Pill = styled.div<{ color?: string }>`
+  background-color: ${({ theme, color }) => color || theme.tertiary};
+  color: ${({ theme }) => theme.onTertiary}};
+  height: 24px;
+  max-width: 60px;
+  border-radius: 8px 8px 8px 8px;
+  padding: 5px 12px;
+  border-radius: 15px;
+  text-align: center;
+  font-size: 0.85em;
+  font-weight: 500;
+   overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+`;
+
+const PillBox = styled.div`
+  display: flex;
+`;
+
+const TextContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  font-size: 0.85em;
+  flex: 1 0 70%;
+  align-self: center;
+`;
+
+const PillContainer = styled.div`
+  display: flex;
+  gap: 4px;
+  flex-wrap: wrap;
+  align-items: center;
+  flex: 1 0 30%; // This makes the pills take up at most 50% width
+`;
+
 interface CourseProps {
   name: string;
+  code: string;
   masters: string[];
+  colors: Map<string, string>;
 }
 
-const CourseName = styled.div`
-  font-weight: bold;
-  margin-right: 10px;
-`;
-
-const Pill = styled.div`
-  background-color: ${({ theme }) => theme.tertiary};
-  color: ${({ theme }) => theme.onTertiary}};
-  padding: 4px 8px;
-  border-radius: 6px;
-  margin-right: 4px;
-`;
-
-const Course: React.FC<CourseProps> = ({ name, masters }) => (
-  <FlexContainer margin='10px' gap='0.5em'>
-    <CourseName>{name}</CourseName>
-    {masters.map(master => (
-      <Pill key={master}>{master}</Pill>
-    ))}
-  </FlexContainer>
-);
-
-interface CourseData {
-  name: string;
-  masters: string[];
-}
-
+const Course: React.FC<CourseProps> = ({ name, code, masters, colors }) => {
+  return (
+    <PillBox>
+      <TextContainer>
+        <p>{name}</p>
+        <p>({code})</p>
+      </TextContainer>
+      <PillContainer>
+        {masters.map((master, idx) => (
+          <Pill key={idx} color={colors.get(master)}>
+            {master.slice(0, 3)}
+          </Pill>
+        ))}
+      </PillContainer>
+    </PillBox>
+  );
+};
 interface CourseContainerProps {
-  courses: CourseData[];
+  courses: CourseData.SelectedCourse[];
+  masters: API.MasterStatus[];
+  colorMap: Map<string, string>;
 }
 
+// TODO: Move to utils
 function toHex(num: number) {
   return Math.round(num * 255).toString(16);
 }
 
-const Container = styled.div`
-  background-color: ${({ theme }) => theme.tertiary + toHex(0.2)}};
+const CourseContainer: React.FC<CourseContainerProps> = ({ courses, masters, colorMap }) => {
+  const getCourseMasters = (course: CourseData.SelectedCourse) => {
+    return masters
+      .filter(
+        master =>
+          master.SelectedCourses.includes(course.course_code) && master.Master !== MASTERS_SUMMARY_NAME
+      )
+      .map(master => master.Master);
   };
-  border-radius: 10px;
-  padding: 10px;
+
+  return (
+    <>
+      {Object.values(courses)
+        .flat()
+        .map(course => (
+          <Course
+            key={course.course_code}
+            name={course.course_name}
+            code={course.course_code}
+            masters={getCourseMasters(course)}
+            colors={colorMap}
+          />
+        ))}
+    </>
+  );
+};
+
+const Header: React.FC = () => {
+  return (
+    <TableRow header>
+      <NameCell>Specialisation</NameCell>
+      <TableCell>Code</TableCell>
+      <TableCell>G1</TableCell>
+      <TableCell>G2</TableCell>
+      <TableCell>A</TableCell>
+      <TableCell>Total</TableCell>
+    </TableRow>
+  );
+};
+
+const FilledTableRow = styled(TableRow)<{ fulfilled: boolean }>`
+  background-color: ${({ theme, fulfilled }) => (fulfilled ? theme.fulfilled : 'transparent')};
 `;
 
-const CourseContainer: React.FC<CourseContainerProps> = ({ courses }) => (
-  <Container>
-    {courses.map(course => (
-      <Course key={course.name} name={course.name} masters={course.masters} />
-    ))}
-  </Container>
-);
-
-const mockData = [
-  {
-    name: 'Course A',
-    masters: ['Master 1', 'Master 2']
-  },
-  {
-    name: 'Course B',
-    masters: ['Master 3']
-  },
-  {
-    name: 'Course A',
-    masters: ['Master 1', 'Master 2']
-  },
-  {
-    name: 'Course B',
-    masters: ['Master 3']
-  },
-  {
-    name: 'Course B',
-    masters: ['Master 3']
-  },
-  {
-    name: 'Course B',
-    masters: ['Master 3']
-  },
-  {
-    name: 'Course B',
-    masters: ['Master 3']
-  },
-  {
-    name: 'Course A',
-    masters: ['Master 1', 'Master 2']
-  },
-  {
-    name: 'Course B',
-    masters: ['Master 3']
-  },
-  {
-    name: 'Course A',
-    masters: ['Master 1', 'Master 2']
-  },
-  {
-    name: 'Course A',
-    masters: ['Master 1', 'Master 2']
-  },
-  {
-    name: 'Course A',
-    masters: ['Master 1', 'Master 2']
-  }
-  // ... add more courses
-];
-
+const TwoColumnWrapper = styled.div`
+  background-color: ${({ theme }) => theme.tertiary + toHex(0.2)}};
+  border-radius: 10px;
+  padding: 10px 20px;
+  display: grid;
+  grid-template-rows: repeat(7, auto); /* 7 items per column */
+  grid-auto-columns: 1fr; /* Makes each new column take up the full width */
+  grid-auto-flow: column; /* Makes items flow into new columns after the 8th item */
+  grid-gap: 10px 5px; /* Gap between items */
+`;
 function CreditsTable({ filters }: ICreditsTable): JSX.Element {
   const [masters, setMasters] = useState<API.Masters[]>([]);
 
   const [classYear, setClassYear] = useState<string>('');
   const [stats, setStats] = useState<API.MasterStatus[]>([]);
 
+  const getMasters = async () => {
+    if (!classYear) return [];
+    const params = {
+      programme: filters?.Programme,
+      year: classYear
+    };
+    const data = await GET<API.Masters[]>(Endpoints.masters, new URLSearchParams(params));
+    return data;
+  };
+
   useEffect(() => {
-    const classSelected = filters?.Year?.startsWith('H');
+    const classSelected = filters.Year?.startsWith('H');
     if (classSelected) {
       setClassYear(filters.Year);
     }
   }, [filters]);
 
+  useEffect(() => {
+    getMasters().then(data => {
+      setMasters(data);
+    });
+  }, [classYear]);
+
+  const colorMap = useMemo(() => {
+    const colors = generateColors(masters.length);
+    const colorMap: [string, string][] = masters.map((master, idx) => [master.master_code, colors[idx]]);
+    return new Map(colorMap);
+  }, [masters]);
+
   const { courses } = useContext(MyContext) as CtxType;
 
   const selectedCourses = useMemo(() => [...courses[4], ...courses[5]], [courses]);
 
-  const getMasters = useCallback(async () => {
-    if (!classYear) return;
-    const params = {
-      programme: filters?.Programme,
-      year: classYear
-    };
-    const data = await GET(Endpoints.masters, new URLSearchParams(params));
-    return data;
-  }, [classYear, filters]);
-
   const getMasterStats = useCallback(async () => {
     const courseCodes = selectedCourses.map(course => course.course_code);
-    const body = { ...filters, selectedCourses: courseCodes };
-    const data = await POST(Endpoints.masterCheck, body);
+    const body = {
+      ...filters,
+      selectedCourses: courseCodes
+    };
+
+    const data = await POST<API.MasterStatus[]>(Endpoints.masterCheck, body);
     return data;
   }, [filters, selectedCourses]);
 
   const handleUpdate = useCallback(async () => {
-    const [masters, stats] = await Promise.all([getMasters(), getMasterStats()]);
-    setMasters(masters);
+    const stats = await getMasterStats();
     setStats(stats);
   }, [getMasters, getMasterStats]);
 
@@ -173,13 +206,15 @@ function CreditsTable({ filters }: ICreditsTable): JSX.Element {
     const sortedMasters = [...masters];
 
     sortedMasters.sort((a, b) => {
+      // "General" should be placed at the end
       if (a.master_name_en === CREDITS_TOTAL_KEY) {
-        return 1; // "General" should be placed at the end
-      } else if (b.master_name_en === CREDITS_TOTAL_KEY) {
-        return -1; // "General" should be placed at the end
-      } else {
-        return a.master_name_en.localeCompare(b.master_name_en); // Sort alphabetically
+        return 1;
       }
+      if (b.master_name_en === CREDITS_TOTAL_KEY) {
+        return -1;
+      }
+      // Sort alphabetically
+      return a.master_name_en.localeCompare(b.master_name_en);
     });
 
     return sortedMasters;
@@ -201,47 +236,33 @@ function CreditsTable({ filters }: ICreditsTable): JSX.Element {
           </StyledButtonWithIcon>
         </Tooltip>
       </GetStatsBar>
-      <StyledTableContainer>
-        <StyledTable>
-          <thead>
-            <tr>
-              <StyledHeader>Specialisation</StyledHeader>
-              <StyledHeader>G1</StyledHeader>
-              <StyledHeader>G2</StyledHeader>
-              <StyledHeader>A</StyledHeader>
-              <StyledHeader>Total</StyledHeader>
-            </tr>
-          </thead>
-          <TableBody>
-            {sortedMasters.map(master => {
-              const masterStat = stats.find(stat => stat.Master === master.master_code) ?? null;
-              const totalCredits = masterStat
-                ? masterStat.G1Credits + masterStat.G2Credits + masterStat.AdvancedCredits
-                : 0;
-              if (!totalCredits) {
-                return null;
-              }
-              return (
-                <ColoredTableRow
-                  fullfilled={masterStat ? masterStat.RequirementsFulfilled : false}
-                  key={master.master_code}
-                >
-                  <StyledCell>{master.master_name_en}</StyledCell>
-                  <StyledCell>{masterStat?.G1Credits}</StyledCell>
-                  <StyledCell>{masterStat?.G2Credits}</StyledCell>
-                  <StyledCell>{masterStat?.AdvancedCredits}</StyledCell>
-                  <StyledCell>{totalCredits}</StyledCell>
-                </ColoredTableRow>
-              );
-            })}
-          </TableBody>
-        </StyledTable>
-      </StyledTableContainer>
-      <Row>
-        <Col xs={12}>
-          <CourseContainer courses={mockData} />
-        </Col>
-      </Row>
+      <ListContainer>
+        <Header />
+        {sortedMasters.map(master => {
+          const masterStat = stats.find(stat => stat.Master === master.master_code);
+          if (masterStat) {
+            const fulfilled = masterStat.RequirementsFulfilled;
+            const totalCredits = masterStat.G1Credits + masterStat.G2Credits + masterStat.AdvancedCredits;
+            return (
+              <FilledTableRow fulfilled={fulfilled} key={master.master_code}>
+                <NameCell>{master.master_name_en}</NameCell>
+                <TableCell>
+                  <Pill key={master.master_code} color={colorMap.get(master.master_code)}>
+                    {master.master_code.slice(0, 3)}
+                  </Pill>
+                </TableCell>
+                <TableCell>{masterStat?.G1Credits}</TableCell>
+                <TableCell>{masterStat?.G2Credits}</TableCell>
+                <TableCell>{masterStat?.AdvancedCredits}</TableCell>
+                <TableCell>{totalCredits}</TableCell>
+              </FilledTableRow>
+            );
+          }
+        })}
+      </ListContainer>
+      <TwoColumnWrapper>
+        <CourseContainer courses={selectedCourses} masters={stats} colorMap={colorMap} />
+      </TwoColumnWrapper>
     </>
   );
 }

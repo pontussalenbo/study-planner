@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import Col from 'components/Flex/Col.style';
 import Row from 'components/Flex/Row.style';
-import { MultiSelect, Option } from 'components/Select';
+import { Select, Option } from 'components/Select';
 import useFetch from 'hooks/useFetch';
 import { Endpoints } from 'interfaces/API_Constants.d';
 import type { Filters, TransformFn } from 'interfaces/Types';
@@ -15,11 +15,7 @@ import { FilterContainer } from './styles';
 import { Heading2 } from 'components/Typography/Heading2';
 import SelectedCoursesTable from '../SelectedCourses/SelectedCourses';
 import VirtualizedTable from './InfiniteScroll';
-import styled from 'styled-components';
-
-const MainFilter = styled(FilterContainer)`
-  margin-bottom: 3rem;
-`;
+import Pencil from 'components/icons/Spinner';
 
 function Courses() {
   const [filters, setFilters] = useState<Filters>({
@@ -30,21 +26,19 @@ function Courses() {
   const [filteredCourses, setFilteredCourses] = useState<CourseData.DataWithLocale[]>([]);
   const [matches, setMatches] = useState(true);
 
-  const { data: programmes } = useFetch<string[]>(BASE_URL + Endpoints.programmes);
-  const { data: years } = useFetch<string[]>(BASE_URL + Endpoints.classYears);
+  const { data: programmes, loading: loadingPrograms } = useFetch<string[]>(BASE_URL + Endpoints.programmes);
+  const { data: years, loading: loadingYears } = useFetch<string[]>(BASE_URL + Endpoints.classYears);
 
   const filterCourses = (transformFn: TransformFn) => {
     const result = transformFn([...courses]);
 
     // If result is a Promise, handle it
-    Promise.resolve(result).then(newCourses => {
-      if (newCourses.length > 0) {
-        setFilteredCourses(newCourses);
-        setMatches(true);
-      } else {
-        setFilteredCourses(courses);
-        setMatches(false);
-      }
+    Promise.resolve(result).then(results => {
+      const hasMatches = results.length > 0;
+      const newCourses = hasMatches ? results : courses;
+
+      setMatches(hasMatches);
+      setFilteredCourses(newCourses);
     });
   };
 
@@ -53,13 +47,14 @@ function Courses() {
     setFilteredCourses(newCourses);
   };
 
-  const handleGetCourses = (filterYear: string) => {
+  const handleGetCourses = (filterYear: string, masters?: string[]) => {
     const coursesFiter = {
       Programme: filters.Programme,
-      Year: filterYear
+      Year: filterYear,
+      MasterCodes: masters
     };
 
-    POST(Endpoints.courses, coursesFiter).then(resp => {
+    POST<API.CourseData[]>(Endpoints.courses, coursesFiter).then(resp => {
       const parsedData = dataParser(resp, 'course_name_en');
       setCourses(parsedData);
       setFilteredCourses(parsedData);
@@ -82,29 +77,33 @@ function Courses() {
     handleFilterChange(value, 'Year');
   };
 
+  if (loadingPrograms || loadingYears) {
+    return <Pencil />;
+  }
+
   return (
     <>
       <Row>
         <Col xs={12}>
           <Heading2>Study Period</Heading2>
-          <MainFilter>
-            <MultiSelect value={filters.Programme} label='Programme' onChange={handleProgrammeChange}>
+          <FilterContainer>
+            <Select value={filters.Programme} label='Programme' onChange={handleProgrammeChange}>
               <Option value=''>Select</Option>
               {programmes?.map(programme => (
                 <Option key={programme} value={programme}>
                   {programme}
                 </Option>
               ))}
-            </MultiSelect>
-            <MultiSelect value={filters.Year} label='Year' onChange={handleYearChange}>
+            </Select>
+            <Select value={filters.Year} label='Year' onChange={handleYearChange}>
               <Option value=''>Select</Option>
               {years?.map(year => (
                 <Option key={year} value={year}>
                   {year}
                 </Option>
               ))}
-            </MultiSelect>
-          </MainFilter>
+            </Select>
+          </FilterContainer>
           <Heading2>Courses</Heading2>
           <FilterContainer>
             <FilterBar

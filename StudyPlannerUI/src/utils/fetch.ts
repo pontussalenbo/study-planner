@@ -4,7 +4,7 @@ import { BASE_URL } from './URL';
 // TODO: Pretty unbareable to handle at large scale, but it's a start
 
 // TODO: Replace T = any with unknown
-export async function POST<T = any>(endpoint: string, data: unknown): Promise<T> {
+export async function POST<T = unknown>(endpoint: string, data: unknown): Promise<T> {
     const body = JSON.stringify(data);
     try {
         const response = await fetch(BASE_URL + endpoint, {
@@ -32,7 +32,7 @@ export async function POST<T = any>(endpoint: string, data: unknown): Promise<T>
  * @throws {APIError} If an error occurs during the fetch operation, it will throw an error of type APIError.
  */
 
-export async function GET<T = any>(endpoint: string, params?: URLSearchParams): Promise<T> {
+export async function GET<T = unknown>(endpoint: string, params?: URLSearchParams): Promise<T> {
     try {
         const url = new URL(BASE_URL + endpoint);
 

@@ -1,50 +1,13 @@
-import React, { useContext, useState } from 'react';
+import React, { useContext, useMemo, useState } from 'react';
 import { MyContext, CtxType } from 'hooks/CourseContext';
-import styled, { useTheme } from 'styled-components';
+import { useTheme } from 'styled-components';
 import StyledButtonWithIcon, { AlertButton } from 'components/Button';
 import { Select } from './styles';
-import { ListContainer } from './InfiniteScroll.style';
-
-interface TableRowProps {
-  header?: boolean;
-}
-
-const TableRow = styled.div<TableRowProps>`
-  display: flex;
-  border-bottom: 1px solid #ccc;
-  padding: 10px 0;
-  font-weight: ${props => (props.header ? 'bold' : 'normal')};
-`;
-
-const TableCell = styled.div`
-  padding: 0 10px;
-  flex: 1;
-  word-wrap: break-word;
-  overflow-wrap: break-word;
-`;
-
-const NameCell = styled(TableCell)`
-  flex: 4;
-`;
-
-const ButtonCell = styled(TableCell)`
-  min-width: 100px;
-  flex: 0 0 auto;
-`;
+import { ButtonCell, ListContainer, NameCell, TableRow, TableCell } from './InfiniteScroll.style';
+import { getDisplayPeriod } from 'utils/sortCourses';
 
 type Props = {
   courses: CourseData.DataWithLocale[];
-};
-
-interface Period {
-  start: number;
-  end: number;
-}
-
-const getDisplayPeriod = (period: Period) => {
-  const { start, end } = period;
-
-  return start !== end ? `${period.start} \u2192 ${end}` : period.start;
 };
 
 const Header: React.FC = () => {
@@ -71,10 +34,13 @@ const Row = ({ index, data }: RowProps) => {
   const theme = useTheme();
 
   const course: CourseData.DataWithLocale = data.courses[index];
-  const [selected, setSelected] = useState(false);
   const [selectedPeriod, setSelectedPeriod] = useState<API.Period | null>(null);
 
-  const { removeCourse, addCourse } = useContext(MyContext) as CtxType;
+  const { removeCourse, addCourse, courseCodes } = useContext(MyContext) as CtxType;
+
+  const isSelected = useMemo(() => {
+    return courseCodes.has(course.course_code);
+  }, [courseCodes, course.course_code]);
 
   const handleButtonClick = () => {
     const selectedCourse: CourseData.SelectedCourse = {
@@ -82,19 +48,19 @@ const Row = ({ index, data }: RowProps) => {
       selectedPeriod,
       selectedYear: 4
     };
-    setSelected(true);
     addCourse(selectedCourse, 4, selectedPeriod);
   };
 
   const handleRemoveClick = () => {
     removeCourse(course.course_code, 4);
-    setSelected(false);
   };
 
   const handlePeriodChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
     const periodIndex = parseInt(event.target.value);
     setSelectedPeriod(course.periods[periodIndex]);
   };
+
+  const hasMultiplePeriods = course.periods.length > 1;
 
   return (
     <TableRow style={{ borderBottom: `1px solid ${theme.outline}` }}>
@@ -103,7 +69,7 @@ const Row = ({ index, data }: RowProps) => {
       <TableCell>{course.credits}</TableCell>
       <TableCell>{course.level}</TableCell>
       <TableCell>
-        {course.periods.length > 1 ? (
+        {hasMultiplePeriods ? (
           <Select defaultValue='' onChange={handlePeriodChange}>
             <option value='' disabled>
               Select
@@ -119,7 +85,7 @@ const Row = ({ index, data }: RowProps) => {
         )}
       </TableCell>
       <ButtonCell>
-        {selected ? (
+        {isSelected ? (
           <AlertButton onClick={handleRemoveClick}>&#45; Remove</AlertButton>
         ) : (
           <StyledButtonWithIcon

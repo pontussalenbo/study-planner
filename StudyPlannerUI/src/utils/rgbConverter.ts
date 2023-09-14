@@ -19,3 +19,33 @@ export function hexToRgb(hex: string) {
           }
         : { r: 0, g: 0, b: 0 };
 }
+
+export function generateColors(n: number): string[] {
+    const colors: string[] = [];
+    const distance = 360 / n;
+
+    for (let i = 0; i < n; i++) {
+        const hue = Math.round(i * distance) % 360;
+        let saturation = 60;
+        let lightness = 75; // Default lightness set to 75%
+
+        // Adjustments for common color blindness issues
+        if ((hue >= 0 && hue <= 30) || (hue >= 330 && hue <= 360)) {
+            // Red hues
+            saturation = 45;
+            lightness = 85; // Red hues tend to be brighter, so we'll set them at the higher end
+        } else if (hue >= 60 && hue <= 180) {
+            // Green hues
+            saturation = 45;
+            lightness = 80; // Green hues adjusted to mid-high range
+        } else if (hue >= 180 && hue <= 300) {
+            // Blue hues
+            saturation = 70;
+            lightness = 75; // Blue hues kept at default
+        }
+
+        colors.push(`hsl(${hue}, ${saturation}%, ${lightness}%)`);
+    }
+
+    return colors;
+}

@@ -7,6 +7,9 @@ interface StyledButtonProps {
 
 export const StyledButton = styled.button<StyledButtonProps>`
   display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  justify-content: center;
   background-color: ${({ theme }) => theme.primaryContainer};
   color: ${({ theme }) => theme.onPrimaryContainer};
   border-color: ${({ theme }) => theme.onPrimaryContainer};
@@ -55,17 +58,9 @@ const IconWrapper = styled.span`
 `;
 
 const Text = styled.span`
-  @media (max-width: 420px) {
+  @media (max-width: 520px) {
     display: none;
   }
-`;
-
-const Container = styled.div`
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: 4px;
-  height: 100%;
 `;
 
 interface IButtonWithIconProps extends ButtonHTMLAttributes<HTMLButtonElement> {
@@ -76,10 +71,8 @@ interface IButtonWithIconProps extends ButtonHTMLAttributes<HTMLButtonElement> {
 
 const StyledButtonWithIcon = ({ children, icon, text = true, ...rest }: IButtonWithIconProps) => (
   <StyledButton {...rest}>
-    <Container>
-      {icon && <IconWrapper>{icon}</IconWrapper>}
-      {text ? children : <Text>{children}</Text>}
-    </Container>
+    {icon && <IconWrapper>{icon}</IconWrapper>}
+    {text ? children : <Text>{children}</Text>}
   </StyledButton>
 );
 

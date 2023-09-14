@@ -26,6 +26,7 @@ declare namespace API {
         G1Credits: number;
         G2Credits: number;
         RequirementsFulfilled: boolean;
+        SelectedCourses: string[];
     }
 
     export interface Masters {

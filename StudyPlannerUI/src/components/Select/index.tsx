@@ -1,131 +1,26 @@
 import React, { useState, ReactNode, useContext, useEffect, useRef, FC } from 'react';
-import styled from 'styled-components';
-import { Select as StyledSelect, Label, SelectWrapper, OptionalText } from './style';
+import {
+  Arrow,
+  Checkbox,
+  DropdownList,
+  LegendContent,
+  OptionItem,
+  Pill,
+  RemoveIcon,
+  SelectContainer,
+  SelectLabel,
+  StyledFieldset,
+  StyledLegend
+} from './style';
 
-interface Props extends React.SelectHTMLAttributes<HTMLSelectElement> {
-  label: string;
-  optional?: boolean;
-  options?: string[];
-  children?: React.ReactNode;
-  width?: string;
-}
-
-export function Select({ label, options, optional, children, ...props }: Props) {
-  const id = props.name + '_' + label;
-  return (
-    <SelectWrapper>
-      <Label htmlFor={id}>
-        {label} {optional && <OptionalText>(optional)</OptionalText>}
-      </Label>
-      <StyledSelect id={id} {...props}>
-        {children}
-        {options?.map(option => (
-          <option key={option} value={option}>
-            {option}
-          </option>
-        ))}
-      </StyledSelect>
-    </SelectWrapper>
-  );
-}
-
-interface SelectContextType<T = string | string[]> {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+interface SelectContextType<T = any> {
   selectValue: T;
-  setSelectValue: (value: any) => void;
+  setSelectValue: (value: T) => void;
   multiple: boolean;
 }
 
 const SelectContext = React.createContext<SelectContextType | undefined>(undefined);
-
-// Styles
-const SelectContainer = styled.div<{ isOpen: boolean; disabled: boolean }>`
-  display: flex;
-  min-height: 38px;
-  align-items: center;
-  justify-content: space-between;
-  background-color: ${({ theme }) => theme.surfaceVariant};
-  color: ${({ theme }) => theme.onSurfaceVariant};
-  border-radius: 4px;
-  width: 200px;
-  position: relative;
-  font-family: 'Roboto', sans-serif;
-  padding: 0;
-  cursor: pointer;
-  ${({ disabled }) =>
-    disabled &&
-    `
-    opacity: 0.5;
-    pointer-events: none;
-  `}
-`;
-
-const Arrow = styled.span<{ isOpen: boolean }>`
-  margin-right: 8px;
-  margin-left: auto;
-  transform: ${props => (props.isOpen ? 'rotate(180deg)' : 'rotate(0deg)')};
-  transition: transform 0.3s ease;
-  font-size: 0.7rem;
-`;
-
-const DropdownList = styled.ul`
-  position: absolute;
-  background-color: ${({ theme }) => theme.surfaceVariant};
-  color: ${({ theme }) => theme.onSurfaceVariant};
-  top: calc(100% + 1px); // Offset to move beyond the border.
-  left: 0px; // Adjust based on left padding of the SelectContainer.
-  width: 100%; // Increase width to account for the paddings.
-  border: 1px solid ${({ theme }) => theme.outline};
-  border-top: none;
-  border-radius: 0 0 4px 4px;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
-  z-index: 1;
-  max-height: 250px;
-  overflow-y: auto;
-  transition: all 0.3s ease;
-
-  /* Animation styles */
-  visibility: hidden;
-  transition: opacity 0.3s linear;
-
-  &[data-visible='true'] {
-    visibility: visible;
-  }
-`;
-
-const OptionItem = styled.li`
-  display: flex;
-  gap: 8px;
-  align-items: center;
-  padding: 10px 12px;
-  cursor: pointer;
-  transition: background-color 0.2s ease;
-  &:hover {
-    background-color: rgba(0, 0, 0, 0.15);
-  }
-  &:active {
-    background-color: rgba(0, 0, 0, 0.2);
-  }
-`;
-
-const Checkbox = styled.input`
-  accent-color: ${({ theme }) => theme.primary};
-`;
-
-const Pill = styled.div`
-  display: inline-flex;
-  align-items: center;
-  background-color: #3498db;
-  color: white;
-  border-radius: 16px;
-  padding: 5px 10px;
-  margin: 5px;
-  font-size: 14px;
-  cursor: pointer;
-`;
-
-const RemoveIcon = styled.span`
-  margin-left: 8px;
-`;
 
 interface SelectedItemProps {
   label: string;
@@ -147,7 +42,7 @@ interface OptionProps {
 }
 
 export const Option: React.FC<OptionProps> = ({ value, children }) => {
-  const { selectValue, setSelectValue, multiple } = useContext(SelectContext) as any;
+  const { selectValue, setSelectValue, multiple } = useContext(SelectContext) as SelectContextType;
 
   const handleClick = () => {
     if (multiple) {
@@ -172,59 +67,6 @@ export const Option: React.FC<OptionProps> = ({ value, children }) => {
   );
 };
 
-const StyledFieldset = styled.fieldset`
-  text-align: left;
-  position: absolute;
-  bottom: 0;
-  right: 0;
-  top: -5px;
-  left: 0;
-  margin: 0;
-  padding: 0 8px;
-  pointer-events: none;
-  border-radius: inherit;
-  border-style: solid;
-  border-width: 1px;
-  overflow: hidden;
-  min-width: 0%;
-  border-width: 2px;
-  border-color: ${({ theme }) => theme.outline};
-`;
-
-const StyledLegend = styled.legend<{ hasValue: boolean }>`
-  float: unset;
-  width: auto;
-  overflow: hidden;
-  display: block;
-  padding: 0;
-  height: 1em;
-  font-size: 0.8em;
-  visibility: hidden;
-  max-width: ${({ hasValue }) => (hasValue ? '100%' : '0.01px')};
-  -webkit-transition: max-width 50ms cubic-bezier(0, 0, 0.2, 1) 0ms;
-  transition: max-width 50ms cubic-bezier(0, 0, 0.2, 1) 0ms;
-  white-space: nowrap;
-`;
-
-const LegendContent = styled.span`
-  padding-left: 5px;
-  padding-right: 5px;
-  display: inline-flex;
-  color: white;
-  visibility: visible;
-  opacity: 1;
-`;
-
-const SelectLabel = styled.label<{ isOpen: boolean }>`
-  display: block;
-  margin: 1rem;
-  // move the label up when the select is open
-  transform: ${props => (props.isOpen ? 'translateY(-18px)' : 'translateY(-1px)')};
-  transition: transform 0.3s ease;
-  font-size: 0.85rem;
-  visibility: ${props => (props.isOpen ? 'hidden' : 'visible')};
-`;
-
 interface CommonProps {
   children: ReactNode;
   pills?: boolean;
@@ -232,23 +74,24 @@ interface CommonProps {
   enabled?: boolean;
 }
 
-type SelectProps<T extends boolean> = CommonProps & {
+type Value = string | number | readonly string[] | readonly number[] | undefined;
+
+type SelectProps<T extends boolean, S extends Value> = CommonProps & {
   multiple?: T;
-  value: T extends true ? string[] : string;
-  defaultValue?: T extends true ? string[] : string;
-  onChange: ((value: any) => void) | ((value: any[]) => void);
+  value: S;
+  defaultValue?: S;
+  onChange: (value: S) => void;
 };
 
-export const MultiSelect = <T extends boolean>({
+export const Select = <T extends boolean, S extends Value>({
   children,
   multiple,
   pills = false,
   value,
-  defaultValue,
   label,
   enabled = true,
   onChange
-}: SelectProps<T>) => {
+}: SelectProps<T, S>) => {
   const [isOpen, setIsOpen] = useState(false);
   const selectRef = useRef<HTMLDivElement | null>(null);
 
@@ -277,16 +120,17 @@ export const MultiSelect = <T extends boolean>({
   };
 
   const selectedValues = Array.isArray(value) ? value.join(', ') : value;
+  const hasValue = Array.isArray(value) ? value.length > 0 : value !== '';
 
   return (
     <SelectContainer disabled={!enabled} isOpen={isOpen} ref={selectRef} onClick={handleContainerClick}>
-      <SelectLabel isOpen={isOpen}>{selectedValues || label}</SelectLabel>
+      <SelectLabel isOpen={isOpen}>{(selectedValues || label) as string}</SelectLabel>
       {Array.isArray(value) && pills && (
         <div>
           {value.map(item => (
             // TODO: implement onRemove
             // eslint-disable-next-line @typescript-eslint/no-empty-function
-            <SelectedItem key={item} label={item} onRemove={() => {}} />
+            <SelectedItem key={item} label={item.toString()} onRemove={() => {}} />
           ))}
         </div>
       )}
@@ -298,8 +142,8 @@ export const MultiSelect = <T extends boolean>({
           {children}
         </SelectContext.Provider>
       </DropdownList>
-      <StyledFieldset>
-        <StyledLegend hasValue={(value?.length ?? 0) > 0 || isOpen}>
+      <StyledFieldset isOpen={isOpen}>
+        <StyledLegend hasValue={hasValue || isOpen}>
           <LegendContent>{label}</LegendContent>
         </StyledLegend>
       </StyledFieldset>

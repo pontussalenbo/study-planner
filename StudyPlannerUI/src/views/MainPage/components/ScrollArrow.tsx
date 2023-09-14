@@ -43,7 +43,7 @@ const ScrollArrow = () => {
       const isElementScrollable = element.scrollHeight > element.clientHeight;
       setIsScrollable(isElementScrollable);
 
-      if (scrollTop + clientHeight >= scrollHeight) {
+      if (scrollTop + clientHeight >= scrollHeight / 2) {
         setIsPointingDown(false);
       }
 
