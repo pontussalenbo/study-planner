@@ -1,3 +1,4 @@
+// TODO: Rename file to a more appropriate name
 import React, { useContext, useMemo, useState } from 'react';
 import { MyContext, CtxType } from 'hooks/CourseContext';
 import { useTheme } from 'styled-components';
