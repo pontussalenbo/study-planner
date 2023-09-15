@@ -1,15 +1,20 @@
 name: CI/CD for React Application
 
+permissions:
+    contents: read
+    pull-requests: write
+
 on:
     push:
         branches: ['master']
         paths:
             - 'StudyPlannerUI/src/**'
     pull_request:
-        types: [opened, synchronize, reopened, closed, labeled]
+        types: [opened, synchronize, reopened, closed]
         branches:
             - master
     workflow_dispatch:
+
 
 env:
     NPM_CONFIG_LEGACY_PEER_DEPS: true
