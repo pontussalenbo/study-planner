@@ -1,3 +1,5 @@
+// TODO: Move to utils folder
+
 const DEFAULT_LANG = 'course_name_en';
 
 export function dataParser(

@@ -1,4 +1,4 @@
-import { memo, useCallback, useContext, useEffect, useMemo, useState } from 'react';
+import { memo, useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
 import { CtxType, MyContext } from 'hooks/CourseContext';
 import Tooltip from 'components/Tooltip';
 import StyledButtonWithIcon from 'components/Button';
@@ -147,11 +147,22 @@ const TwoColumnWrapper = styled.div`
   grid-auto-flow: column; /* Makes items flow into new columns after the 8th item */
   grid-gap: 10px 5px; /* Gap between items */
 `;
+
+const BoldCell = styled(TableCell)`
+  font-weight: bold;
+`;
+
+const BoldNameCell = styled(NameCell)`
+  font-weight: bold;
+`;
+
 function CreditsTable({ filters }: ICreditsTable): JSX.Element {
   const [masters, setMasters] = useState<API.Masters[]>([]);
 
   const [classYear, setClassYear] = useState<string>('');
   const [stats, setStats] = useState<API.MasterStatus[]>([]);
+
+  const buttonRef = useRef<HTMLButtonElement | null>(null);
 
   const getMasters = async () => {
     if (!classYear) return [];
@@ -175,6 +186,13 @@ function CreditsTable({ filters }: ICreditsTable): JSX.Element {
       setMasters(data);
     });
   }, [classYear]);
+
+  useEffect(() => {
+    if (buttonRef.current) {
+      const height = buttonRef.current.offsetHeight;
+      console.log('Button height:', height);
+    }
+  }, [buttonRef]);
 
   const colorMap = useMemo(() => {
     const colors = generateColors(masters.length);
@@ -222,12 +240,14 @@ function CreditsTable({ filters }: ICreditsTable): JSX.Element {
 
   const sortedMasters = useMemo(() => sortMasters(masters), [masters]);
   const enoughCourses = useMemo(() => selectedCourses.length >= 4, [courses]);
+  const summary = useMemo(() => stats.find(master => master.Master === MASTERS_SUMMARY_NAME), [stats]);
 
   return (
     <>
-      <GetStatsBar>
+      <GetStatsBar buttonHeight={buttonRef.current?.offsetHeight}>
         <Tooltip enabled={!enoughCourses} text='Needs atleast 4 courses'>
           <StyledButtonWithIcon
+            rref={buttonRef}
             disabled={!enoughCourses}
             onClick={handleUpdate}
             icon={<ReloadIcon fill='white' width='0.8rem' />}
@@ -240,9 +260,11 @@ function CreditsTable({ filters }: ICreditsTable): JSX.Element {
         <Header />
         {sortedMasters.map(master => {
           const masterStat = stats.find(stat => stat.Master === master.master_code);
+
           if (masterStat) {
             const fulfilled = masterStat.RequirementsFulfilled;
             const totalCredits = masterStat.G1Credits + masterStat.G2Credits + masterStat.AdvancedCredits;
+            if (totalCredits === 0) return null;
             return (
               <FilledTableRow fulfilled={fulfilled} key={master.master_code}>
                 <NameCell>{master.master_name_en}</NameCell>
@@ -259,7 +281,18 @@ function CreditsTable({ filters }: ICreditsTable): JSX.Element {
             );
           }
         })}
+        {summary && (
+          <FilledTableRow fulfilled={false} key={summary.Master}>
+            <BoldNameCell>{summary.Master}</BoldNameCell>
+            <TableCell />
+            <BoldCell>{summary.G1Credits}</BoldCell>
+            <BoldCell>{summary?.G2Credits}</BoldCell>
+            <BoldCell>{summary?.AdvancedCredits}</BoldCell>
+            <BoldCell>{summary.AdvancedCredits}</BoldCell>
+          </FilledTableRow>
+        )}
       </ListContainer>
+      <ListContainer></ListContainer>
       <TwoColumnWrapper>
         <CourseContainer courses={selectedCourses} masters={stats} colorMap={colorMap} />
       </TwoColumnWrapper>

@@ -86,6 +86,7 @@ function Courses() {
       <Row>
         <Col xs={12}>
           <Heading2>Study Period</Heading2>
+          {/* TODO: refactor to a separate component */}
           <FilterContainer>
             <Select value={filters.Programme} label='Programme' onChange={handleProgrammeChange}>
               <Option value=''>Select</Option>

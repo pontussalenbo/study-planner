@@ -2,6 +2,8 @@ import StyledButtonWithIcon, { StyledButton } from 'components/Button';
 import styled from 'styled-components';
 import { device } from 'utils/breakpoints';
 
+const buttonBottomMargin = 10;
+
 export const StatsButton = styled(StyledButton)`
     margin-bottom: 10px;
 `;
@@ -25,14 +27,12 @@ export const Select = styled.select`
     min-width: max-content;
 `;
 
-export const GetStatsBar = styled.div`
+export const GetStatsBar = styled.div<{ buttonHeight?: number }>`
     display: flex;
     gap: 1rem;
     align-items: flex-end;
     margin-bottom: 10px;
-    @media (${device.lg}) {
-        margin-top: -3rem;
-    }
+    margin-top: -${({ buttonHeight }) => (buttonHeight ? buttonHeight + buttonBottomMargin : 0)}px;
 `;
 
 export const AddButton = styled(StyledButtonWithIcon)`

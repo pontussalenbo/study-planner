@@ -67,10 +67,11 @@ interface IButtonWithIconProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   children: React.ReactNode;
   icon?: React.ReactNode;
   text?: boolean;
+  rref?: React.Ref<HTMLButtonElement>;
 }
 
-const StyledButtonWithIcon = ({ children, icon, text = true, ...rest }: IButtonWithIconProps) => (
-  <StyledButton {...rest}>
+const StyledButtonWithIcon = ({ children, icon, text = true, rref, ...rest }: IButtonWithIconProps) => (
+  <StyledButton ref={rref} {...rest}>
     {icon && <IconWrapper>{icon}</IconWrapper>}
     {text ? children : <Text>{children}</Text>}
   </StyledButton>

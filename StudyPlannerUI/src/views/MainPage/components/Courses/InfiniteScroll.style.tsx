@@ -38,8 +38,12 @@ export const TableRow = styled.div<TableRowProps>`
   ${({ header }) => header && `position: sticky; top: 0; background-color: ${Tokens.neutralVariant20}  ;`};
   display: flex;
   border-bottom: 1px solid #ccc;
+  &:last-child {
+    border-bottom: none;
+  }
   padding: 10px 0;
   font-weight: ${props => (props.header ? 'bold' : 'normal')};
+  ${({ header }) => header && 'z-index: 1;'};
 `;
 
 export const TableCell = styled.div`
