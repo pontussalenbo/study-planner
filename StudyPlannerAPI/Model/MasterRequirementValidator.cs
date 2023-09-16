@@ -34,7 +34,6 @@ public class MasterRequirementValidator : IMasterRequirementValidator
             masterCodes = await db.ExecuteQuery<string>(query);
         }
 
-        masterCodes.Add(Constants.SUMMARY);
         if (!masterCodes.Contains(Constants.GENERAL))
         {
             masterCodes.Add(Constants.GENERAL);
@@ -46,6 +45,8 @@ public class MasterRequirementValidator : IMasterRequirementValidator
             var validationResult = await ValidateMaster(programme, masterCode, year, selectedCourses);
             result.Add(validationResult);
         }
+
+        result.Add(await GetSummary(selectedCourses));
 
         return new JsonResult(result);
     }
@@ -61,25 +62,14 @@ public class MasterRequirementValidator : IMasterRequirementValidator
             .Distinct()
             .Select(Columns.CREDITS, Columns.LEVEL)
             .Where(Columns.PROGRAMME_CODE, programme)
-            .Where(Columns.CLASS_YEAR, year);
-
-        if (masterCode == Constants.SUMMARY)
-        {
-            query = query.Where(q =>
-                q.Where(Columns.ELECTABILITY, Constants.ELECTIVE)
-                    .OrWhere(Columns.ELECTABILITY, Constants.EXTERNAL_ELECTIVE));
-        }
-        else
-        {
-            query = query.Where(Columns.MASTER_CODE, masterCode);
-        }
-
-        query = query.Where(q =>
-        {
-            const string col = $"{Tables.COURSES}.{Columns.COURSE_CODE}";
-            q = q.Where(col, selectedCourses.First());
-            return selectedCourses.Skip(1).Aggregate(q, (current, courseCode) => current.OrWhere(col, courseCode));
-        });
+            .Where(Columns.CLASS_YEAR, year)
+            .Where(Columns.MASTER_CODE, masterCode)
+            .Where(q =>
+            {
+                const string col = $"{Tables.COURSES}.{Columns.COURSE_CODE}";
+                q = q.Where(col, selectedCourses.First());
+                return selectedCourses.Skip(1).Aggregate(q, (current, courseCode) => current.OrWhere(col, courseCode));
+            });
 
         var queryResult = await db.ExecuteQuery<CourseDTO>(query);
 
@@ -88,6 +78,7 @@ public class MasterRequirementValidator : IMasterRequirementValidator
         var g2Credits = queryResult.Where(c => c.level == Constants.G2_CREDITS).Sum(c => c.credits);
         var totalCredits = queryResult.Sum(c => c.credits);
         var coursesInMaster = queryResult.Select(c => c.course_code).ToList();
+
         return new MasterValidationResult
         {
             Master = masterCode,
@@ -95,11 +86,41 @@ public class MasterRequirementValidator : IMasterRequirementValidator
             G1Credits = g1Credits,
             G2Credits = g2Credits,
             SelectedCourses = coursesInMaster,
-            RequirementsFulfilled = masterCode != Constants.SUMMARY
-                ? advancedCredits >= Constants.REQUIRED_A_CREDITS_MASTER &&
-                  totalCredits >= Constants.REQUIRED_CREDITS_MASTER
-                : advancedCredits >= Constants.REQUIRED_A_CREDITS_TOTAL &&
-                  totalCredits >= Constants.REQUIRED_CREDITS_TOTAL
+            RequirementsFulfilled = advancedCredits >= Constants.REQUIRED_A_CREDITS_MASTER &&
+                                    totalCredits >= Constants.REQUIRED_CREDITS_MASTER
+        };
+    }
+
+    public async Task<MasterValidationResult> GetSummary(IReadOnlyCollection<string> selectedCourses)
+    {
+        var query = new Query(Tables.COURSES)
+            .Select(Columns.COURSE_CODE).Distinct()
+            .Select(Columns.CREDITS, Columns.LEVEL)
+            .Where(q =>
+            {
+                q = q.Where(Columns.COURSE_CODE, selectedCourses.First());
+                return selectedCourses.Skip(1).Aggregate(q,
+                    (current, courseCode) => current.OrWhere(Columns.COURSE_CODE, courseCode));
+            });
+
+        var queryResult = await db.ExecuteQuery<CourseDTO>(query);
+
+        var advancedCredits = queryResult.Where(c => c.level == Constants.A_CREDITS).Sum(c => c.credits);
+        var g1Credits = queryResult.Where(c => c.level == Constants.G1_CREDITS).Sum(c => c.credits);
+        var g2Credits = queryResult.Where(c => c.level == Constants.G2_CREDITS).Sum(c => c.credits);
+        var totalCredits = queryResult.Sum(c => c.credits);
+        var coursesInMaster = queryResult.Select(c => c.course_code).ToList();
+
+        return new MasterValidationResult
+        {
+            Master = Constants.SUMMARY,
+            AdvancedCredits = advancedCredits,
+            G1Credits = g1Credits,
+            G2Credits = g2Credits,
+            SelectedCourses = coursesInMaster,
+            RequirementsFulfilled =
+                advancedCredits >= Constants.REQUIRED_A_CREDITS_TOTAL &&
+                totalCredits >= Constants.REQUIRED_CREDITS_TOTAL
         };
     }
 }
