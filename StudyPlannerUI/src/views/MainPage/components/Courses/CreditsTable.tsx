@@ -158,21 +158,12 @@ const BoldNameCell = styled(NameCell)`
 
 function CreditsTable({ filters }: ICreditsTable): JSX.Element {
   const [masters, setMasters] = useState<API.Masters[]>([]);
-
   const [classYear, setClassYear] = useState<string>('');
   const [stats, setStats] = useState<API.MasterStatus[]>([]);
 
   const buttonRef = useRef<HTMLButtonElement | null>(null);
 
-  const getMasters = async () => {
-    if (!classYear) return [];
-    const params = {
-      programme: filters?.Programme,
-      year: classYear
-    };
-    const data = await GET<API.Masters[]>(Endpoints.masters, new URLSearchParams(params));
-    return data;
-  };
+  const { courses } = useContext(MyContext) as CtxType;
 
   useEffect(() => {
     const classSelected = filters.Year?.startsWith('H');
@@ -182,17 +173,21 @@ function CreditsTable({ filters }: ICreditsTable): JSX.Element {
   }, [filters]);
 
   useEffect(() => {
-    getMasters().then(data => {
-      setMasters(data);
-    });
-  }, [classYear]);
+    const getMasters = async () => {
+      const params = {
+        programme: filters?.Programme,
+        year: classYear
+      };
+      const data = await GET<API.Masters[]>(Endpoints.masters, new URLSearchParams(params));
+      return data;
+    };
 
-  useEffect(() => {
-    if (buttonRef.current) {
-      const height = buttonRef.current.offsetHeight;
-      console.log('Button height:', height);
+    if (classYear) {
+      getMasters().then(data => {
+        setMasters(data);
+      });
     }
-  }, [buttonRef]);
+  }, [classYear]);
 
   const colorMap = useMemo(() => {
     const colors = generateColors(masters.length);
@@ -200,26 +195,11 @@ function CreditsTable({ filters }: ICreditsTable): JSX.Element {
     return new Map(colorMap);
   }, [masters]);
 
-  const { courses } = useContext(MyContext) as CtxType;
-
-  const selectedCourses = useMemo(() => [...courses[4], ...courses[5]], [courses]);
-
-  const getMasterStats = useCallback(async () => {
-    const courseCodes = selectedCourses.map(course => course.course_code);
-    const body = {
-      ...filters,
-      selectedCourses: courseCodes
-    };
-
-    const data = await POST<API.MasterStatus[]>(Endpoints.masterCheck, body);
-    return data;
-  }, [filters, selectedCourses]);
-
-  const handleUpdate = useCallback(async () => {
-    const stats = await getMasterStats();
-    setStats(stats);
-  }, [getMasters, getMasterStats]);
-
+  /**
+   * Sort masters alphabetically, but put "General" at the end
+   * @param masters masters to sort
+   * @returns sorted list of masters
+   */
   const sortMasters = (masters: API.Masters[]) => {
     const sortedMasters = [...masters];
 
@@ -238,9 +218,40 @@ function CreditsTable({ filters }: ICreditsTable): JSX.Element {
     return sortedMasters;
   };
 
+  /** Cache the sorted masters, so that we dont sort them on each re-render */
   const sortedMasters = useMemo(() => sortMasters(masters), [masters]);
-  const enoughCourses = useMemo(() => selectedCourses.length >= 4, [courses]);
-  const summary = useMemo(() => stats.find(master => master.Master === MASTERS_SUMMARY_NAME), [stats]);
+  const selectedCourses = [...courses[4], ...courses[5]];
+
+  const enoughCourses = selectedCourses.length >= 4;
+  const summary = stats.find(master => master.Master === MASTERS_SUMMARY_NAME);
+
+  /**
+   * Gets master stats from the backend based on currently selected courses and filters
+   */
+  const getMasterStats = useCallback(async () => {
+    const courseCodes = selectedCourses.map(course => course.course_code);
+    const body = {
+      ...filters,
+      selectedCourses: courseCodes
+    };
+
+    const data = await POST<API.MasterStatus[]>(Endpoints.masterCheck, body);
+    return data;
+  }, [filters, selectedCourses]);
+
+  const handleUpdate = useCallback(async () => {
+    const stats = await getMasterStats();
+    setStats(stats);
+  }, [getMasterStats]);
+
+  const totalCredits = (summary: API.MasterStatus) => {
+    return summary.G1Credits + summary.G2Credits + summary.AdvancedCredits;
+  };
+
+  /** Because Andreas can't answer with summary capitalized ;) */
+  const capitalizeFirstLetter = (string: string) => {
+    return string.charAt(0).toUpperCase() + string.slice(1);
+  };
 
   return (
     <>
@@ -261,10 +272,14 @@ function CreditsTable({ filters }: ICreditsTable): JSX.Element {
         {sortedMasters.map(master => {
           const masterStat = stats.find(stat => stat.Master === master.master_code);
 
-          if (masterStat) {
-            const fulfilled = masterStat.RequirementsFulfilled;
-            const totalCredits = masterStat.G1Credits + masterStat.G2Credits + masterStat.AdvancedCredits;
-            if (totalCredits === 0) return null;
+          if (!masterStat) {
+            return null;
+          }
+
+          const fulfilled = masterStat.RequirementsFulfilled;
+          const total = totalCredits(masterStat);
+
+          if (total > 0) {
             return (
               <FilledTableRow fulfilled={fulfilled} key={master.master_code}>
                 <NameCell>{master.master_name_en}</NameCell>
@@ -276,23 +291,22 @@ function CreditsTable({ filters }: ICreditsTable): JSX.Element {
                 <TableCell>{masterStat?.G1Credits}</TableCell>
                 <TableCell>{masterStat?.G2Credits}</TableCell>
                 <TableCell>{masterStat?.AdvancedCredits}</TableCell>
-                <TableCell>{totalCredits}</TableCell>
+                <TableCell>{total}</TableCell>
               </FilledTableRow>
             );
           }
         })}
         {summary && (
           <FilledTableRow fulfilled={false} key={summary.Master}>
-            <BoldNameCell>{summary.Master}</BoldNameCell>
+            <BoldNameCell>{capitalizeFirstLetter(summary.Master)}</BoldNameCell>
             <TableCell />
             <BoldCell>{summary.G1Credits}</BoldCell>
-            <BoldCell>{summary?.G2Credits}</BoldCell>
-            <BoldCell>{summary?.AdvancedCredits}</BoldCell>
+            <BoldCell>{summary.G2Credits}</BoldCell>
             <BoldCell>{summary.AdvancedCredits}</BoldCell>
+            <BoldCell>{totalCredits(summary)}</BoldCell>
           </FilledTableRow>
         )}
       </ListContainer>
-      <ListContainer></ListContainer>
       <TwoColumnWrapper>
         <CourseContainer courses={selectedCourses} masters={stats} colorMap={colorMap} />
       </TwoColumnWrapper>

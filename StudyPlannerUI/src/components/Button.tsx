@@ -18,7 +18,7 @@ export const StyledButton = styled.button<StyledButtonProps>`
   font-size: 1em;
   padding: 8px 12px;
   border-radius: 4px;
-  
+
   ${({ disabled, theme }) =>
     !disabled &&
     ` &:hover {
@@ -32,7 +32,7 @@ export const StyledButton = styled.button<StyledButtonProps>`
       color: ${theme.onSecondaryContainer};
     }`}
   }
- 
+
   ${({ disabled, theme }) =>
     disabled &&
     `background-color: ${theme.surfaceVariant};
