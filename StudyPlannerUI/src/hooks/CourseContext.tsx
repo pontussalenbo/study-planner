@@ -7,11 +7,7 @@ export interface CtxType {
   courses: SelectedCourses;
   setSelectedCourses: React.Dispatch<React.SetStateAction<SelectedCourses>>;
 
-  addCourse: (
-    course: CourseData.SelectedCourse,
-    year: 4 | 5,
-    period: API.Period | null
-  ) => void;
+  addCourse: (course: CourseData.SelectedCourse, year: 4 | 5, period: API.Period | null) => void;
 
   removeCourse: (courseName: string, year?: 4 | 5) => void;
   changeYear: (courseName: string, year: 4 | 5) => void;
@@ -141,9 +137,7 @@ const funcs = {
     }
 
     const prevYear = year === 4 ? 5 : 4;
-    const courseIndex = state.courses[prevYear].findIndex(
-      c => c.course_code === courseName
-    );
+    const courseIndex = state.courses[prevYear].findIndex(c => c.course_code === courseName);
 
     if (courseIndex < 0) {
       return state;
@@ -180,9 +174,7 @@ const initialState: State = {
 
 const SelectedCoursesContext = createContext<State | undefined>(undefined);
 
-const SelectedCoursesDispatchContext = createContext<React.Dispatch<Actions> | undefined>(
-  undefined
-);
+const SelectedCoursesDispatchContext = createContext<React.Dispatch<Actions> | undefined>(undefined);
 
 interface IProps {
   children: React.ReactNode;
@@ -211,9 +203,7 @@ export function useSelectedCourses() {
 export function useSelectedCoursesDispatch() {
   const context = useContext(SelectedCoursesDispatchContext);
   if (context === undefined) {
-    throw new Error(
-      'useSelectedCoursesDispatch must be used within a SelectedCoursesProvider'
-    );
+    throw new Error('useSelectedCoursesDispatch must be used within a SelectedCoursesProvider');
   }
   return context;
 }
@@ -241,11 +231,7 @@ function OldProvider({ children }: IProps) {
     return selectedCourses[4].concat(selectedCourses[5]);
   };
 
-  const addCourse = (
-    course: CourseData.SelectedCourse,
-    year: 4 | 5,
-    period: API.Period | null
-  ) => {
+  const addCourse = (course: CourseData.SelectedCourse, year: 4 | 5, period: API.Period | null) => {
     const isCourseSelected = courseCodes.has(course.course_code);
 
     if (isCourseSelected) {

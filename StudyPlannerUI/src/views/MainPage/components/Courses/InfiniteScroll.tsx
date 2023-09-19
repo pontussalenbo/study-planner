@@ -53,7 +53,7 @@ const Row = ({ index, data }: RowProps) => {
   };
 
   const handleRemoveClick = () => {
-    removeCourse(course.course_code, 4);
+    removeCourse(course.course_code);
   };
 
   const handlePeriodChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
