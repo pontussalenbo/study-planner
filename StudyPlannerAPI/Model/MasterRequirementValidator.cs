@@ -86,7 +86,8 @@ public class MasterRequirementValidator : IMasterRequirementValidator
             G1Credits = g1Credits,
             G2Credits = g2Credits,
             SelectedCourses = coursesInMaster,
-            RequirementsFulfilled = advancedCredits >= Constants.REQUIRED_A_CREDITS_MASTER &&
+            RequirementsFulfilled = masterCode != Constants.GENERAL &&
+                                    advancedCredits >= Constants.REQUIRED_A_CREDITS_MASTER &&
                                     totalCredits >= Constants.REQUIRED_CREDITS_MASTER
         };
     }
