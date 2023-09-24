@@ -58,4 +58,12 @@ public class LinkShareController : ControllerBase
         var errors = validationResult.Errors.Select(e => new ValidationError(e.ErrorCode, e.ErrorMessage));
         return BadRequest(errors);
     }
+
+    [HttpDelete]
+    public async Task<IActionResult> DeleteStudyPlanWithId([FromQuery] string studyPlanId)
+    {
+        // TODO: Fix validation
+        return await this.PerformEndpointAction(async () => await linkShareManager.DeleteStudyPlanWithId(studyPlanId),
+            logger);
+    }
 }

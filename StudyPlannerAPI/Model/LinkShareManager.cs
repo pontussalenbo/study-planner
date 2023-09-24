@@ -57,6 +57,22 @@ public class LinkShareManager : ILinkShareManager
         return new JsonResult(result);
     }
 
+    public async Task<IActionResult> DeleteStudyPlanWithId(string studyPlanId)
+    {
+        if (await IsReadOnly(studyPlanId))
+        {
+            return new BadRequestResult();
+        }
+
+        // Delete plan
+        await DeleteStudyPlan(studyPlanId);
+
+        // Delete courses
+        await DeleteStudyPlanCourses(studyPlanId);
+
+        return new OkResult();
+    }
+
     public async Task<IActionResult> GetUniqueBlobFromPlan(string programme, string year,
         List<SelectedCourseDTO> selectedCourses, string studyPlanName, string uniqueBlob)
     {
@@ -178,6 +194,14 @@ public class LinkShareManager : ILinkShareManager
 
         var query = new Query(Tables.STUDY_PLAN_COURSE)
             .AsInsert(cols, data);
+        await db.ExecuteQuery<int>(query);
+    }
+
+    private async Task DeleteStudyPlan(string studyPlanId)
+    {
+        var query = new Query(Tables.STUDY_PLAN)
+            .Where(Columns.STUDY_PLAN_ID, studyPlanId)
+            .AsDelete();
         await db.ExecuteQuery<int>(query);
     }
 }

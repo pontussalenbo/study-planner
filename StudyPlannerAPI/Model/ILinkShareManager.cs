@@ -9,4 +9,6 @@ public interface ILinkShareManager
         List<SelectedCourseDTO> selectedCourses, string studyPlanName, string uniqueBlob);
 
     Task<IActionResult> GetPlanFromUniqueBlob(string uniqueBlob);
+
+    Task<IActionResult> DeleteStudyPlanWithId(string studyPlanId);
 }
