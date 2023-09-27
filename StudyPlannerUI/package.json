@@ -8,6 +8,7 @@
     "build": "rm -rf build && tsc && vite build",
     "test": "vitest",
     "preview": "vite preview",
+    "tsc:check": "ts-prune | grep -v '(used in module)' && jscpd src",
     "prettier:check": "prettier --check src",
     "prettier:fix": "prettier --write src",
     "lint": "eslint src",
@@ -17,6 +18,8 @@
   "dependencies": {
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
+    "react-query": "^3.39.3",
+    "react-router-dom": "^6.16.0",
     "recharts": "^2.5.0",
     "styled-components": "^5.3.10"
   },

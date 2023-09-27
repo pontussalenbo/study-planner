@@ -33,7 +33,7 @@ const SearchBar: React.FC<SearchBarProps> = ({ matches, filter }: SearchBarProps
     <InputWithLabel
       onChange={handleSearchChange}
       showError={shouldError}
-      label='Search courses'
+      label='Find courses'
       placeholder='course name or code'
     >
       <SearchError>no matches</SearchError>

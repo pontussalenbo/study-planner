@@ -36,7 +36,7 @@ export const StyledButton = styled.button<StyledButtonProps>`
   ${({ disabled, theme }) =>
     disabled &&
     `background-color: ${theme.surfaceVariant};
-    opacity: 0.5; 
+    opacity: 0.5;
     color: ${theme.onSurfaceVariant};
     cursor: not-allowed;`}
 `;
@@ -55,6 +55,7 @@ const IconWrapper = styled.span`
   flex-direction: row;
   align-items: center;
   justify-content: center;
+  color: inherit;
 `;
 
 const Text = styled.span`
@@ -63,18 +64,18 @@ const Text = styled.span`
   }
 `;
 
-interface IButtonWithIconProps extends ButtonHTMLAttributes<HTMLButtonElement> {
+export interface IButtonWithIconProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   children: React.ReactNode;
   icon?: React.ReactNode;
   text?: boolean;
   rref?: React.Ref<HTMLButtonElement>;
 }
 
-const StyledButtonWithIcon = ({ children, icon, text = true, rref, ...rest }: IButtonWithIconProps) => (
+const IconButton = ({ children, icon, text = true, rref, ...rest }: IButtonWithIconProps) => (
   <StyledButton ref={rref} {...rest}>
     {icon && <IconWrapper>{icon}</IconWrapper>}
     {text ? children : <Text>{children}</Text>}
   </StyledButton>
 );
 
-export default StyledButtonWithIcon;
+export default IconButton;

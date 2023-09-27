@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/explicit-function-return-type */
 import styled from 'styled-components';
 import { device } from 'utils/breakpoints';
-import calcColWidth from 'utils/calcColWidth';
+import { calcColWidth } from 'utils/breakpoints';
 
 export interface ColProps {
   xs?: number;

@@ -1,26 +1,32 @@
-import { BASE_URL } from './URL';
-
 // TODO: Implement object export methods to get each respective endpoint
 // TODO: Pretty unbareable to handle at large scale, but it's a start
 
-// TODO: Replace T = any with unknown
+import { BASE_URL } from 'interfaces/API_Constants.d';
+
 export async function POST<T = unknown>(endpoint: string, data: unknown): Promise<T> {
     const body = JSON.stringify(data);
+    const config = {
+        body,
+        method: 'POST',
+        'Content- Type': 'application/json'
+    };
     try {
-        const response = await fetch(BASE_URL + endpoint, {
-            body,
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' }
-        });
+        const response = await fetch(BASE_URL + endpoint, config);
+
+        if (response.status !== 200) {
+            throw new APIError({ message: 'Error', code: response.status, rest: {} });
+        }
+
         const json = await response.json();
         return json;
     } catch (error) {
+        console.log(error);
+
         throw error as APIError;
     }
 }
 
 /**
- * TODO: Replace T = any with unknown
  * Send a GET request to the specified endpoint and parse the response as JSON.
  *
  * @template T The expected return type of the API response.
@@ -41,6 +47,11 @@ export async function GET<T = unknown>(endpoint: string, params?: URLSearchParam
         }
 
         const response = await fetch(url.toString());
+
+        if (response.status !== 200) {
+            throw new APIError({ message: 'Error', code: response.status, rest: {} });
+        }
+
         const json = await response.json();
         return json;
     } catch (error) {
