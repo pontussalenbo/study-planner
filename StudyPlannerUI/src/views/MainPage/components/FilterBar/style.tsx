@@ -1,23 +1,6 @@
-import { StyledButton } from 'components/Button';
 import { Label } from 'components/Select/style';
 import { InputHTMLAttributes } from 'react';
 import styled from 'styled-components';
-
-export const GetButton = styled(StyledButton)`
-  height: max-content;
-  padding: 8px 12px;
-  border-radius: 4px;
-  margin-top: auto;
-  margin-left: auto;
-`;
-
-export const SelectWrapper = styled.div`
-  display: flex;
-  gap: 1rem;
-  max-width: 100%;
-  align-items: flex-end;
-  flex-wrap: wrap;
-`;
 
 export const SearchBarContainer = styled.div`
   width: 100%;
@@ -77,12 +60,24 @@ interface InputWithLabelProps extends InputHTMLAttributes<HTMLInputElement> {
   children?: React.ReactNode;
 }
 
-export const InputWithLabel = ({ label, placeholder, showError, children, ...rest }: InputWithLabelProps) => {
+export const InputWithLabel = ({
+  label,
+  placeholder,
+  showError,
+  children,
+  ...rest
+}: InputWithLabelProps) => {
   return (
     <SearchBarContainer>
       <SearchInputWrapper>
         <Label htmlFor='searchBar'>{label}</Label>
-        <SearchInput {...rest} id='searchBar' error={showError} type='text' placeholder={placeholder} />
+        <SearchInput
+          {...rest}
+          id='searchBar'
+          error={showError}
+          type='text'
+          placeholder={placeholder}
+        />
         {showError && children}
       </SearchInputWrapper>
     </SearchBarContainer>

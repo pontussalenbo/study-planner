@@ -1,13 +1,12 @@
-// FilterBar.tsx
 import React, { useState } from 'react';
 import Tooltip from 'components/Tooltip';
 import { GET, POST } from 'utils/fetch';
 import { Endpoints } from 'interfaces/API_Constants.d';
 import { Filters } from 'interfaces/Types';
-import StyledButtonWithIcon from 'components/Button';
-import { ReactComponent as ReloadIcon } from 'components/icons/reload-outline.svg';
-import { dataParser } from 'views/MainPage/dataParser';
+import IconButton from 'components/Button';
+import { dataParser } from 'utils/sortCourses';
 import { Option, Select } from 'components/Select';
+import ReloadIcon from 'components/Icons/Reload';
 
 interface FilterBarProps {
   filters: Filters;
@@ -16,25 +15,28 @@ interface FilterBarProps {
   update: (courses: CourseData.DataWithLocale[]) => void;
 }
 
-const FilterType = {
+const FILTERS = {
   Year: 'Academic Year',
   Class: 'Class',
   None: ''
 } as const;
 
-type FilterType = (typeof FilterType)[keyof typeof FilterType];
-type ClassYear = Exclude<FilterType, typeof FilterType.None>;
+const ALL_MASTERS = '';
+
+type FilterKeys = keyof typeof FILTERS;
+type FilterValues = (typeof FILTERS)[FilterKeys];
+type ClassYear = Exclude<FilterValues, typeof FILTERS.None>;
 
 export const FilterBar: React.FC<FilterBarProps> = ({ filters, onGetCourses, update }) => {
   /* Filter by Class or Year (selected type) */
-  const [filterType, setFilterType] = React.useState<FilterType>(FilterType.None);
+  const [filterType, setFilterType] = React.useState<FilterValues>(FILTERS.None);
   /* Selected Class/Year */
   const [classYearFilter, setClassYearFilter] = React.useState<string>(filters.Year);
   /* All masters that is selected in the filter */
   const [multiSelectValue, setMultiSelectValue] = useState<string[]>([]);
 
   /* all masters available for selected programme and year */
-  const [masters, setMasters] = React.useState<API.Masters[]>([]);
+  const [masters, setMasters] = React.useState<API.Master[]>([]);
   /* Class/Year filter values */
   const [filterValues, setFilterValues] = React.useState<string[]>([]);
 
@@ -58,18 +60,18 @@ export const FilterBar: React.FC<FilterBarProps> = ({ filters, onGetCourses, upd
 
     if (Programme && Year) {
       const params = new URLSearchParams({ Programme, Year });
-      GET<API.Masters[]>(Endpoints.masters, params).then(data => setMasters(data));
+      GET<API.Master[]>(Endpoints.masters, params).then(data => setMasters(data));
     }
   }, [filters]);
 
   const fetchFilterValues = async (filter: ClassYear) => {
     const urls = {
-      [FilterType.Class]: Endpoints.classYears,
-      [FilterType.Year]: Endpoints.academicYears
+      [FILTERS.Class]: Endpoints.classYears,
+      [FILTERS.Year]: Endpoints.academicYears
     };
 
     const data = await GET<string[]>(urls[filter]);
-    setFilterValues(data);
+    setFilterValues(data.reverse());
   };
 
   const handleMasterFilter = (masters: string[]) => {
@@ -83,14 +85,14 @@ export const FilterBar: React.FC<FilterBarProps> = ({ filters, onGetCourses, upd
 
   const handleChangeMasters = (value: string[]) => {
     // If the user just selected the "select all" option
-    if (value.includes('') && !multiSelectValue.includes('')) {
+    if (value.includes(ALL_MASTERS) && !multiSelectValue.includes(ALL_MASTERS)) {
       const allMasters = masters.map(master => master.master_code);
       // Add all masters along with the "select all" option
-      setMultiSelectValue([...allMasters, '']);
+      setMultiSelectValue([...allMasters, ALL_MASTERS]);
       handleMasterFilter(allMasters);
     }
     // If the user deselected the "select all" option
-    else if (!value.includes('') && multiSelectValue.includes('')) {
+    else if (!value.includes(ALL_MASTERS) && multiSelectValue.includes(ALL_MASTERS)) {
       setMultiSelectValue([]);
       handleMasterFilter([]);
     }
@@ -101,13 +103,13 @@ export const FilterBar: React.FC<FilterBarProps> = ({ filters, onGetCourses, upd
     }
   };
 
-  const handleChangeFilterType = (value: FilterType) => {
+  const handleChangeFilterType = (value: FilterValues) => {
     setFilterType(value);
     fetchFilterValues(value as ClassYear);
 
     // Reset class year filter when filter type is changed to year
     // as they are two separate entities
-    if (filterType === FilterType.Year) {
+    if (value === FILTERS.Year) {
       setClassYearFilter('');
     }
   };
@@ -131,6 +133,7 @@ export const FilterBar: React.FC<FilterBarProps> = ({ filters, onGetCourses, upd
       <Tooltip text='Please select a filter' enabled={!hasFilterBy}>
         <Select
           enabled={hasFilterBy}
+          placeholder={`Select ${filterType}`}
           label={filterType}
           value={classYearFilter}
           onChange={setClassYearFilter}
@@ -147,6 +150,7 @@ export const FilterBar: React.FC<FilterBarProps> = ({ filters, onGetCourses, upd
       <Tooltip text={masterTooltip} enabled={disableMasterSelection}>
         <Select
           enabled={!disableMasterSelection}
+          placeholder='Select Masters'
           label='masters'
           multiple
           value={multiSelectValue}
@@ -161,14 +165,14 @@ export const FilterBar: React.FC<FilterBarProps> = ({ filters, onGetCourses, upd
         </Select>
       </Tooltip>
 
-      <StyledButtonWithIcon
+      <IconButton
         disabled={disableGetCourses}
         onClick={() => onGetCourses(classYearFilter, multiSelectValue)}
         text
         icon={<ReloadIcon width='0.7rem' />}
       >
         Get Courses
-      </StyledButtonWithIcon>
+      </IconButton>
     </>
   );
 };

@@ -1,15 +1,15 @@
 {
-    "compilerOptions": {
-        "allowSyntheticDefaultImports": true,
-        "resolveJsonModule": true,
-        "composite": true,
-        "forceConsistentCasingInFileNames": true,
-        "isolatedModules": true,
-        "module": "ESNext",
-        "moduleResolution": "Node",
-        "skipLibCheck": true,
-        "strict": true,
-        "target": "ESNext"
-    },
-    "include": ["vite.config.ts", ".eslintrc.cjs"]
+  "compilerOptions": {
+    "allowSyntheticDefaultImports": true,
+    "resolveJsonModule": true,
+    "composite": true,
+    "forceConsistentCasingInFileNames": true,
+    "isolatedModules": true,
+    "module": "ESNext",
+    "moduleResolution": "Node",
+    "skipLibCheck": true,
+    "strict": true,
+    "target": "ESNext"
+  },
+  "include": ["vite.config.ts", ".eslintrc.js"]
 }

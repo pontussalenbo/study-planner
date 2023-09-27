@@ -4,12 +4,13 @@ import styled from 'styled-components';
 
 const ArrowButton = styled.button`
   position: fixed;
-  right: 30px;
+  right: 15px;
   bottom: 20px;
   border: none;
   background-color: transparent;
   cursor: pointer;
   outline: none;
+  z-index: 10000;
 `;
 
 const Circle = styled.div`
