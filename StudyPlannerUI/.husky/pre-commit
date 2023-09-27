@@ -3,3 +3,4 @@
 
 exec >/dev/tty 2>&1
 cd ./StudyPlannerUI && FORCE_COLOR=1 npx lint-staged
+pnpm run build

@@ -92,17 +92,6 @@ export interface CustomTheme {
     fulfilled: string;
 }
 
-export const pillsColors = [
-    '#8B0000',
-    '#006c4b',
-    '#FFD700',
-    '#800080',
-    '#a5ccde',
-    '#3d6373',
-    '#ffb4ab',
-    '#FFA500'
-];
-
 export const customDarkTheme: CustomTheme = {
     primary: '#0ee1a1',
     onPrimary: '#003825',
