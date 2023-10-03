@@ -9,7 +9,10 @@ interface State<T> {
 type Cache<T> = Record<string, T>;
 
 // discriminated union type
-type Action<T> = { type: 'error'; payload: Error } | { type: 'fetched'; payload: T } | { type: 'loading' };
+type Action<T> =
+  | { type: 'error'; payload: Error }
+  | { type: 'fetched'; payload: T }
+  | { type: 'loading' };
 
 function useFetch<T = unknown>(url?: string, options?: RequestInit): State<T> {
   const cache = useRef<Cache<T>>({});
@@ -44,6 +47,7 @@ function useFetch<T = unknown>(url?: string, options?: RequestInit): State<T> {
     if (!url) return undefined;
 
     cancelRequest.current = false;
+    const controller = new AbortController();
 
     const fetchData = async (): Promise<void> => {
       dispatch({ type: 'loading' });
@@ -54,8 +58,10 @@ function useFetch<T = unknown>(url?: string, options?: RequestInit): State<T> {
         return;
       }
 
+      const optionsWithSignal = { ...options, signal: controller.signal };
+
       try {
-        const response = await fetch(url, options);
+        const response = await fetch(url, optionsWithSignal);
         if (!response.ok) {
           throw new Error(response.statusText);
         }
@@ -63,11 +69,16 @@ function useFetch<T = unknown>(url?: string, options?: RequestInit): State<T> {
         const data = (await response.json()) as T;
         // eslint-disable-next-line require-atomic-updates
         cache.current[url] = data;
-        if (cancelRequest.current) return;
+        if (cancelRequest.current) {
+          dispatch({ type: 'error', payload: new Error('Request cancelled') });
+          return;
+        }
 
         dispatch({ type: 'fetched', payload: data });
       } catch (error) {
-        if (cancelRequest.current) return;
+        if (cancelRequest.current) {
+          dispatch({ type: 'error', payload: new Error('Request cancelled') });
+        }
 
         dispatch({ type: 'error', payload: error as Error });
       }
@@ -79,6 +90,7 @@ function useFetch<T = unknown>(url?: string, options?: RequestInit): State<T> {
     // ...state update after the component was unmounted
     return () => {
       cancelRequest.current = true;
+      controller.abort();
     };
   }, [options, url]);
 

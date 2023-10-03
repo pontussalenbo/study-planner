@@ -3,12 +3,19 @@
 
 import { BASE_URL } from 'interfaces/API_Constants.d';
 
-export async function POST<T = unknown>(endpoint: string, data: unknown): Promise<T> {
+export async function POST<T = unknown>(
+    endpoint: string,
+    data: unknown,
+    abort?: AbortController
+): Promise<T> {
     const body = JSON.stringify(data);
-    const config = {
+    const config: RequestInit = {
         body,
         method: 'POST',
-        'Content- Type': 'application/json'
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        signal: abort?.signal
     };
     try {
         const response = await fetch(BASE_URL + endpoint, config);
@@ -38,7 +45,11 @@ export async function POST<T = unknown>(endpoint: string, data: unknown): Promis
  * @throws {APIError} If an error occurs during the fetch operation, it will throw an error of type APIError.
  */
 
-export async function GET<T = unknown>(endpoint: string, params?: URLSearchParams): Promise<T> {
+export async function GET<T = unknown>(
+    endpoint: string,
+    params?: URLSearchParams,
+    abort?: AbortController
+): Promise<T> {
     try {
         const url = new URL(BASE_URL + endpoint);
 
@@ -46,7 +57,7 @@ export async function GET<T = unknown>(endpoint: string, params?: URLSearchParam
             url.search = params.toString();
         }
 
-        const response = await fetch(url.toString());
+        const response = await fetch(url.toString(), { signal: abort?.signal });
 
         if (response.status !== 200) {
             throw new APIError({ message: 'Error', code: response.status, rest: {} });

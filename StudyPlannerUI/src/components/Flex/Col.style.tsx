@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/explicit-function-return-type */
 import styled from 'styled-components';
 import { device } from 'utils/breakpoints';
 import { calcColWidth } from 'utils/breakpoints';
@@ -9,9 +8,11 @@ export interface ColProps {
   md?: number;
   lg?: number;
   xl?: number;
+  gap?: number;
 }
 
 const Col = styled.div<ColProps>`
+  gap: ${({ gap }) => gap || 0}px;
   display: flex;
   flex-direction: column;
   position: relative;

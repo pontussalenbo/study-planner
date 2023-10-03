@@ -3,7 +3,7 @@ interface SVGProps extends React.SVGProps<SVGSVGElement> {
   strokeWidth?: number;
 }
 
-const SvgComponent = (props: SVGProps) => (
+const AddIcon = (props: SVGProps) => (
   <svg
     xmlns='http://www.w3.org/2000/svg'
     className='ionicon'
@@ -22,4 +22,4 @@ const SvgComponent = (props: SVGProps) => (
     />
   </svg>
 );
-export default SvgComponent;
+export default AddIcon;

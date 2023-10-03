@@ -3,12 +3,12 @@ import Tooltip from 'components/Tooltip';
 import { GET, POST } from 'utils/fetch';
 import { Endpoints } from 'interfaces/API_Constants.d';
 import { Filters } from 'interfaces/Types';
-import IconButton from 'components/Button';
+import IconButton from 'components/Button/Button';
 import { dataParser } from 'utils/sortCourses';
 import { Option, Select } from 'components/Select';
 import ReloadIcon from 'components/Icons/Reload';
 
-interface FilterBarProps {
+interface CoursesFilterProps {
   filters: Filters;
   onFilterChange: (value: string, name: keyof Filters) => void;
   onGetCourses: (filters: string, masters?: string[]) => void;
@@ -27,7 +27,7 @@ type FilterKeys = keyof typeof FILTERS;
 type FilterValues = (typeof FILTERS)[FilterKeys];
 type ClassYear = Exclude<FilterValues, typeof FILTERS.None>;
 
-export const FilterBar: React.FC<FilterBarProps> = ({ filters, onGetCourses, update }) => {
+export const CoursesFilter: React.FC<CoursesFilterProps> = ({ filters, onGetCourses, update }) => {
   /* Filter by Class or Year (selected type) */
   const [filterType, setFilterType] = React.useState<FilterValues>(FILTERS.None);
   /* Selected Class/Year */
@@ -57,11 +57,14 @@ export const FilterBar: React.FC<FilterBarProps> = ({ filters, onGetCourses, upd
    */
   React.useEffect(() => {
     const { Programme, Year } = filters;
+    const controller = new AbortController();
 
     if (Programme && Year) {
       const params = new URLSearchParams({ Programme, Year });
-      GET<API.Master[]>(Endpoints.masters, params).then(data => setMasters(data));
+      GET<API.Master[]>(Endpoints.masters, params, controller).then(data => setMasters(data));
     }
+
+    return () => controller.abort();
   }, [filters]);
 
   const fetchFilterValues = async (filter: ClassYear) => {
@@ -110,16 +113,16 @@ export const FilterBar: React.FC<FilterBarProps> = ({ filters, onGetCourses, upd
     // Reset class year filter when filter type is changed to year
     // as they are two separate entities
     if (value === FILTERS.Year) {
-      setClassYearFilter('');
+      setClassYearFilter(FILTERS.None);
     }
   };
 
-  const hasProgramme = filters.Programme !== '';
-  const hasYear = filters.Year !== '';
-  const hasFilterBy = filterType !== '';
+  const hasProgramme = filters.Programme !== FILTERS.None;
+  const hasYear = filters.Year !== FILTERS.None;
+  const hasFilterBy = filterType !== FILTERS.None;
 
   const disableMasterSelection = !hasProgramme || !hasYear;
-  const disableGetCourses = filters.Programme === '' || classYearFilter === '';
+  const disableGetCourses = !hasProgramme || !hasYear;
 
   const masterTooltip = !hasProgramme ? 'Please select a Programme' : 'Please select a Year';
 

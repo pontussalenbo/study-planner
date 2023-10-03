@@ -29,7 +29,7 @@ declare namespace API {
         SelectedCourses: string[];
     }
 
-    export interface Masters {
+    export interface Master {
         master_code: string;
         master_name_en: string;
         master_name_sv: string;

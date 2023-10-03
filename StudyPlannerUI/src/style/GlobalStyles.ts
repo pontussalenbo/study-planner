@@ -21,9 +21,6 @@ body {
   overflow-x: hidden;
   min-height: 100vh;
   text-rendering: optimizeSpeed;
-  font-family: sans-serif;
-  font-size: 1rem;
-  line-height: 1;
   background-color: ${({ theme }) => theme.background};
   color: ${({ theme }) => theme.onBackground};
 }

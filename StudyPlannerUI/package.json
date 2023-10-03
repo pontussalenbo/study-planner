@@ -8,7 +8,8 @@
     "build": "rm -rf build && tsc && vite build",
     "test": "vitest",
     "preview": "vite preview",
-    "tsc:check": "ts-prune | grep -v '(used in module)' && jscpd src",
+    "check:unused-code": "ts-prune | grep -v '(used in module)'",
+    "check:dupe-code": "jscpd src",
     "prettier:check": "prettier --check src",
     "prettier:fix": "prettier --write src",
     "lint": "eslint src",
@@ -102,7 +103,8 @@
       "vite@>=4.3.0 <4.3.9": ">=4.3.9",
       "semver@<5.7.2": ">=5.7.2",
       "semver@>=6.0.0 <6.3.1": ">=6.3.1",
-      "semver@>=7.0.0 <7.5.2": ">=7.5.2"
+      "semver@>=7.0.0 <7.5.2": ">=7.5.2",
+      "get-func-name@<2.0.1": ">=2.0.1"
     }
   }
 }
