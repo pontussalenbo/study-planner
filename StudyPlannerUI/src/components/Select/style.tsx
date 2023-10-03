@@ -1,35 +1,10 @@
 import { Tokens } from 'style/tokens';
 import styled from 'styled-components';
 
-export const SelectWrapper = styled.div`
-  display: grid;
-  grid-template-areas:
-    'label'
-    'select';
-  grid-template-rows: min-content min-content;
-  gap: 8px;
-  max-width: 200px;
-`;
-
 export const Label = styled.label`
   grid-area: label;
   font-weight: bold;
   font-size: 1em;
-`;
-
-export const Select = styled.select`
-  grid-area: select;
-  padding: 2px;
-  border-radius: 4px;
-  border: 1px solid ${({ theme }) => theme.secondary};
-  min-width: 100px;
-`;
-
-export const OptionalText = styled.span`
-  font-size: 0.7rem;
-  margin-left: 3px;
-  font-weight: 300;
-  font-style: italic;
 `;
 
 interface Openable {
@@ -41,7 +16,7 @@ export const StyledFieldset = styled.fieldset<Openable>`
   position: absolute;
   bottom: 0;
   right: 0;
-  top: -5px;
+  top: -8px;
   left: 0;
   margin: 0;
   padding: 0 8px;
@@ -69,7 +44,7 @@ export const StyledLegend = styled.legend<{ hasValue: boolean }>`
   overflow: hidden;
   display: block;
   padding: 0;
-  height: 1em;
+  height: calc(1em + 3px);
   font-size: 0.8em;
   visibility: hidden;
   max-width: ${({ hasValue }) => (hasValue ? '100%' : '0.01px')};
@@ -112,7 +87,7 @@ export const SelectContainer = styled.div<{ isOpen: boolean; disabled: boolean }
   ${({ disabled }) =>
     disabled &&
     `
-    opacity: 0.5;
+    opacity: 0.7;
     pointer-events: none;
   `}
 `;
@@ -129,7 +104,7 @@ export const DropdownList = styled.ul`
   position: absolute;
   background-color: ${({ theme }) => theme.surfaceVariant};
   color: ${({ theme }) => theme.onSurfaceVariant};
-  top: calc(100% + 1px); // Offset to move beyond the border.
+  top: calc(100% + 2px); // Offset to move beyond the border.
   left: 0px; // Adjust based on left padding of the SelectContainer.
   width: 100%; // Increase width to account for the paddings.
   border: 1px solid ${({ theme }) => theme.outline};

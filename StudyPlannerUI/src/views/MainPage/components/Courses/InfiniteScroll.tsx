@@ -1,15 +1,12 @@
 // TODO: Rename file to a more appropriate name
-import React, { useContext, useMemo, useState } from 'react';
-import { MyContext, CtxType } from 'hooks/CourseContext';
-import { useTheme } from 'styled-components';
-import StyledButtonWithIcon, { AlertButton } from 'components/Button';
-import { Select } from './styles';
-import { ButtonCell, ListContainer, NameCell, TableRow, TableCell } from './InfiniteScroll.style';
+import { useState } from 'react';
+import IconButton from 'components/Button/Button';
+import { ReactComponent as RemoveIcon } from 'components/Icons/remove-outline.svg';
+import AddIcon from 'components/Icons/Add';
 import { getDisplayPeriod } from 'utils/sortCourses';
-
-type Props = {
-  courses: CourseData.DataWithLocale[];
-};
+import { TableRow, TableCell, NameCell, ButtonCell } from 'components/Table/style';
+import { ListContainer } from './InfiniteScroll.style';
+import { useStudyplanContext } from 'hooks/CourseContext';
 
 const Header: React.FC = () => {
   return (
@@ -32,16 +29,9 @@ interface RowProps {
 }
 
 const Row = ({ index, data }: RowProps) => {
-  const theme = useTheme();
-
-  const course: CourseData.DataWithLocale = data.courses[index];
   const [selectedPeriod, setSelectedPeriod] = useState<API.Period | null>(null);
 
-  const { removeCourse, addCourse, courseCodes } = useContext(MyContext) as CtxType;
-
-  const isSelected = useMemo(() => {
-    return courseCodes.has(course.course_code);
-  }, [courseCodes, course.course_code]);
+  const { removeCourse, addCourse, hasCourse } = useStudyplanContext();
 
   const handleButtonClick = () => {
     const selectedCourse: CourseData.SelectedCourse = {
@@ -61,17 +51,19 @@ const Row = ({ index, data }: RowProps) => {
     setSelectedPeriod(course.periods[periodIndex]);
   };
 
+  const course: CourseData.DataWithLocale = data.courses[index];
   const hasMultiplePeriods = course.periods.length > 1;
+  const isSelected = hasCourse(course.course_code);
 
   return (
-    <TableRow style={{ borderBottom: `1px solid ${theme.outline}` }}>
+    <TableRow>
       <TableCell>{course.course_code}</TableCell>
       <NameCell>{course.course_name}</NameCell>
       <TableCell>{course.credits}</TableCell>
       <TableCell>{course.level}</TableCell>
       <TableCell>
         {hasMultiplePeriods ? (
-          <Select defaultValue='' onChange={handlePeriodChange}>
+          <select style={{ minWidth: 'max-content' }} defaultValue='' onChange={handlePeriodChange}>
             <option value='' disabled>
               Select
             </option>
@@ -80,26 +72,34 @@ const Row = ({ index, data }: RowProps) => {
                 {getDisplayPeriod(period)}
               </option>
             ))}
-          </Select>
+          </select>
         ) : (
           <span>{getDisplayPeriod(course.periods[0])}</span>
         )}
       </TableCell>
       <ButtonCell>
         {isSelected ? (
-          <AlertButton onClick={handleRemoveClick}>&#45; Remove</AlertButton>
+          <IconButton text variant='error' icon={<RemoveIcon />} onClick={handleRemoveClick}>
+            Remove
+          </IconButton>
         ) : (
-          <StyledButtonWithIcon
-            disabled={!selectedPeriod && course.periods.length > 1}
+          <IconButton
+            text
+            variant='primary'
+            icon={<AddIcon />}
             onClick={handleButtonClick}
-            text={false}
+            disabled={!selectedPeriod && course.periods.length > 1}
           >
-            &#43; Select
-          </StyledButtonWithIcon>
+            Select
+          </IconButton>
         )}
       </ButtonCell>
     </TableRow>
   );
+};
+
+type Props = {
+  courses: CourseData.DataWithLocale[];
 };
 
 const VirtualizedTable: React.FC<Props> = ({ courses }) => {

@@ -68,10 +68,11 @@ export const Option: React.FC<OptionProps> = ({ value, children }) => {
 };
 
 interface CommonProps {
-  children: ReactNode;
+  children?: ReactNode;
   pills?: boolean;
   label: string;
   enabled?: boolean;
+  placeholder?: string;
 }
 
 type Value = string | number | readonly string[] | readonly number[] | undefined;
@@ -87,6 +88,7 @@ export const Select = <T extends boolean, S extends Value>({
   children,
   multiple,
   pills = false,
+  placeholder,
   value,
   label,
   enabled = true,
@@ -123,8 +125,13 @@ export const Select = <T extends boolean, S extends Value>({
   const hasValue = Array.isArray(value) ? value.length > 0 : value !== '';
 
   return (
-    <SelectContainer disabled={!enabled} isOpen={isOpen} ref={selectRef} onClick={handleContainerClick}>
-      <SelectLabel isOpen={isOpen}>{(selectedValues || label) as string}</SelectLabel>
+    <SelectContainer
+      disabled={!enabled}
+      isOpen={isOpen}
+      ref={selectRef}
+      onClick={handleContainerClick}
+    >
+      <SelectLabel isOpen={isOpen}>{selectedValues || placeholder || label}</SelectLabel>
       {Array.isArray(value) && pills && (
         <div>
           {value.map(item => (

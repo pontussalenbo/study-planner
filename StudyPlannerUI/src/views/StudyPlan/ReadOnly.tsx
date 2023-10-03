@@ -1,19 +1,20 @@
-import { Container, Wrapper } from './style';
-import Courses from './components/Courses';
+import React from 'react';
+import ReadOnlyView from './components/ReadOnlyView';
 import Col from 'components/Flex/Col.style';
 import Row from 'components/Flex/Row.style';
-import { Filters } from 'interfaces/Types';
 import HorizontalBarChart from 'components/Barchart';
+import { Container, Wrapper } from 'views/MainPage/style';
+import { Filters } from 'interfaces/Types';
 
-interface MainPageProps {
-  filters?: Filters;
+interface ReadOnlyProps {
+  filters: Filters;
 }
 
-const MainPage: React.FC<MainPageProps> = ({ filters }) => {
+const ReadOnly: React.FC<ReadOnlyProps> = ({ filters }) => {
   return (
     <Container>
       <Wrapper>
-        <Courses initFilters={filters} />
+        <ReadOnlyView filters={filters} />
         <Row id='graphs'>
           <Col md={6}>
             <HorizontalBarChart year={4} />
@@ -27,4 +28,4 @@ const MainPage: React.FC<MainPageProps> = ({ filters }) => {
   );
 };
 
-export default MainPage;
+export default ReadOnly;

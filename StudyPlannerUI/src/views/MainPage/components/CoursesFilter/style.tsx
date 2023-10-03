@@ -7,7 +7,6 @@ export const SearchBarContainer = styled.div`
   align-items: flex-end;
   gap: 1rem;
   display: flex;
-  margin-bottom: 20px;
 `;
 
 export const SearchInputWrapper = styled.div`

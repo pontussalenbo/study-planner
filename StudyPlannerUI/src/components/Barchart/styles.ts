@@ -1,4 +1,3 @@
-import { StyledButton } from 'components/Button';
 import { Tokens } from 'style/tokens';
 import styled from 'styled-components';
 
@@ -20,12 +19,6 @@ export const ArrowButton = styled.button`
 
 export const ButtonIcon = styled.span`
     margin-right: 4px;
-`;
-
-export const RemoveButton = styled(StyledButton)`
-    display: block;
-    margin: 0 auto;
-    background: ${({ theme }) => theme.errorContainer};
 `;
 
 export const Wrapper = styled.div`
