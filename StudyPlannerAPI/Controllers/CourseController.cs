@@ -42,7 +42,7 @@ public class CourseController : ControllerBase
 
     [HttpPost]
     [Consumes(MediaTypeNames.Application.Json)]
-    [Route("get")]
+    [Route(Routes.INFO)]
     public async Task<IActionResult> GetCourses([FromBody] List<string> courseCodes)
     {
         return await this.PerformEndpointAction(async () => await courseInfoManager.GetCourses(courseCodes), logger);

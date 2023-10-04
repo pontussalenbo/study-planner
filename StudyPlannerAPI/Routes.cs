@@ -14,4 +14,5 @@ public class Routes
     public const string MASTERS = "masters";
     public const string ACADEMIC_YEARS = "academic_years";
     public const string CLASS_YEARS = "class_years";
+    public const string INFO = "info";
 }
