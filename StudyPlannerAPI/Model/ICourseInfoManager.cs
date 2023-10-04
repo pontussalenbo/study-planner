@@ -4,5 +4,7 @@ namespace StudyPlannerAPI.Model;
 
 public interface ICourseInfoManager
 {
-    Task<IActionResult> GetCourses(string programme, string year, List<string> master);
+    Task<IActionResult> GetCoursesByProgrammeAndYear(string programme, string year, List<string> master);
+
+    Task<IActionResult> GetCourses(List<string> courseCodes);
 }

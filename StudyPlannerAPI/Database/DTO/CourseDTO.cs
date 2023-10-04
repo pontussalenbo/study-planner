@@ -21,4 +21,9 @@ public class CourseDTO
     {
         return course_code.GetHashCode();
     }
+
+    public CourseInfoDTO ToCourseInfoDTO()
+    {
+        return new CourseInfoDTO(course_name_en, course_name_sv, level, credits);
+    }
 }
