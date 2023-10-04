@@ -26,17 +26,25 @@ public class CourseController : ControllerBase
 
     [HttpPost]
     [Consumes(MediaTypeNames.Application.Json)]
-    public async Task<IActionResult> GetCourses([FromBody] CourseParams courseParams)
+    public async Task<IActionResult> GetCoursesByProgrammeAndYear([FromBody] CourseParams courseParams)
     {
         var validationResult = await validator.ValidateAsync(courseParams);
         if (validationResult.IsValid)
         {
             return await this.PerformEndpointAction(
-                async () => await courseInfoManager.GetCourses(courseParams.Programme,
+                async () => await courseInfoManager.GetCoursesByProgrammeAndYear(courseParams.Programme,
                     courseParams.Year, courseParams.MasterCodes), logger);
         }
 
         var errors = validationResult.Errors.Select(e => new ValidationError(e.ErrorCode, e.ErrorMessage));
         return BadRequest(errors);
+    }
+
+    [HttpPost]
+    [Consumes(MediaTypeNames.Application.Json)]
+    [Route("get")]
+    public async Task<IActionResult> GetCourses([FromBody] List<string> courseCodes)
+    {
+        return await this.PerformEndpointAction(async () => await courseInfoManager.GetCourses(courseCodes), logger);
     }
 }

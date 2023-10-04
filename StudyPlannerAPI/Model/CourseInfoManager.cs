@@ -18,7 +18,7 @@ public class CourseInfoManager : ICourseInfoManager
         this.logger = logger;
     }
 
-    public async Task<IActionResult> GetCourses(string programme, string year, List<string> masters)
+    public async Task<IActionResult> GetCoursesByProgrammeAndYear(string programme, string year, List<string> masters)
     {
         var table = ModelUtil.YearPatternToTable(year);
         var column = ModelUtil.YearPatternToColumn(year);
@@ -44,6 +44,30 @@ public class CourseInfoManager : ICourseInfoManager
 
         var result = await db.ExecuteQuery<CourseDTO>(query);
         result = await AppendCoursePeriods(result, programme, year);
+        return new JsonResult(result);
+    }
+
+    public async Task<IActionResult> GetCourses(List<string> courseCodes)
+    {
+        if (courseCodes.Count == 0)
+        {
+            return new JsonResult(null);
+        }
+
+        var query = new Query(Tables.COURSES)
+            .Select(Columns.COURSE_CODE, Columns.COURSE_NAME_EN, Columns.COURSE_NAME_SV, Columns.CREDITS,
+                Columns.LEVEL);
+
+        query = query.Where(sq =>
+        {
+            sq = sq.Where(Columns.COURSE_CODE, courseCodes.First());
+            return courseCodes.Skip(1)
+                .Aggregate(sq, (current, courseCode) => current.OrWhere(Columns.COURSE_CODE, courseCode));
+        });
+
+        var queryRes = await db.ExecuteQuery<CourseDTO>(query);
+        var result = queryRes.ToDictionary(c => c.course_code, c => c.ToCourseInfoDTO());
+
         return new JsonResult(result);
     }
 
