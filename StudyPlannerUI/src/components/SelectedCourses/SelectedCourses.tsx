@@ -5,7 +5,7 @@ import IconButton from 'components/Button/Button';
 import { getDisplayPeriod, sortCourses } from 'utils/sortCourses';
 import { TableRow, TableCell, NameCell, ButtonCell } from 'components/Table/style';
 import { ListContainer } from 'views/MainPage/components/Courses/InfiniteScroll.style';
-import { ReactComponent as RemoveIcon } from 'components/Icons/remove-outline.svg';
+import { ReactComponent as RemoveIcon } from 'assets/remove-outline.svg';
 interface CreditsTableProps {
   year: CourseData.YEAR;
 }

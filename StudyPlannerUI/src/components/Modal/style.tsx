@@ -4,8 +4,9 @@ import { Tokens } from 'style/tokens';
 export const ModalDialog = styled.dialog`
   background: ${Tokens.neutral20};
   color: ${({ theme }) => theme.onBackground};
-  max-width: 30%;
-  min-width: 300px;
+  max-width: 600px;
+  width: min-content;
+  min-width: 400px;
   padding: 2rem;
   border: 0;
   border-radius: 0.5rem;
@@ -26,4 +27,22 @@ export const CloseButton = styled.button`
   position: absolute;
   top: 0.5em;
   right: 0.5em;
+
+  & > svg {
+    fill: ${Tokens.neutral50};
+  }
+
+  &:hover {
+    cursor: pointer;
+    & > svg {
+      fill: ${Tokens.neutral70};
+    }
+  }
+
+  &:active {
+    & > svg {
+      fill: ${Tokens.neutral60};
+    }
+    scale: 0.95;
+  }
 `;

@@ -1,5 +1,4 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
-import styled from 'styled-components';
 import Col from 'components/Flex/Col.style';
 import Row from 'components/Flex/Row.style';
 import IconButton from 'components/Button/Button';
@@ -9,53 +8,18 @@ import type { Filters } from 'interfaces/Types';
 import { Heading2 } from 'components/Typography/Heading2';
 import { FilterContainer, GetStatsBar } from 'components/Temp/styles';
 import SelectedCoursesTable from 'components/SelectedCourses/SelectedCourses';
-import { floatToHex, generateColors } from 'utils/colors';
+import { generateColors } from 'utils/colors';
 import { Endpoints } from 'interfaces/API_Constants.d';
-import { GET, POST } from 'utils/fetch';
+import { GET } from 'utils/fetch';
 import MasterCheck from 'components/MasterCheck';
 import { CourseContainer } from 'components/CoursesWithMaster';
-import {
-  LegendContent,
-  SelectContainer,
-  SelectLabel,
-  StyledFieldset,
-  StyledLegend
-} from 'components/Select/style';
 import StickyButton from 'components/Button/StickyButton';
 import SavePlanModal from 'components/Modal/SavePlanModal';
 import { useStudyplanContext } from 'hooks/CourseContext';
+import { TwoColumnWrapper } from './style';
+import { ReadonlyField } from 'components/ReadonlyField';
+import { getMasterStats } from 'api/master';
 
-// TODO: REFRACTOR THIS TO A NEW COMPONENT
-const TwoColumnWrapper = styled.div`
-  background-color: ${({ theme }) => theme.tertiary + floatToHex(0.2)};
-  border-radius: 10px;
-  padding: 10px 20px;
-  display: grid;
-  grid-template-rows: repeat(7, auto); /* 7 items per column */
-  grid-auto-columns: 1fr; /* Makes each new column take up the full width */
-  grid-auto-flow: column; /* Makes items flow into new columns after the 8th item */
-  grid-gap: 10px 5px; /* Gap between items */
-`;
-
-interface ReadonlyFieldProps {
-  label: string;
-  value: string;
-}
-
-function ReadonlyField({ label, value }: ReadonlyFieldProps) {
-  return (
-    <SelectContainer isOpen={false} disabled>
-      <SelectLabel isOpen={false}>{value}</SelectLabel>
-      <StyledFieldset isOpen={false}>
-        <StyledLegend hasValue>
-          <LegendContent>{label}</LegendContent>
-        </StyledLegend>
-      </StyledFieldset>
-    </SelectContainer>
-  );
-}
-
-// ! END TODO
 interface CoursesProps {
   filters: Filters;
 }
@@ -68,15 +32,13 @@ const ReadOnlyView: React.FC<CoursesProps> = ({ filters }) => {
 
   const selectedCourses = [...courses[4], ...courses[5]];
 
-  const getMasterStats = async (signal?: AbortController) => {
+  const updateMasterStats = async (signal?: AbortController) => {
     const courseCodes = selectedCourses.map(course => course.course_code);
     const body = {
       ...filters,
       selectedCourses: courseCodes
     };
-
-    const data = await POST<API.MasterStatus[]>(Endpoints.masterCheck, body, signal);
-    return data;
+    return getMasterStats(body, signal);
   };
 
   useEffect(() => {
@@ -85,7 +47,8 @@ const ReadOnlyView: React.FC<CoursesProps> = ({ filters }) => {
     if (!loaded) {
       return;
     }
-    getMasterStats(signal).then(data => {
+
+    updateMasterStats(signal).then(data => {
       setStats(data);
     });
   }, [loaded]);
@@ -119,7 +82,7 @@ const ReadOnlyView: React.FC<CoursesProps> = ({ filters }) => {
   };
 
   const handleUpdate = async () => {
-    const stats = await getMasterStats();
+    const stats = await updateMasterStats();
     setStats(stats);
   };
 
@@ -164,7 +127,7 @@ const ReadOnlyView: React.FC<CoursesProps> = ({ filters }) => {
               onClick={handleModal}
               icon={<ReloadIcon fill='white' width='0.8rem' />}
             >
-              Save Plan
+              Copy Plan
             </StickyButton>
             <SavePlanModal data={filters} isOpen={isModalOpen} onClose={handleModal} />
           </GetStatsBar>
