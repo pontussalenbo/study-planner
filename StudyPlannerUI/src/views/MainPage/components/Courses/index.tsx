@@ -23,7 +23,8 @@ import Tooltip from 'components/Tooltip';
 import { useStudyplanContext } from 'hooks/CourseContext';
 import { Grid, GridItem } from 'components/Layout/Grid';
 import FlexContainer from 'components/Layout';
-import AddCourse from './AddCourse';
+import AddCourse from './AddCourseModal';
+import { useToastContext } from 'hooks/useToast';
 
 interface CourseProps {
   initFilters?: Filters;
@@ -51,8 +52,8 @@ const Courses: React.FC<CourseProps> = ({ initFilters = initialFilters }) => {
     BASE_URL + Endpoints.classYears
   );
 
-  const { courses: c, loaded } = useStudyplanContext();
-
+  const { courses: c, loaded, loadedPlan } = useStudyplanContext();
+  const toastDispatch = useToastContext();
   const selectedCourses = [...c[4], ...c[5]];
 
   const getMasterStats = async (signal?: AbortController) => {
@@ -76,14 +77,47 @@ const Courses: React.FC<CourseProps> = ({ initFilters = initialFilters }) => {
       setStats(data);
     });
 
-    handleGetCourses(filters.Year);
+    handleGetCourses(filters.Year.toString());
     return () => {
       signal.abort();
     };
   }, [loaded]);
 
+  const parseCourses = (courses: CourseData.SelectedCourse[]) => {
+    return courses.map(course => ({
+      course_code: course.course_code,
+      period_start: course.periods[0].start,
+      period_end: course.periods[0].end,
+      study_year: course.selectedYear
+    }));
+  };
+
   const handleModal = () => {
-    setIsModalOpen(prev => !prev);
+    if (loaded || loadedPlan.url) {
+      const yearFour = parseCourses(c[4]);
+      const yearFive = parseCourses(c[5]);
+
+      const SelectedCourses = [...yearFour, ...yearFive];
+
+      const { Programme, Year } = filters;
+
+      const PART_TO_REMOVE = window.location.origin + '/studyplan/';
+
+      const id = loadedPlan.url.replace(PART_TO_REMOVE, '');
+      const body = {
+        UniqueBlob: id,
+        StudyPlanName: loadedPlan.name,
+        Programme,
+        Year,
+        SelectedCourses
+      };
+
+      POST<unknown>(Endpoints.savePlan, body).then(() => {
+        toastDispatch.showToast('Plan saved!', 'success', 3);
+      });
+    } else {
+      setIsModalOpen(prev => !prev);
+    }
   };
 
   const handleUpdate = async () => {
@@ -182,7 +216,8 @@ const Courses: React.FC<CourseProps> = ({ initFilters = initialFilters }) => {
                 </IconButton>
               </Tooltip>
               <StickyButton
-                variant='secondary'
+                disabled={!enoughCourses}
+                variant='primary'
                 onClick={handleModal}
                 icon={<ReloadIcon fill='white' width='0.8rem' />}
               >

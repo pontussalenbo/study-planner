@@ -1,5 +1,5 @@
 import React, { useRef, useEffect, useState } from 'react';
-import { ReactComponent as CloseIcon } from 'components/Icons/close-round-icon.svg';
+import { ReactComponent as CloseIcon } from 'assets/close-round-icon.svg';
 import { ModalDialog, CloseButton } from './style';
 
 interface ModalProps {

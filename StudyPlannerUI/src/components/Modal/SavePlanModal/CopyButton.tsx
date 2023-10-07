@@ -1,11 +1,10 @@
 import React, { useState, useCallback } from 'react';
 import styled from 'styled-components';
-import { StyledButton } from 'components/Button/Button';
-import { ReactComponent as CopyIcon } from 'components/Icons/copy-icon.svg';
-import { ReactComponent as CheckmarkIcon } from 'components/Icons/check-mark-icon.svg';
+import { ReactComponent as CopyIcon } from 'assets/copy-icon.svg';
+import { ReactComponent as CheckmarkIcon } from 'assets/check-mark-icon.svg';
+import { StyledButton } from 'components/Button/style';
 
 const Tooltip = styled.div`
-  /* Your tooltip styles */
   position: absolute;
   top: 100%;
   left: 50%;

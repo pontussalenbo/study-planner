@@ -1,7 +1,8 @@
 import React, { useEffect, useRef, useState } from 'react';
-import styled from 'styled-components';
 import IconButton, { IButtonWithIconProps } from 'components/Button/Button';
 import SaveIcon from 'components/Icons/Save';
+import styled from 'styled-components';
+const OFFSET = 10;
 
 const StyledButton = styled(IconButton)<{ sticky: boolean; navHeight: number }>`
   z-index: 2;
@@ -10,9 +11,7 @@ const StyledButton = styled(IconButton)<{ sticky: boolean; navHeight: number }>`
   cursor: pointer;
 `;
 
-const OFFSET = 10;
-
-const StickyButton: React.FC<IButtonWithIconProps> = ({ children, onClick }) => {
+const StickyButton: React.FC<IButtonWithIconProps> = ({ children, onClick, ...rest }) => {
   const [sticky, setSticky] = useState(false);
   const stickyRef = useRef(sticky); // useRef to store the current sticky state
   const stickyStylesRef = useRef({}); // useRef to store the current sticky styles
@@ -71,6 +70,7 @@ const StickyButton: React.FC<IButtonWithIconProps> = ({ children, onClick }) => 
 
   return (
     <StyledButton
+      {...rest}
       id='save-button'
       rref={buttonRef}
       sticky={sticky}

@@ -1,7 +1,7 @@
 // TODO: Rename file to a more appropriate name
 import { useState } from 'react';
 import IconButton from 'components/Button/Button';
-import { ReactComponent as RemoveIcon } from 'components/Icons/remove-outline.svg';
+import { ReactComponent as RemoveIcon } from 'assets/remove-outline.svg';
 import AddIcon from 'components/Icons/Add';
 import { getDisplayPeriod } from 'utils/sortCourses';
 import { TableRow, TableCell, NameCell, ButtonCell } from 'components/Table/style';

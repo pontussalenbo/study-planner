@@ -7,6 +7,7 @@ import Navbar from 'components/Navbar';
 import StudyPlan from 'views/StudyPlan';
 import StudyplanProvider from 'hooks/CourseContext';
 import ScrollArrow from 'components/ScrollArrow';
+import ToastProvider from 'hooks/useToast';
 
 function App(): JSX.Element {
   return (
@@ -14,13 +15,15 @@ function App(): JSX.Element {
       <GlobalStyles />
       <Navbar />
       <StudyplanProvider>
-        <BrowserRouter>
-          <Routes>
-            <Route path='/studyplan/:id' element={<StudyPlan />} />
-            <Route path='/' element={<MainPage />} />
-            <Route path='*' element={<MainPage />} />
-          </Routes>
-        </BrowserRouter>
+        <ToastProvider>
+          <BrowserRouter>
+            <Routes>
+              <Route path='/studyplan/:id' element={<StudyPlan />} />
+              <Route path='/' element={<MainPage />} />
+              <Route path='*' element={<MainPage />} />
+            </Routes>
+          </BrowserRouter>
+        </ToastProvider>
       </StudyplanProvider>
       <ScrollArrow />
     </ThemeProvider>

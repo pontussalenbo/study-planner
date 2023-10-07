@@ -13,6 +13,8 @@ export interface CtxType {
   courses: SelectedCourses;
   loaded: boolean;
   loadedPlan: LoadedPlan;
+  unsavedChanges: boolean;
+  setLoadedPlan: (loadedPlan: LoadedPlan) => void;
   hasCourse: (courseCode: string) => boolean;
   addCourse: (
     course: CourseData.SelectedCourse,
@@ -58,6 +60,7 @@ function StudyplanProvider({ children, initState }: ProviderProps) {
   const [readOnly, setReadOnly] = useState(false);
   const [name, setName] = useState('');
   const [url, setUrl] = useState<string>('');
+  const [unsavedChanges, setUnsavedChanges] = useState(false);
 
   useEffect(() => {
     if (initState) {
@@ -92,6 +95,8 @@ function StudyplanProvider({ children, initState }: ProviderProps) {
       ...prev,
       [year]: [...prev[year], updatedCourse]
     }));
+
+    setUnsavedChanges(true);
   };
 
   const setCourses = (selectedCourses: SelectedCourses) => {
@@ -110,6 +115,7 @@ function StudyplanProvider({ children, initState }: ProviderProps) {
         5: prev[5].filter(c => c.course_code !== courseName)
       }));
     }
+    setUnsavedChanges(true);
   };
 
   const changeYear = (courseName: string, year: CourseData.YEAR) => {
@@ -126,6 +132,7 @@ function StudyplanProvider({ children, initState }: ProviderProps) {
         [year]: [...prev[year], course]
       };
     });
+    setUnsavedChanges(true);
   };
 
   const loadedPlan: LoadedPlan = {
@@ -134,10 +141,24 @@ function StudyplanProvider({ children, initState }: ProviderProps) {
     url
   };
 
-  const store = {
+  const setLoadedPlan = (loadedPlan: LoadedPlan) => {
+    setReadOnly(loadedPlan.readOnly);
+    setName(loadedPlan.name);
+    setUrl(loadedPlan.url);
+  };
+
+  const savePlan = () => {
+    if (!unsavedChanges) return;
+    // TODO: Implement API CALL
+    setUnsavedChanges(false);
+  };
+
+  const store: CtxType = {
     hasCourse,
     loaded,
     loadedPlan,
+    unsavedChanges,
+    setLoadedPlan,
     courses: selectedCourses,
     addCourse,
     removeCourse,
