@@ -34,6 +34,8 @@ const SavePlanModal: React.FC<SavePlanModalProps> = ({ data, isOpen, onClose }) 
 
   const { courses, loaded, loadedPlan } = useStudyplanContext();
 
+  const wasOpened = useRef(false);
+
   useEffect(() => {
     if (isOpen && focusInputRef.current) {
       setTimeout(() => {
@@ -100,12 +102,17 @@ const SavePlanModal: React.FC<SavePlanModalProps> = ({ data, isOpen, onClose }) 
 
   const shouldShowModal = (!loaded && !submitSuccess) || (loadedPlan.readOnly && !submitSuccess);
 
-  if (!shouldShowModal) {
+  const handleClose = () => {
+    wasOpened.current = true;
+    onClose();
+  };
+
+  if (!shouldShowModal && wasOpened.current) {
     return null;
   }
 
   return (
-    <Modal hasCloseBtn isOpen={isOpen} onClose={onClose}>
+    <Modal hasCloseBtn isOpen={isOpen} onClose={handleClose}>
       {!submitSuccess ? (
         <>
           <Heading2>Save your study plan</Heading2>
