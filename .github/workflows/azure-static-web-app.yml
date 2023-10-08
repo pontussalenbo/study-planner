@@ -8,11 +8,20 @@ on:
     push:
         branches: ['master']
         paths:
-            - 'StudyPlannerUI/src/**'
+            - "StudyPlannerUI/src/**"
+            - "StudyPlannerUI/public/**"
+            - ".github/workflows/azure-static-web-app.yml"
+            - "StudyPlannerUI/vite.config.ts"
     pull_request:
         types: [opened, synchronize, reopened, closed]
         branches:
             - master
+        paths:
+            - "StudyPlannerUI/src/**"
+            - "StudyPlannerUI/public/**"
+            - ".github/workflows/azure-static-web-app.yml"
+            - "StudyPlannerUI/vite.config.ts"
+
     workflow_dispatch:
 
 
