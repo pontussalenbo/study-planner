@@ -12,6 +12,8 @@ public class CourseInfoDTO
         Credits = credits;
     }
 
+    // FIXME: change magic strings to constants. Depends on PR #54
+
     [JsonPropertyName("courseName_en")]
     public string CourseNameEn { get; private set; }
 

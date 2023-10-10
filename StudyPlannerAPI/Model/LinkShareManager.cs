@@ -45,12 +45,24 @@ public class LinkShareManager : ILinkShareManager
                     .Where(Columns.STUDY_PLAN_READ_ONLY_ID, uniqueBlob));
         var courses = await db.ExecuteQuery<SelectedCourseDTO>(query);
 
+        query = new Query(Tables.STUDY_PLAN_CUSTOM_COURSE)
+            .Select(Columns.COURSE_CODE, Columns.COURSE_NAME, Columns.LEVEL, Columns.CREDITS, Columns.STUDY_YEAR,
+                Columns.PERIOD_START, Columns.PERIOD_END)
+            .Where(Columns.STUDY_PLAN_ID, uniqueBlob)
+            .OrWhereIn(Columns.STUDY_PLAN_ID,
+                new Query(Tables.STUDY_PLAN)
+                    .Select(Columns.STUDY_PLAN_ID)
+                    .Where(Columns.STUDY_PLAN_READ_ONLY_ID, uniqueBlob));
+        var customCourses = await db.ExecuteQuery<CustomCourseDTO>(query);
+
+
         var result = new LinkShareDTO
         {
             Programme = studyPlanDTO.programme_code,
             StudyPlanName = studyPlanDTO.study_plan_name,
             Year = studyPlanDTO.year,
             SelectedCourses = courses,
+            CustomCourses = customCourses,
             IsReadOnly = isReadOnly
         };
 
@@ -58,7 +70,8 @@ public class LinkShareManager : ILinkShareManager
     }
 
     public async Task<IActionResult> GetUniqueBlobFromPlan(string programme, string year,
-        List<SelectedCourseDTO> selectedCourses, string studyPlanName, string uniqueBlob)
+        List<SelectedCourseDTO> selectedCourses, string studyPlanName, string uniqueBlob,
+        List<CustomCourseDTO> customCourses)
     {
         var studyPlanId = uniqueBlob;
 
@@ -70,6 +83,7 @@ public class LinkShareManager : ILinkShareManager
         if (await StudyPlanExists(studyPlanId))
         {
             await DeleteStudyPlanCourses(studyPlanId);
+            await DeleteStudyPlanCustomCourses(studyPlanId);
             await UpdateStudyPlanName(studyPlanName, studyPlanId);
         }
         else
@@ -78,16 +92,15 @@ public class LinkShareManager : ILinkShareManager
             logger.LogInformation("Plan created with id: {id}", studyPlanId);
             if (studyPlanId == string.Empty)
             {
-                logger.LogInformation(":(");
                 return new BadRequestResult();
             }
         }
 
         await AddStudyPlanCourses(studyPlanId, selectedCourses);
+        await AddStudyPlanCustomCourses(studyPlanId, customCourses);
         var studyPlanReadOnlyId = await GetReadOnlyId(studyPlanId);
         if (studyPlanReadOnlyId == string.Empty)
         {
-            logger.LogInformation(":( 2");
             return new BadRequestResult();
         }
 
@@ -121,6 +134,14 @@ public class LinkShareManager : ILinkShareManager
     private async Task DeleteStudyPlanCourses(string studyPlanId)
     {
         var query = new Query(Tables.STUDY_PLAN_COURSE)
+            .Where(Columns.STUDY_PLAN_ID, studyPlanId)
+            .AsDelete();
+        await db.ExecuteQuery<int>(query);
+    }
+
+    private async Task DeleteStudyPlanCustomCourses(string studyPlanId)
+    {
+        var query = new Query(Tables.STUDY_PLAN_CUSTOM_COURSE)
             .Where(Columns.STUDY_PLAN_ID, studyPlanId)
             .AsDelete();
         await db.ExecuteQuery<int>(query);
@@ -167,6 +188,11 @@ public class LinkShareManager : ILinkShareManager
 
     private async Task AddStudyPlanCourses(string studyPlanId, List<SelectedCourseDTO> selectedCourses)
     {
+        if (selectedCourses.Count == 0)
+        {
+            return;
+        }
+
         var cols = new List<string>
         {
             Columns.STUDY_PLAN_ID, Columns.COURSE_CODE, Columns.STUDY_YEAR, Columns.PERIOD_START, Columns.PERIOD_END
@@ -177,6 +203,30 @@ public class LinkShareManager : ILinkShareManager
             List<object> { studyPlanId, c.course_code, c.study_year, c.period_start, c.period_end }));
 
         var query = new Query(Tables.STUDY_PLAN_COURSE)
+            .AsInsert(cols, data);
+        await db.ExecuteQuery<int>(query);
+    }
+
+    private async Task AddStudyPlanCustomCourses(string studyPlanId, List<CustomCourseDTO> customCourses)
+    {
+        if (customCourses.Count == 0)
+        {
+            return;
+        }
+
+        var cols = new List<string>
+        {
+            Columns.STUDY_PLAN_ID, Columns.COURSE_CODE, Columns.COURSE_NAME, Columns.LEVEL, Columns.CREDITS,
+            Columns.STUDY_YEAR, Columns.PERIOD_START, Columns.PERIOD_END
+        };
+
+        var data = new List<List<object>>();
+        customCourses.ForEach(c => data.Add(new List<object>
+        {
+            studyPlanId, c.course_code, c.course_name, c.level, c.credits, c.study_year, c.period_start, c.period_end
+        }));
+
+        var query = new Query(Tables.STUDY_PLAN_CUSTOM_COURSE)
             .AsInsert(cols, data);
         await db.ExecuteQuery<int>(query);
     }
