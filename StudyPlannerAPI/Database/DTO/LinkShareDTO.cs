@@ -1,4 +1,6 @@
-﻿namespace StudyPlannerAPI.Database.DTO;
+﻿using System.Text.Json.Serialization;
+
+namespace StudyPlannerAPI.Database.DTO;
 
 public class LinkShareDTO
 {
@@ -9,6 +11,9 @@ public class LinkShareDTO
 
     public bool IsReadOnly { get; set; } = false;
 
-    //public List<string> MasterCodes { get; set; } = new();
     public List<SelectedCourseDTO> SelectedCourses { get; set; } = new();
+
+    // FIXME: change magic strings to constants. Depends on PR #54
+    [JsonPropertyName("customCourses")]
+    public List<CustomCourseDTO> CustomCourses { get; set; } = new();
 }

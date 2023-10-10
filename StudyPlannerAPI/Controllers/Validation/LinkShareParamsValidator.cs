@@ -28,6 +28,6 @@ public class LinkShareParamsValidator : AbstractValidator<LinkShareParams>
         RuleFor(lsp => lsp.SelectedCourses)
             .Must(courses => courses.Count > 0)
             .WithErrorCode(ErrorCodes.COUNT_LEQ_ZERO)
-            .WithMessage(ErrorUtil.LeqZero(nameof(LinkShareParams.SelectedCourses)));
+            .WithMessage(ErrorUtil.CountLeqZero(nameof(LinkShareParams.SelectedCourses)));
     }
 }
