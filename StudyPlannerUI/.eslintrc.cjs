@@ -25,8 +25,8 @@ module.exports = {
         'prettier'
     ],
     'rules': {
+        'no-console': 'warn',
         'no-inline-styles/no-inline-styles': 1,
-        // 'max-len': [ 'error', { 'code': 100 } ],
         'react/require-default-props': 'off',
         'indent': [
 		  'error',

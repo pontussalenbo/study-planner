@@ -11,5 +11,5 @@
     "strict": true,
     "target": "ESNext"
   },
-  "include": ["vite.config.ts", ".eslintrc.js"]
+  "include": ["vite.config.ts", ".eslintrc.cjs"]
 }
