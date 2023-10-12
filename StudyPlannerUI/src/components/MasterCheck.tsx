@@ -1,7 +1,7 @@
 import { useMemo } from 'react';
 import styled from 'styled-components';
 import { ListContainer } from '../views/MainPage/components/Courses/InfiniteScroll.style';
-import { CREDITS_TOTAL_KEY, MASTERS_SUMMARY_NAME } from 'interfaces/API_Constants.d';
+import { CREDITS_TOTAL_KEY, MASTERS_SUMMARY_NAME } from 'api/constants';
 import {
   TableRow,
   NameCell,

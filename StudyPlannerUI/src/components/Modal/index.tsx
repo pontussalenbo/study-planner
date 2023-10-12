@@ -36,12 +36,16 @@ const Modal: React.FC<ModalProps> = ({ isOpen, hasCloseBtn = true, onClose, chil
     }
 
     if (isModalOpen) {
-      modalElement.showModal();
       document.body.style.overflowY = 'hidden';
+      modalElement.showModal();
     } else {
-      modalElement.close();
       document.body.style.overflowY = 'auto';
+      modalElement.close();
     }
+
+    return () => {
+      document.body.style.overflowY = 'auto';
+    };
   }, [isModalOpen]);
 
   return (

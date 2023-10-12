@@ -1,4 +1,4 @@
-import { Endpoints } from 'interfaces/API_Constants.d';
+import { Endpoints } from 'api/constants';
 import { GET } from './fetch';
 
 export function saveMaster() {

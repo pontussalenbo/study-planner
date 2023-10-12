@@ -11,7 +11,7 @@ interface Openable {
   isOpen: boolean;
 }
 
-export const StyledFieldset = styled.fieldset<Openable>`
+export const StyledFieldset = styled.fieldset<Openable & { error?: boolean }>`
   text-align: left;
   position: absolute;
   bottom: 0;
@@ -36,6 +36,7 @@ export const StyledFieldset = styled.fieldset<Openable>`
     `
     border-color: ${theme.primary};
     `}
+  border-color: ${({ error, theme }) => error && theme.error};
 `;
 
 export const StyledLegend = styled.legend<{ hasValue: boolean }>`
@@ -79,7 +80,7 @@ export const SelectContainer = styled.div<{ isOpen: boolean; disabled: boolean }
   background-color: ${({ theme }) => theme.surfaceVariant};
   color: ${({ theme }) => theme.onSurfaceVariant};
   border-radius: 4px;
-  width: 200px;
+  min-width: 200px;
   position: relative;
   font-family: 'Roboto', sans-serif;
   padding: 0;

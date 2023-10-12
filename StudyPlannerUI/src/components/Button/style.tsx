@@ -1,7 +1,6 @@
 import styled from 'styled-components';
 import { CustomTheme } from 'style/Theme';
 import { Tokens } from 'style/tokens';
-import IconButton from './Button';
 
 type Token = keyof typeof Tokens;
 type ThemeColor = keyof CustomTheme;

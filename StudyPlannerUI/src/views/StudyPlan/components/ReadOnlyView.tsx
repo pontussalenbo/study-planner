@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import Col from 'components/Flex/Col.style';
 import Row from 'components/Flex/Row.style';
 import IconButton from 'components/Button/Button';
@@ -9,8 +9,6 @@ import { Heading2 } from 'components/Typography/Heading2';
 import { FilterContainer, GetStatsBar } from 'components/Temp/styles';
 import SelectedCoursesTable from 'components/SelectedCourses/SelectedCourses';
 import { generateColors } from 'utils/colors';
-import { Endpoints } from 'interfaces/API_Constants.d';
-import { GET } from 'utils/fetch';
 import MasterCheck from 'components/MasterCheck';
 import { CourseContainer } from 'components/CoursesWithMaster';
 import StickyButton from 'components/Button/StickyButton';
@@ -18,7 +16,7 @@ import SavePlanModal from 'components/Modal/SavePlanModal';
 import { useStudyplanContext } from 'hooks/CourseContext';
 import { TwoColumnWrapper } from './style';
 import { ReadonlyField } from 'components/ReadonlyField';
-import { getMasterStats } from 'api/master';
+import { getMasterStats, getMasters } from 'api/master';
 
 interface CoursesProps {
   filters: Filters;
@@ -55,16 +53,13 @@ const ReadOnlyView: React.FC<CoursesProps> = ({ filters }) => {
 
   useEffect(() => {
     const signal = new AbortController();
-    const getMasters = async () => {
-      const params = {
-        programme: filters.Programme,
-        year: filters.Year
-      };
-      const data = await GET<API.Master[]>(Endpoints.masters, new URLSearchParams(params), signal);
-      return data;
+
+    const params = {
+      programme: filters.Programme,
+      year: filters.Year
     };
 
-    getMasters().then(data => {
+    getMasters(params, signal).then(data => {
       setMasters(data);
     });
 
@@ -75,15 +70,12 @@ const ReadOnlyView: React.FC<CoursesProps> = ({ filters }) => {
 
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
 
-  const buttonRef = useRef<HTMLButtonElement | null>(null);
-
   const handleModal = () => {
     setIsModalOpen(prev => !prev);
   };
 
-  const handleUpdate = async () => {
-    const stats = await updateMasterStats();
-    setStats(stats);
+  const handleUpdate = () => {
+    updateMasterStats().then(stats => setStats(stats));
   };
 
   const enoughCourses = selectedCourses.length >= 4;
@@ -114,7 +106,6 @@ const ReadOnlyView: React.FC<CoursesProps> = ({ filters }) => {
           <GetStatsBar>
             <Tooltip enabled={!enoughCourses} text='Needs atleast 4 courses'>
               <IconButton
-                rref={buttonRef}
                 disabled={!enoughCourses}
                 onClick={handleUpdate}
                 icon={<ReloadIcon fill='white' width='0.8rem' />}

@@ -34,7 +34,7 @@ const Toast: React.FC<ToastProps> = ({ onClick }) => {
   );
 };
 
-interface ModalProps {
+interface AddCourseModalProps {
   isOpen: boolean;
   onClose: () => void;
 }
@@ -49,10 +49,66 @@ const defaultCourse: CourseData.SelectedCourse = {
   selectedYear: 4
 };
 
-const AddCourseModal: React.FC<ModalProps> = ({ isOpen, onClose }) => {
-  const [submitSuccess, setSubmitSuccess] = useState(false);
+interface CourseFormProps {
+  course_code: string;
+  course_name: string;
+  credits: number;
+  level: string;
+  start: number;
+  end: number;
+}
+/*
+TODO: examine usability of this
+type TValidators = {
+  [x in keyof CourseFormProps]: (...args: any) => boolean;
+};
+
+const errorMsgs = {
+  course_code: 'Course code is required',
+  course_name: 'Course name is required',
+  credits: 'Credits must be between 1 and 30',
+  level: 'Level must be G1, G2 or A',
+  start: {
+    bound: 'Start period must be between 1 and 4',
+    order: 'Start period must be before end period'
+  },
+  end: {
+    bound: 'End period must be between 1 and 4',
+    order: 'End period must be after start period'
+  }
+};
+
+const validators: TValidators = {
+  course_code: (value: string) => value.length > 0,
+  course_name: (value: string) => value.length > 0,
+  credits: (value: number) => value > 0 && value <= 30,
+  level: (value: string) => value === 'G1' || value === 'G2' || value === 'A',
+  start: (value: number, other: number) => value > 0 && value <= 4 && value <= other,
+  end: (value: number, other: number) => value > 0 && value <= 4 && value >= other
+};
+
+const validateCourse = (course: CourseData.SelectedCourse) => {
+  const errors: Partial<Record<keyof CourseFormProps, string>> = {};
+
+  Object.entries(validators).forEach(([key, validator]) => {
+    const value = course[key as keyof CourseData.SelectedCourse];
+    const other = key === 'start' ? course.periods[0].end : course.periods[0].start;
+
+    if (!validator(value, other)) {
+      errors[key as keyof CourseFormProps] = errorMsgs[key as keyof CourseFormProps];
+    }
+  });
+
+
+  return errors;
+};
+  */
+
+const AddCourseModal: React.FC<AddCourseModalProps> = ({ isOpen, onClose }) => {
   const [course, setCourse] = useState<CourseData.SelectedCourse>(defaultCourse);
   const [addedCourse, setAddedCourse] = useState<string>('');
+  const [errors, setErrors] = useState<Partial<Record<keyof CourseFormProps, string>>>({});
+  const [submitSuccess, setSubmitSuccess] = useState(false);
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -65,6 +121,7 @@ const AddCourseModal: React.FC<ModalProps> = ({ isOpen, onClose }) => {
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = event.target;
+
     setCourse(prev => ({
       ...prev,
       [name]: value
@@ -73,6 +130,7 @@ const AddCourseModal: React.FC<ModalProps> = ({ isOpen, onClose }) => {
 
   const handlePeriodChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { name, valueAsNumber } = event.target;
+
     setCourse(prev => ({
       ...prev,
       periods: [{ ...prev.periods[0], [name]: valueAsNumber }]
@@ -81,6 +139,7 @@ const AddCourseModal: React.FC<ModalProps> = ({ isOpen, onClose }) => {
 
   const handleFormSubmit = (e: FormEvent) => {
     e.preventDefault();
+
     addCourse(course, course.selectedYear, course.selectedPeriod);
     setSubmitSuccess(true);
     setAddedCourse(course.course_code);
@@ -112,8 +171,10 @@ const AddCourseModal: React.FC<ModalProps> = ({ isOpen, onClose }) => {
             type='text'
             value={course.course_name}
             onChange={handleChange}
+            errorMsg={errors.course_name}
             required
           />
+
           <FormInput
             label='Course Code'
             id='course_code'
@@ -121,6 +182,7 @@ const AddCourseModal: React.FC<ModalProps> = ({ isOpen, onClose }) => {
             type='text'
             value={course.course_code}
             onChange={handleChange}
+            errorMsg={errors.course_code}
             required
           />
         </FormRow>
@@ -132,6 +194,7 @@ const AddCourseModal: React.FC<ModalProps> = ({ isOpen, onClose }) => {
             type='number'
             value={course.credits}
             onChange={handleChange}
+            errorMsg={errors.credits}
             required
           />
           <FormInput
@@ -141,6 +204,7 @@ const AddCourseModal: React.FC<ModalProps> = ({ isOpen, onClose }) => {
             type='text'
             value={course.level}
             onChange={handleChange}
+            errorMsg={errors.level}
             required
           />
         </FormRow>
@@ -152,6 +216,7 @@ const AddCourseModal: React.FC<ModalProps> = ({ isOpen, onClose }) => {
             type='number'
             value={course.periods[0].start}
             onChange={handlePeriodChange}
+            errorMsg={errors.start}
             required
           />
           <FormInput
@@ -161,14 +226,13 @@ const AddCourseModal: React.FC<ModalProps> = ({ isOpen, onClose }) => {
             type='number'
             value={course.periods[0].end}
             onChange={handlePeriodChange}
+            errorMsg={errors.end}
             required
           />
         </FormRow>
-        <FormRow>
-          <StyledButton variant='primary' type='submit'>
-            Add Course
-          </StyledButton>
-        </FormRow>
+        <StyledButton variant='primary' type='submit'>
+          Add Course
+        </StyledButton>
       </FormContainer>
     </Modal>
   );

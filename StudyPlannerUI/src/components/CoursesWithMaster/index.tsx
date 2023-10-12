@@ -1,5 +1,5 @@
 import FlexContainer from 'components/Layout';
-import { MASTERS_SUMMARY_NAME } from 'interfaces/API_Constants.d';
+import { MASTERS_SUMMARY_NAME } from 'api/constants';
 import styled from 'styled-components';
 
 const Pill = styled.div<{ color?: string }>`

@@ -2,9 +2,8 @@ import { useEffect, useState } from 'react';
 import Col from 'components/Flex/Col.style';
 import Row from 'components/Flex/Row.style';
 import useFetch from 'hooks/useFetch';
-import { BASE_URL, Endpoints } from 'interfaces/API_Constants.d';
+import { BASE_URL, Endpoints } from 'api/constants';
 import type { Filters, TransformFn } from 'interfaces/Types';
-import { POST } from 'utils/fetch';
 import { CoursesFilter } from '../CoursesFilter';
 import SearchBar from '../CoursesFilter/SearchBar';
 import CreditsTable from './CreditsTable';
@@ -25,6 +24,8 @@ import { Grid, GridItem } from 'components/Layout/Grid';
 import FlexContainer from 'components/Layout';
 import AddCourse from './AddCourseModal';
 import { useToastContext } from 'hooks/useToast';
+import { getMasterStats, getMasters } from 'api/master';
+import { getCoursesByProgramme } from 'api/courses';
 
 interface CourseProps {
   initFilters?: Filters;
@@ -42,8 +43,38 @@ const Courses: React.FC<CourseProps> = ({ initFilters = initialFilters }) => {
   const [filteredCourses, setFilteredCourses] = useState<CourseData.DataWithLocale[]>([]);
   const [matches, setMatches] = useState(true);
 
+  const [masters, setMasters] = useState<API.Master[]>([]);
   const [stats, setStats] = useState<API.MasterStatus[]>([]);
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
+
+  const { courses: c, loaded, urls, savePlan } = useStudyplanContext();
+  const selectedCourses = [...c[4], ...c[5]];
+
+  const toastDispatch = useToastContext();
+
+  useEffect(() => {
+    if (!loaded) {
+      return;
+    }
+
+    const signal = new AbortController();
+
+    const params = {
+      programme: filters.Programme,
+      year: filters.Year
+    };
+
+    getMasters(params, signal).then(data => {
+      setMasters(data);
+    });
+
+    handleUpdateMasterStats(signal);
+    handleGetCourses(filters.Year.toString());
+
+    return () => {
+      signal.abort();
+    };
+  }, [loaded]);
 
   const { data: programmes, loading: loadingPrograms } = useFetch<string[]>(
     BASE_URL + Endpoints.programmes
@@ -52,77 +83,14 @@ const Courses: React.FC<CourseProps> = ({ initFilters = initialFilters }) => {
     BASE_URL + Endpoints.classYears
   );
 
-  const { courses: c, loaded, loadedPlan } = useStudyplanContext();
-  const toastDispatch = useToastContext();
-  const selectedCourses = [...c[4], ...c[5]];
-
-  const getMasterStats = async (signal?: AbortController) => {
-    const courseCodes = selectedCourses.map(course => course.course_code);
-    const body = {
-      ...filters,
-      selectedCourses: courseCodes
-    };
-
-    const data = await POST<API.MasterStatus[]>(Endpoints.masterCheck, body, signal);
-    return data;
-  };
-
-  useEffect(() => {
-    const signal = new AbortController();
-
-    if (!loaded) {
-      return;
-    }
-    getMasterStats(signal).then(data => {
-      setStats(data);
-    });
-
-    handleGetCourses(filters.Year.toString());
-    return () => {
-      signal.abort();
-    };
-  }, [loaded]);
-
-  const parseCourses = (courses: CourseData.SelectedCourse[]) => {
-    return courses.map(course => ({
-      course_code: course.course_code,
-      period_start: course.periods[0].start,
-      period_end: course.periods[0].end,
-      study_year: course.selectedYear
-    }));
-  };
-
   const handleModal = () => {
-    if (loaded || loadedPlan.url) {
-      const yearFour = parseCourses(c[4]);
-      const yearFive = parseCourses(c[5]);
-
-      const SelectedCourses = [...yearFour, ...yearFive];
-
-      const { Programme, Year } = filters;
-
-      const PART_TO_REMOVE = window.location.origin + '/studyplan/';
-
-      const id = loadedPlan.url.replace(PART_TO_REMOVE, '');
-      const body = {
-        UniqueBlob: id,
-        StudyPlanName: loadedPlan.name,
-        Programme,
-        Year,
-        SelectedCourses
-      };
-
-      POST<unknown>(Endpoints.savePlan, body).then(() => {
+    if (urls.sId) {
+      savePlan(filters).then(() => {
         toastDispatch.showToast('Plan saved!', 'success', 3);
       });
     } else {
       setIsModalOpen(prev => !prev);
     }
-  };
-
-  const handleUpdate = async () => {
-    const stats = await getMasterStats();
-    setStats(stats);
   };
 
   const filterCourses = (transformFn: TransformFn) => {
@@ -144,18 +112,29 @@ const Courses: React.FC<CourseProps> = ({ initFilters = initialFilters }) => {
   };
 
   const handleGetCourses = (filterYear: string, masters?: string[]) => {
-    const coursesFiter = {
+    const filter = {
       Programme: filters.Programme,
       Year: filterYear,
       MasterCodes: masters
     };
 
-    POST<API.CourseData[]>(Endpoints.courses, coursesFiter).then(resp => {
+    getCoursesByProgramme(filter).then(resp => {
       const parsedData = dataParser(resp, 'course_name_en');
       setCourses(parsedData);
       setFilteredCourses(parsedData);
       setMatches(parsedData.length > 0);
     });
+  };
+
+  const handleUpdateMasterStats = async (signal?: AbortController) => {
+    const courseCodes = selectedCourses.map(course => course.course_code);
+    const body = {
+      ...filters,
+      selectedCourses: courseCodes
+    };
+
+    const stats = await getMasterStats(body, signal);
+    setStats(stats);
   };
 
   const enoughCourses = selectedCourses.length >= 4;
@@ -191,6 +170,7 @@ const Courses: React.FC<CourseProps> = ({ initFilters = initialFilters }) => {
               onGetCourses={handleGetCourses}
               update={updateCourses}
               filters={filters}
+              masters={masters}
             />
           </FilterContainer>
         </Col>
@@ -209,7 +189,7 @@ const Courses: React.FC<CourseProps> = ({ initFilters = initialFilters }) => {
               <Tooltip enabled={!enoughCourses} text='Needs atleast 4 courses'>
                 <IconButton
                   disabled={!enoughCourses}
-                  onClick={handleUpdate}
+                  onClick={() => handleUpdateMasterStats()}
                   icon={<ReloadIcon fill='white' width='0.8rem' />}
                 >
                   Check Masters
@@ -232,7 +212,7 @@ const Courses: React.FC<CourseProps> = ({ initFilters = initialFilters }) => {
           </GridItem>
 
           <GridItem order={4} mobileOrder={4}>
-            <CreditsTable stats={stats} filters={filters} />
+            <CreditsTable stats={stats} masters={masters} />
           </GridItem>
         </Grid>
       </Row>
@@ -251,5 +231,7 @@ const Courses: React.FC<CourseProps> = ({ initFilters = initialFilters }) => {
     </>
   );
 };
+
+Courses.whyDidYouRender = true;
 
 export default Courses;
