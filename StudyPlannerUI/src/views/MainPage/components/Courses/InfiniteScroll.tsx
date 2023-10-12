@@ -98,11 +98,11 @@ const Row = ({ index, data }: RowProps) => {
   );
 };
 
-type Props = {
+interface VirtualizedTableProps {
   courses: CourseData.DataWithLocale[];
-};
+}
 
-const VirtualizedTable: React.FC<Props> = ({ courses }) => {
+const VirtualizedTable: React.FC<VirtualizedTableProps> = ({ courses }) => {
   return (
     <ListContainer>
       <Header />

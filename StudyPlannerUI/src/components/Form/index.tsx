@@ -7,18 +7,33 @@ import {
 } from 'components/Select/style';
 import { ChangeEvent, useState } from 'react';
 import { SearchInput } from './styles';
+import FlexContainer from 'components/Layout';
+
+interface CommonProps extends React.InputHTMLAttributes<HTMLInputElement> {
+  label: string;
+  errorMsg?: string;
+}
+
+type EditableInputProps = CommonProps & {
+  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  readOnly?: false;
+};
+
+type ReadOnlyInputProps = CommonProps & {
+  onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  readOnly: true;
+};
+
+type FormInputProps = EditableInputProps | ReadOnlyInputProps;
 
 // TODO: make onchange optional if readonly
-interface FormInputProps extends React.InputHTMLAttributes<HTMLInputElement> {
-  label: string;
-  onChange?: (e: ChangeEvent<HTMLInputElement>) => void;
-}
 
 export const FormInput: React.FC<FormInputProps> = ({
   value,
   onChange,
   label,
   placeholder,
+  errorMsg,
   ...rest
 }) => {
   const [isFocused, setIsFocused] = useState(false);
@@ -38,20 +53,25 @@ export const FormInput: React.FC<FormInputProps> = ({
   };
 
   return (
-    <SelectContainer isOpen={isFocused} disabled={false}>
-      <SelectLabel isOpen={isFocused || hasValue}>{placeholder || label}</SelectLabel>
-      <StyledFieldset isOpen={isFocused}>
-        <StyledLegend hasValue={hasValue || isFocused}>
-          <LegendContent>{label}</LegendContent>
-        </StyledLegend>
-        <SearchInput
-          {...rest}
-          value={value || ''}
-          onFocus={handleFocus}
-          onBlur={handleBlur}
-          onChange={handleChange}
-        />
-      </StyledFieldset>
-    </SelectContainer>
+    <FlexContainer direction='column' gap='5px' id='1'>
+      <SelectContainer isOpen={isFocused} disabled={false} id='2'>
+        <SelectLabel isOpen={isFocused || hasValue} id='3'>
+          {placeholder || label}
+        </SelectLabel>
+        <StyledFieldset error={!!errorMsg} isOpen={isFocused} id='4'>
+          <StyledLegend hasValue={hasValue || isFocused} id='5'>
+            <LegendContent>{label}</LegendContent>
+          </StyledLegend>
+          <SearchInput
+            {...rest}
+            value={value || ''}
+            onFocus={handleFocus}
+            onBlur={handleBlur}
+            onChange={handleChange}
+          />
+        </StyledFieldset>
+      </SelectContainer>
+      <span>{errorMsg}</span>
+    </FlexContainer>
   );
 };

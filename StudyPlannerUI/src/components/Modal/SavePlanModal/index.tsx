@@ -1,7 +1,5 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, ChangeEvent, FC } from 'react';
 import Modal from 'components/Modal';
-import { POST } from 'utils/fetch';
-import { Endpoints } from 'interfaces/API_Constants.d';
 import { Heading2 } from 'components/Typography/Heading2';
 import { Paragraph } from 'components/Typography/Paragraph';
 import { Filters } from 'interfaces/Types';
@@ -10,11 +8,8 @@ import CopyButton from './CopyButton';
 import { FormContainer, FormRow } from 'components/Form/styles';
 import { FormInput } from 'components/Form';
 import { StyledButton } from 'components/Button/style';
-
-interface SavePlanResponse {
-  StudyPlanId: string;
-  StudyPlanReadOnlyId: string;
-}
+import { savePlan } from 'api/studyplan';
+import { Endpoints } from 'api/constants';
 
 interface SavePlanModalProps {
   isOpen: boolean;
@@ -26,28 +21,25 @@ interface URLS {
   sId: string;
   sIdReadOnly: string;
 }
-const SavePlanModal: React.FC<SavePlanModalProps> = ({ data, isOpen, onClose }) => {
-  const focusInputRef = useRef<HTMLInputElement | null>(null);
+const SavePlanModal: FC<SavePlanModalProps> = ({ data, isOpen, onClose }) => {
   const [planName, setPlanName] = useState<string>('');
   const [submitSuccess, setSubmitSuccess] = useState(false);
   const [urls, setUrls] = useState<URLS | null>(null);
 
-  const { courses, loaded, loadedPlan } = useStudyplanContext();
+  const { courses, loaded, loadedPlan, setUrls: setContextUrls } = useStudyplanContext();
 
+  const focusInputRef = useRef<HTMLInputElement | null>(null);
   const wasOpened = useRef(false);
 
   useEffect(() => {
     if (isOpen && focusInputRef.current) {
       setTimeout(() => {
-        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-        focusInputRef.current!.focus();
+        focusInputRef.current?.focus();
       }, 0);
     }
   }, [isOpen]);
 
-  const handleInputChange = (
-    event: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
-  ): void => {
+  const handleInputChange = (event: ChangeEvent<HTMLInputElement>): void => {
     const { value } = event.target;
     setPlanName(value);
   };
@@ -57,7 +49,7 @@ const SavePlanModal: React.FC<SavePlanModalProps> = ({ data, isOpen, onClose }) 
     submitData().then(() => setPlanName(''));
   };
 
-  const copyToClipboard = (url: string) => {
+  const copyToClipboard = (url = '') => {
     navigator?.clipboard?.writeText(url);
   };
 
@@ -85,17 +77,19 @@ const SavePlanModal: React.FC<SavePlanModalProps> = ({ data, isOpen, onClose }) 
     };
 
     try {
-      const response = await POST<SavePlanResponse>(Endpoints.savePlan, body);
-      const BASE_URL = window.location.origin + '/studyplan/';
+      const response = await savePlan(body);
+
+      const BASE_URL = window.location.origin + Endpoints.studyPlan;
+      const urls = {
+        sId: BASE_URL + '/' + response.StudyPlanId,
+        sIdReadOnly: BASE_URL + '/' + response.StudyPlanReadOnlyId
+      };
 
       setSubmitSuccess(true);
-      setUrls({
-        sId: BASE_URL + response.StudyPlanId,
-        sIdReadOnly: BASE_URL + response.StudyPlanReadOnlyId
-      });
+      setUrls(urls);
+      setContextUrls(urls);
     } catch (error) {
       setSubmitSuccess(false);
-      console.error('Error submitting data:', error);
       // TODO: Handle error
     }
   };
@@ -150,14 +144,14 @@ const SavePlanModal: React.FC<SavePlanModalProps> = ({ data, isOpen, onClose }) 
           </Paragraph>
           <FormRow>
             <FormInput readOnly type='text' label='Editable Link' value={urls?.sId} />
-            <CopyButton onClick={() => copyToClipboard(urls?.sId ?? '')} />
+            <CopyButton onClick={() => copyToClipboard(urls?.sId)} />
           </FormRow>
           <Paragraph>
             Share your study plan with others by sharing the read only link below.
           </Paragraph>
           <FormRow>
             <FormInput readOnly type='text' label='Read only Link' value={urls?.sIdReadOnly} />
-            <CopyButton onClick={() => copyToClipboard(urls?.sIdReadOnly ?? '')} />
+            <CopyButton onClick={() => copyToClipboard(urls?.sIdReadOnly)} />
           </FormRow>
         </>
       )}

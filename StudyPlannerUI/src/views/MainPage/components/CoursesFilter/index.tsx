@@ -1,79 +1,46 @@
 import React, { useState } from 'react';
 import Tooltip from 'components/Tooltip';
-import { GET, POST } from 'utils/fetch';
-import { Endpoints } from 'interfaces/API_Constants.d';
 import { Filters } from 'interfaces/Types';
 import IconButton from 'components/Button/Button';
 import { dataParser } from 'utils/sortCourses';
 import { Option, Select } from 'components/Select';
 import ReloadIcon from 'components/Icons/Reload';
+import {
+  ClassYearFilter,
+  FILTERS,
+  FilterValue,
+  getCoursesByProgramme,
+  getFilterByValues
+} from 'api/courses';
 
 interface CoursesFilterProps {
+  masters: API.Master[];
   filters: Filters;
   onFilterChange: (value: string, name: keyof Filters) => void;
   onGetCourses: (filters: string, masters?: string[]) => void;
   update: (courses: CourseData.DataWithLocale[]) => void;
 }
 
-const FILTERS = {
-  Year: 'Academic Year',
-  Class: 'Class',
-  None: ''
-} as const;
-
 const ALL_MASTERS = '';
 
-type FilterKeys = keyof typeof FILTERS;
-type FilterValues = (typeof FILTERS)[FilterKeys];
-type ClassYear = Exclude<FilterValues, typeof FILTERS.None>;
-
-export const CoursesFilter: React.FC<CoursesFilterProps> = ({ filters, onGetCourses, update }) => {
+export const CoursesFilter: React.FC<CoursesFilterProps> = ({
+  masters,
+  onGetCourses,
+  update,
+  filters
+}) => {
   /* Filter by Class or Year (selected type) */
-  const [filterType, setFilterType] = React.useState<FilterValues>(FILTERS.None);
+  const [filterType, setFilterType] = React.useState<FILTERS>(FILTERS.None);
   /* Selected Class/Year */
   const [classYearFilter, setClassYearFilter] = React.useState<string>(filters.Year);
   /* All masters that is selected in the filter */
   const [multiSelectValue, setMultiSelectValue] = useState<string[]>([]);
 
-  /* all masters available for selected programme and year */
-  const [masters, setMasters] = React.useState<API.Master[]>([]);
   /* Class/Year filter values */
   const [filterValues, setFilterValues] = React.useState<string[]>([]);
 
-  /**
-   * Set default value for class year filter to your class.
-   * Reset class year filter when filter type is changed year
-   * (as they year and class are two separate entities).
-   */
-  React.useEffect(() => {
-    if (filters.Year && classYearFilter === '') {
-      setClassYearFilter(filters.Year);
-    }
-  }, [filters.Year]);
-
-  /**
-   * Fetch all masters for selected programme and year
-   * when both programme and year are selected
-   */
-  React.useEffect(() => {
-    const { Programme, Year } = filters;
-    const controller = new AbortController();
-
-    if (Programme && Year) {
-      const params = new URLSearchParams({ Programme, Year });
-      GET<API.Master[]>(Endpoints.masters, params, controller).then(data => setMasters(data));
-    }
-
-    return () => controller.abort();
-  }, [filters]);
-
-  const fetchFilterValues = async (filter: ClassYear) => {
-    const urls = {
-      [FILTERS.Class]: Endpoints.classYears,
-      [FILTERS.Year]: Endpoints.academicYears
-    };
-
-    const data = await GET<string[]>(urls[filter]);
+  const fetchFilterValues = async (filter: ClassYearFilter) => {
+    const data = await getFilterByValues(filter);
     setFilterValues(data.reverse());
   };
 
@@ -81,7 +48,7 @@ export const CoursesFilter: React.FC<CoursesFilterProps> = ({ filters, onGetCour
     const { Programme, Year } = filters;
     const body = { Programme, Year, MasterCodes: masters };
 
-    POST<API.CourseData[]>(Endpoints.courses, body)
+    getCoursesByProgramme(body)
       .then(data => dataParser(data))
       .then(data => update(data));
   };
@@ -106,9 +73,12 @@ export const CoursesFilter: React.FC<CoursesFilterProps> = ({ filters, onGetCour
     }
   };
 
-  const handleChangeFilterType = (value: FilterValues) => {
+  const handleChangeFilterType = (value: FilterValue) => {
+    if (value === FILTERS.None) {
+      return;
+    }
     setFilterType(value);
-    fetchFilterValues(value as ClassYear);
+    fetchFilterValues(value);
 
     // Reset class year filter when filter type is changed to year
     // as they are two separate entities

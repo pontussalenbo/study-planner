@@ -1,7 +1,4 @@
-// TODO: Implement object export methods to get each respective endpoint
-// TODO: Pretty unbareable to handle at large scale, but it's a start
-
-import { BASE_URL } from 'interfaces/API_Constants.d';
+import { BASE_URL } from 'api/constants';
 
 export async function POST<T = unknown>(
     endpoint: string,
@@ -27,7 +24,7 @@ export async function POST<T = unknown>(
         const json = await response.json();
         return json;
     } catch (error) {
-        console.log(error);
+        console.error(error);
 
         throw error as APIError;
     }

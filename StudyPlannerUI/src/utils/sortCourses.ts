@@ -15,12 +15,7 @@ export function sortCourses<T extends CourseData.DataWithLocale>(courses: T[]): 
     });
 }
 
-interface Period {
-    start: number;
-    end: number;
-}
-
-export const getDisplayPeriod = (period: Period) => {
+export const getDisplayPeriod = (period: API.Period) => {
     const { start, end } = period;
 
     return start !== end ? `${period.start} \u2192 ${end}` : period.start;
