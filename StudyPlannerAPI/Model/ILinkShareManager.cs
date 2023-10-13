@@ -10,4 +10,6 @@ public interface ILinkShareManager
         List<CustomCourseDTO> customCourses);
 
     Task<IActionResult> GetPlanFromUniqueBlob(string uniqueBlob);
+
+    Task<IActionResult> GetReadOnlyIdFromId(string studyPlanId);
 }

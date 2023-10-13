@@ -16,4 +16,7 @@ public class LinkShareDTO
     // FIXME: change magic strings to constants. Depends on PR #54
     [JsonPropertyName("customCourses")]
     public List<CustomCourseDTO> CustomCourses { get; set; } = new();
+
+    [JsonPropertyName("studyPlanReadOnlyId")]
+    public string StudyPlanReadOnlyId { get; set; } = string.Empty;
 }
