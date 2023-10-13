@@ -96,7 +96,7 @@ public class LinkShareController : ControllerBase
     }
 
     [HttpGet]
-    [Route("id")]
+    [Route(Routes.ID)]
     public async Task<IActionResult> GetReadOnlyIdFromId([FromQuery] string studyPlanId)
     {
         return await this.PerformEndpointAction(async () => await linkShareManager.GetReadOnlyIdFromId(studyPlanId),
