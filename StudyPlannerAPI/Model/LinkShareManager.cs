@@ -45,6 +45,7 @@ public class LinkShareManager : ILinkShareManager
                     .Where(Columns.STUDY_PLAN_READ_ONLY_ID, uniqueBlob));
         var courses = await db.ExecuteQuery<SelectedCourseDTO>(query);
 
+        // Get custom courses
         query = new Query(Tables.STUDY_PLAN_CUSTOM_COURSE)
             .Select(Columns.COURSE_CODE, Columns.COURSE_NAME, Columns.LEVEL, Columns.CREDITS, Columns.STUDY_YEAR,
                 Columns.PERIOD_START, Columns.PERIOD_END)
@@ -55,9 +56,9 @@ public class LinkShareManager : ILinkShareManager
                     .Where(Columns.STUDY_PLAN_READ_ONLY_ID, uniqueBlob));
         var customCourses = await db.ExecuteQuery<CustomCourseDTO>(query);
 
-
         var result = new LinkShareDTO
         {
+            StudyPlanReadOnlyId = isReadOnly ? uniqueBlob : await GetReadOnlyId(uniqueBlob),
             Programme = studyPlanDTO.programme_code,
             StudyPlanName = studyPlanDTO.study_plan_name,
             Year = studyPlanDTO.year,
@@ -109,6 +110,29 @@ public class LinkShareManager : ILinkShareManager
             StudyPlanId = studyPlanId,
             StudyPlanReadOnlyId = studyPlanReadOnlyId
         };
+        return new JsonResult(result);
+    }
+
+    public async Task<IActionResult> GetReadOnlyIdFromId(string studyPlanId)
+    {
+        if (studyPlanId == string.Empty || await IsReadOnly(studyPlanId))
+        {
+            return new BadRequestResult();
+        }
+
+        var readOnlyId = await GetReadOnlyId(studyPlanId);
+
+        if (readOnlyId == string.Empty)
+        {
+            return new NotFoundResult();
+        }
+
+        var result = new UniqueBlobDTO
+        {
+            StudyPlanId = studyPlanId,
+            StudyPlanReadOnlyId = readOnlyId
+        };
+
         return new JsonResult(result);
     }
 
@@ -183,7 +207,7 @@ public class LinkShareManager : ILinkShareManager
             .Select(Columns.STUDY_PLAN_READ_ONLY_ID)
             .Where(Columns.STUDY_PLAN_ID, studyPlanId);
         var result = await db.ExecuteQuery<StudyPlanIdDTO>(query);
-        return result.FirstOrDefault()?.study_plan_read_only_id;
+        return result.FirstOrDefault(new StudyPlanIdDTO())?.study_plan_read_only_id;
     }
 
     private async Task AddStudyPlanCourses(string studyPlanId, List<SelectedCourseDTO> selectedCourses)

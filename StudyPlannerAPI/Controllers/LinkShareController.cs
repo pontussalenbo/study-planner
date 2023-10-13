@@ -94,4 +94,12 @@ public class LinkShareController : ControllerBase
         var errors = validationResult.Errors.Select(e => new ValidationError(e.ErrorCode, e.ErrorMessage));
         return BadRequest(errors);
     }
+
+    [HttpGet]
+    [Route("id")]
+    public async Task<IActionResult> GetReadOnlyIdFromId([FromQuery] string studyPlanId)
+    {
+        return await this.PerformEndpointAction(async () => await linkShareManager.GetReadOnlyIdFromId(studyPlanId),
+            logger);
+    }
 }
