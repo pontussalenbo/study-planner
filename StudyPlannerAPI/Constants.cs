@@ -22,6 +22,8 @@ public class Constants
 
     public const string STUDY_PLAN_NAME_DEFAULT = "My study plan";
 
+    public const string COURSE_CODES = "courseCodes";
+
     public const int REQUIRED_A_CREDITS_TOTAL = 45;
     public const int REQUIRED_A_CREDITS_MASTER = 30;
     public const int REQUIRED_CREDITS_TOTAL = 90;
