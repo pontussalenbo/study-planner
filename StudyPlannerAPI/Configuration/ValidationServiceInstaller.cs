@@ -1,7 +1,7 @@
 ﻿using FluentValidation;
 using StudyPlannerAPI.Controllers.Params;
 using StudyPlannerAPI.Controllers.Validation;
-using StudyPlannerAPI.Database.DTO;
+using StudyPlannerAPI.Model;
 
 namespace StudyPlannerAPI.Configuration;
 
@@ -12,7 +12,7 @@ public class ValidationServiceInstaller : IServiceInstaller
         services.AddScoped<IValidator<CourseParams>, CourseParamsValidator>();
         services.AddScoped<IValidator<MasterCheckParams>, MasterCheckParamsValidator>();
         services.AddScoped<IValidator<LinkShareParams>, LinkShareParamsValidator>();
-        services.AddScoped<IValidator<UniqueBlobDTO>, UniqueBlobValidator>();
+        services.AddScoped<IValidator<StudyPlanIdResult>, StudyPlanIdValidator>();
         services.AddScoped<IValidator<ProgrammeMastersParams>, ProgrammeMastersParamsValidator>();
         services.AddScoped<IValidator<CustomCourseDTO>, CustomCourseValidator>();
         services.AddScoped<IValidator<CustomCourseMinimalDTO>, CustomCourseMinimalValidator>();
