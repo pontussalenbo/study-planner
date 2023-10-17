@@ -17,11 +17,11 @@ interface ActionBarProps {
 
 function ActionBar({ filters, updateMasterStats, selectedCourses }: ActionBarProps) {
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
-  const { urls, savePlan } = useStudyplanContext();
+  const { urls, savePlan, loaded } = useStudyplanContext();
   const toastDispatch = useToastContext();
 
   const handleModal = () => {
-    if (urls.sId) {
+    if (urls.sId || loaded) {
       savePlan(filters).then(() => {
         toastDispatch.showToast('Plan saved!', 'success', 3);
       });

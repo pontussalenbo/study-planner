@@ -19,6 +19,7 @@ export interface StudyPlan {
     Year: number | string;
     SelectedCourses: PlanCourses[];
     UniqueBlob?: string;
+    CustomCourses?: PlanCourses[];
 }
 
 export async function savePlan(plan: StudyPlan): Promise<SavePlanResponse> {

@@ -11,8 +11,9 @@ interface CreditsTableProps {
 }
 
 function SelectedCoursesTable({ year }: CreditsTableProps): JSX.Element {
-  const { courses, removeCourse, changeYear } = useStudyplanContext();
-  const yearCourses = useMemo(() => sortCourses(courses[year]), [courses, year]);
+  const { courses, customCourses, removeCourse, changeYear } = useStudyplanContext();
+  const allCourses = [...courses[year], ...customCourses[year]];
+  const yearCourses = useMemo(() => sortCourses(allCourses), [courses, customCourses]);
 
   return (
     <ListContainer>
@@ -29,7 +30,9 @@ function SelectedCoursesTable({ year }: CreditsTableProps): JSX.Element {
           <NameCell>{course.course_name}</NameCell>
           <TableCell>{getDisplayPeriod(course.periods[0])}</TableCell>
           <TableCell>
-            <ArrowButton onClick={() => changeYear(course.course_code, year === 4 ? 5 : 4)}>
+            <ArrowButton
+              onClick={() => changeYear(course.course_code, year === 4 ? 5 : 4, course?.custom)}
+            >
               {year === 4 ? '\u2192' : '\u2190'}
             </ArrowButton>
           </TableCell>

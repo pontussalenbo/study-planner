@@ -19,11 +19,14 @@ const SearchBar: React.FC<SearchBarProps> = ({ matches, filter }: SearchBarProps
   };
 
   const handleFilter = (query: string) => {
+    const search = query.toLowerCase();
     const transformFn = (courses: CourseData.DataWithLocale[]) => {
       return courses.filter(
         course =>
-          course.course_name.toLowerCase().includes(query.toLowerCase()) ||
-          course.course_code.toLowerCase().includes(query.toLowerCase())
+          course.course_name.toLowerCase().includes(search) ||
+          // Support for search in other language (en/sv)
+          course.course_name_other?.toLowerCase().includes(search) ||
+          course.course_code.toLowerCase().includes(search)
       );
     };
     filter(transformFn);

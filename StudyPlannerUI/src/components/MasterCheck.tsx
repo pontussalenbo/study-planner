@@ -103,9 +103,11 @@ const MasterCheck: React.FC<MasterCheckProps> = ({ masters, stats, colorMap }) =
               <FilledTableRow fulfilled={fulfilled} key={master.master_code}>
                 <NameCell>{master.master_name_en}</NameCell>
                 <TableCell>
-                  <Pill key={master.master_code} color={color}>
-                    {master.master_code.slice(0, 3)}
-                  </Pill>
+                  {master.master_code !== CREDITS_TOTAL_KEY.toLowerCase() && (
+                    <Pill key={master.master_code} color={color}>
+                      {master.master_code.slice(0, 3)}
+                    </Pill>
+                  )}
                 </TableCell>
                 <TableCell>{masterStat.G1Credits}</TableCell>
                 <TableCell>{masterStat.G2Credits}</TableCell>

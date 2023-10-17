@@ -53,25 +53,32 @@ export interface State {
      * The urls (editable and readonly), used to access the study plan.
      */
     urls: URLS;
+    /**
+     * Custom courses that have been added to the study plan.
+     */
+    customCourses: SelectedCourses;
 }
 
-interface Action {
+/**
+ * The action that is dispatched to update the state.
+ * @template T The type of the payload.
+ */
+interface Action<T = any> {
     /**
      * Dispatchable action to perform.
      */
     type: keyof typeof actionHandlers;
     /**
      * Payload to update the state with.
-     * TODO: Find a way to type this properly.
      */
-    payload: any;
+    payload: T;
 }
 
 /**
  * Sets the initial state when the component is mounted.
  * This is used when loading a study plan from a url to prepopulate the state.
  */
-const setInitStateHandler = (state: State, action: Action): State => ({
+const setInitStateHandler = (state: State, action: Action<State>): State => ({
     ...state,
     ...action.payload,
     loaded: true
@@ -80,16 +87,22 @@ const setInitStateHandler = (state: State, action: Action): State => ({
 /**
  * Sets the courses that are currently selected in the study plan.
  */
-const setSelectedCoursesHandler = (state: State, action: Action): State => ({
+const setSelectedCoursesHandler = (state: State, action: Action<SelectedCourses>): State => ({
     ...state,
     selectedCourses: action.payload,
+    unsavedChanges: true
+});
+
+const setCustomCoursesHandler = (state: State, action: Action<SelectedCourses>): State => ({
+    ...state,
+    customCourses: action.payload,
     unsavedChanges: true
 });
 
 /**
  * Sets the urls (editable and readonly) for the study plan.
  */
-const setUrlsHandler = (state: State, action: Action): State => ({
+const setUrlsHandler = (state: State, action: Action<URLS>): State => ({
     ...state,
     urls: action.payload
 });
@@ -97,7 +110,7 @@ const setUrlsHandler = (state: State, action: Action): State => ({
 /**
  * Sets the loaded plan information.
  */
-const setLoadedPlanHandler = (state: State, action: Action): State => ({
+const setLoadedPlanHandler = (state: State, action: Action<LoadedPlan>): State => ({
     ...state,
     loadedPlan: action.payload
 });
@@ -105,7 +118,7 @@ const setLoadedPlanHandler = (state: State, action: Action): State => ({
 /**
  * Sets whether the study plan has unsaved changes or not.
  */
-const setUnsavedChangesHandler = (state: State, action: Action): State => ({
+const setUnsavedChangesHandler = (state: State, action: Action<boolean>): State => ({
     ...state,
     unsavedChanges: action.payload
 });
@@ -114,6 +127,7 @@ const setUnsavedChangesHandler = (state: State, action: Action): State => ({
 const actionHandlers = {
     SET_INIT_STATE: setInitStateHandler,
     SET_SELECTED_COURSES: setSelectedCoursesHandler,
+    SET_CUSTOM_COURSES: setCustomCoursesHandler,
     SET_URLS: setUrlsHandler,
     SET_LOADED_PLAN: setLoadedPlanHandler,
     SET_UNSAVED_CHANGES: setUnsavedChangesHandler
