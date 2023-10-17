@@ -1,16 +1,16 @@
 ﻿using FluentValidation;
-using StudyPlannerAPI.Database.DTO;
 using StudyPlannerAPI.Error;
+using StudyPlannerAPI.Model;
 
 namespace StudyPlannerAPI.Controllers.Validation;
 
-public class UniqueBlobValidator : AbstractValidator<UniqueBlobDTO>
+public class StudyPlanIdValidator : AbstractValidator<StudyPlanIdResult>
 {
-    public UniqueBlobValidator()
+    public StudyPlanIdValidator()
     {
         RuleFor(u => u.StudyPlanId)
             .NotNull()
             .WithErrorCode(ErrorCodes.PARAM_NULL)
-            .WithErrorCode(ErrorUtil.ParamNull(nameof(UniqueBlobDTO.StudyPlanId)));
+            .WithErrorCode(ErrorUtil.ParamNull(nameof(StudyPlanIdResult.StudyPlanId)));
     }
 }

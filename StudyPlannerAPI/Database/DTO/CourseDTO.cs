@@ -1,12 +1,19 @@
-﻿#pragma warning disable IDE1006
+﻿using System.Text.Json.Serialization;
+
+#pragma warning disable IDE1006
 namespace StudyPlannerAPI.Database.DTO;
 
-[Serializable]
 public class CourseDTO
 {
+    [JsonPropertyName(Constants.COURSE_CODE)]
     public string course_code { get; set; } = string.Empty;
+
+    [JsonPropertyName(Constants.COURSE_NAME_SV)]
     public string course_name_sv { get; set; } = string.Empty;
+
+    [JsonPropertyName(Constants.COURSE_NAME_EN)]
     public string course_name_en { get; set; } = string.Empty;
+
     public float credits { get; set; } = 0;
     public string level { get; set; } = string.Empty;
 

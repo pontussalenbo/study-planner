@@ -56,7 +56,6 @@ public class GeneralInfoManager : IGeneralInfoManager
             .Where(Columns.PROGRAMME_CODE, programme)
             .Where(column, year);
         var result = await db.ExecuteQuery<MasterDTO>(query);
-
         return new JsonResult(result);
     }
 }
