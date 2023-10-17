@@ -43,8 +43,9 @@ public class CourseController : ControllerBase
     [HttpPost]
     [Consumes(MediaTypeNames.Application.Json)]
     [Route(Routes.INFO)]
-    public async Task<IActionResult> GetCourses([FromBody] List<string> courseCodes)
+    public async Task<IActionResult> GetCourses([FromBody] CourseListParams courseListParams)
     {
-        return await this.PerformEndpointAction(async () => await courseInfoManager.GetCourses(courseCodes), logger);
+        return await this.PerformEndpointAction(
+            async () => await courseInfoManager.GetCourses(courseListParams.CourseCodes), logger);
     }
 }
