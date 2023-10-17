@@ -1,7 +1,8 @@
-import SelectedCoursesProvider, { InitialState } from 'hooks/CourseContext';
+import SelectedCoursesProvider from 'hooks/CourseContext';
 import MainPage from 'views/MainPage';
 import ReadOnly from './ReadOnly';
 import useFetchStudyPlan from 'hooks/usePreloadStudyPlan';
+import { LoadedPlan, State } from 'reducers/courseContext';
 
 function StudyPlan() {
   const { loading, error, data } = useFetchStudyPlan();
@@ -14,13 +15,25 @@ function StudyPlan() {
     return <div>loading...</div>;
   }
 
-  const { isReadOnly, name, url, selectedCourses, filters } = data;
+  const { isReadOnly, name, url, selectedCourses, filters, id } = data;
 
-  const initState: InitialState = {
-    selectedCourses,
+  const loadedPlan: LoadedPlan = {
     readOnly: isReadOnly,
     name,
     url
+  };
+
+  const sId = !isReadOnly ? id : '';
+  const sIdReadOnly = isReadOnly ? id : '';
+
+  const initState: State = {
+    selectedCourses,
+    // FIXME: This is a hack to make the custom courses work
+    customCourses: { 4: [], 5: [] },
+    loaded: true,
+    unsavedChanges: false,
+    loadedPlan,
+    urls: { sId, sIdReadOnly: sIdReadOnly }
   };
 
   return (

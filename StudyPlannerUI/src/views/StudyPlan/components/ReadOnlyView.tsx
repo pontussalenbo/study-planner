@@ -26,9 +26,9 @@ const ReadOnlyView: React.FC<CoursesProps> = ({ filters }) => {
   const [masters, setMasters] = useState<API.Master[]>([]);
   const [stats, setStats] = useState<API.MasterStatus[]>([]);
 
-  const { loaded, courses } = useStudyplanContext();
+  const { loaded, courses, customCourses } = useStudyplanContext();
 
-  const selectedCourses = [...courses[4], ...courses[5]];
+  const selectedCourses = [...courses[4], ...courses[5], ...customCourses[4], ...customCourses[5]];
 
   const updateMasterStats = async (signal?: AbortController) => {
     const courseCodes = selectedCourses.map(course => course.course_code);

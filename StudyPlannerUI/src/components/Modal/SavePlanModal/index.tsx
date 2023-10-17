@@ -26,7 +26,13 @@ const SavePlanModal: FC<SavePlanModalProps> = ({ data, isOpen, onClose }) => {
   const [submitSuccess, setSubmitSuccess] = useState(false);
   const [urls, setUrls] = useState<URLS | null>(null);
 
-  const { courses, loaded, loadedPlan, setUrls: setContextUrls } = useStudyplanContext();
+  const {
+    courses,
+    customCourses: custom,
+    loaded,
+    loadedPlan,
+    setUrls: setContextUrls
+  } = useStudyplanContext();
 
   const focusInputRef = useRef<HTMLInputElement | null>(null);
   const wasOpened = useRef(false);
@@ -67,6 +73,12 @@ const SavePlanModal: FC<SavePlanModalProps> = ({ data, isOpen, onClose }) => {
     const yearFour = parseCourses(courses[4]);
     const yearFive = parseCourses(courses[5]);
     const SelectedCourses = [...yearFour, ...yearFive];
+    // FIXME: Pascal to camel case
+    const customYearFour = parseCourses(custom[4]);
+    const customYearFive = parseCourses(custom[5]);
+
+    // TODO: Add custom course to body
+    const customCourses = [...customYearFour, ...customYearFive];
 
     const { Programme, Year } = data;
     const body = {

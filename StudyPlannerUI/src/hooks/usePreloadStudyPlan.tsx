@@ -1,7 +1,6 @@
 import { useReducer, useCallback, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import { StudyPlanCourse, getPlan } from 'api/studyplan';
-import { Endpoints } from 'api/constants';
 import { StudyPlanCoursesResponse, getCourseInfoByCode } from 'api/courses';
 import { SelectedCourses } from '../reducers/courseContext';
 
@@ -21,6 +20,7 @@ const parseCourse = (selectedCourse: StudyPlanCourse, courses: StudyPlanCoursesR
   const course: CourseData.SelectedCourse = {
     course_code: selectedCourse.course_code,
     course_name: courseData.courseName_en,
+    course_name_other: courseData.courseName_sv,
     credits: courseData.credits,
     level: courseData.level,
     selectedYear: selectedCourse.study_year,
@@ -54,6 +54,7 @@ interface Data {
   isReadOnly: boolean;
   name: string;
   url: string;
+  id: string;
   selectedCourses: SelectedCourses;
   filters: {
     Programme: string;
@@ -104,8 +105,9 @@ const useFetchStudyPlan = () => {
 
         const data = {
           isReadOnly: IsReadOnly,
+          id,
           name: StudyPlanName,
-          url: `${window.location.origin}${Endpoints.studyPlan}/${id}`,
+          url: `${id}`,
           selectedCourses: plan,
           filters: { Programme, Year }
         };

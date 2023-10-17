@@ -32,6 +32,8 @@ export function dataParser(
     return data.map(course => {
         const { course_code, credits, level, periods } = course;
         const course_name = course[locale];
-        return { course_code, course_name, level, credits, periods };
+        const course_name_other =
+            locale === DEFAULT_LANG ? course.course_name_sv : course.course_name_en;
+        return { course_code, course_name, course_name_other, level, credits, periods };
     });
 }

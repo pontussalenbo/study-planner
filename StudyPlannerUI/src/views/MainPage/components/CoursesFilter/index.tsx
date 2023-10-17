@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Tooltip from 'components/Tooltip';
 import { Filters } from 'interfaces/Types';
 import IconButton from 'components/Button/Button';
@@ -38,6 +38,13 @@ export const CoursesFilter: React.FC<CoursesFilterProps> = ({
 
   /* Class/Year filter values */
   const [filterValues, setFilterValues] = React.useState<string[]>([]);
+
+  useEffect(() => {
+    // Check if filters.Year has value and classYearFilter does not have a value
+    if (filters.Year && !classYearFilter) {
+      setClassYearFilter(filters.Year);
+    }
+  }, [filters.Year]);
 
   const fetchFilterValues = async (filter: ClassYearFilter) => {
     const data = await getFilterByValues(filter);

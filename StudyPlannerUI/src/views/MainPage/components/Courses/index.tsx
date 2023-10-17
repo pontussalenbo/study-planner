@@ -47,17 +47,18 @@ const Courses: React.FC<CourseProps> = ({ initFilters = initialFilters }) => {
   const [stats, setStats] = useState<API.MasterStatus[]>([]);
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
 
-  const { courses: c, loaded, urls, savePlan } = useStudyplanContext();
+  const { courses: c, loaded, urls, savePlan, loadedPlan } = useStudyplanContext();
+
   const selectedCourses = [...c[4], ...c[5]];
 
   const toastDispatch = useToastContext();
 
   useEffect(() => {
-    if (!loaded) {
+    const signal = new AbortController();
+
+    if (!filters.Programme || !filters.Year) {
       return;
     }
-
-    const signal = new AbortController();
 
     const params = {
       programme: filters.Programme,
@@ -67,6 +68,18 @@ const Courses: React.FC<CourseProps> = ({ initFilters = initialFilters }) => {
     getMasters(params, signal).then(data => {
       setMasters(data);
     });
+
+    return () => {
+      signal.abort();
+    };
+  }, [filters.Programme, filters.Year]);
+
+  useEffect(() => {
+    const signal = new AbortController();
+
+    if (!loaded) {
+      return;
+    }
 
     handleUpdateMasterStats(signal);
     handleGetCourses(filters.Year.toString());
@@ -84,7 +97,7 @@ const Courses: React.FC<CourseProps> = ({ initFilters = initialFilters }) => {
   );
 
   const handleModal = () => {
-    if (urls.sId) {
+    if (urls.sId || (loaded && !loadedPlan.readOnly)) {
       savePlan(filters).then(() => {
         toastDispatch.showToast('Plan saved!', 'success', 3);
       });

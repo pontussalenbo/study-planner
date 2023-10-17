@@ -1,5 +1,5 @@
 import FlexContainer from 'components/Layout';
-import { MASTERS_SUMMARY_NAME } from 'api/constants';
+import { CREDITS_TOTAL_KEY, MASTERS_SUMMARY_NAME } from 'api/constants';
 import styled from 'styled-components';
 
 const Pill = styled.div<{ color?: string }>`
@@ -49,11 +49,14 @@ const Course: React.FC<CourseProps> = ({ name, code, masters, colors }) => {
         <p>{name}</p>
       </TextContainer>
       <PillContainer>
-        {masters.map((master, idx) => (
-          <Pill key={idx} color={colors.get(master)}>
-            {master.slice(0, 3)}
-          </Pill>
-        ))}
+        {masters.map(
+          (master, idx) =>
+            master !== CREDITS_TOTAL_KEY.toLowerCase() && (
+              <Pill key={idx} color={colors.get(master)}>
+                {master.slice(0, 3)}
+              </Pill>
+            )
+        )}
       </PillContainer>
     </FlexContainer>
   );

@@ -11,8 +11,8 @@ interface CreditsTableProps {
 }
 
 function CreditsTable({ masters, stats }: CreditsTableProps) {
-  const { courses } = useStudyplanContext();
-  const selectedCourses = [...courses[4], ...courses[5]];
+  const { courses, customCourses } = useStudyplanContext();
+  const selectedCourses = [...courses[4], ...courses[5], ...customCourses[4], ...customCourses[5]];
 
   /**
    * Generate a color for each master and memoize it
