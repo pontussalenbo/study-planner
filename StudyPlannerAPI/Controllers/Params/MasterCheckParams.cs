@@ -32,5 +32,9 @@ public class MasterCheckParams
     [JsonPropertyName(Constants.SELECTED_COURSES)]
     public List<string> SelectedCourses { get; set; } = new();
 
+    /// <summary>
+    ///     List of custom courses
+    /// </summary>
+    [JsonPropertyName(Constants.CUSTOM_COURSES)]
     public List<CustomCourseMinimalDTO> CustomCourses { get; set; } = new();
 }

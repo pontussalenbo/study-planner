@@ -55,9 +55,20 @@ public class LinkShareManager : ILinkShareManager
                     .Where(Columns.STUDY_PLAN_READ_ONLY_ID, studyPlanId));
         var courses = await db.ExecuteQuery<SelectedCourseDTO>(query);
 
-        var result = new LinkShareResult
+        // Get custom courses
+        query = new Query(Tables.STUDY_PLAN_CUSTOM_COURSE)
+            .Select(Columns.COURSE_CODE, Columns.COURSE_NAME, Columns.LEVEL, Columns.CREDITS, Columns.STUDY_YEAR,
+                Columns.PERIOD_START, Columns.PERIOD_END)
+            .Where(Columns.STUDY_PLAN_ID, studyPlanId)
+            .OrWhereIn(Columns.STUDY_PLAN_ID,
+                new Query(Tables.STUDY_PLAN)
+                    .Select(Columns.STUDY_PLAN_ID)
+                    .Where(Columns.STUDY_PLAN_READ_ONLY_ID, studyPlanId));
+        var customCourses = await db.ExecuteQuery<CustomCourseDTO>(query);
+
+        var result = new LinkShareDTO
         {
-            StudyPlanReadOnlyId = isReadOnly ? uniqueBlob : await GetReadOnlyId(uniqueBlob),
+            StudyPlanReadOnlyId = isReadOnly ? studyPlanId : await GetReadOnlyId(studyPlanId),
             Programme = studyPlanDTO.programme_code,
             StudyPlanName = studyPlanDTO.study_plan_name,
             Year = studyPlanDTO.year,
@@ -71,7 +82,8 @@ public class LinkShareManager : ILinkShareManager
 
     /// <inheritdoc />
     public async Task<IActionResult> GetIdFromStudyPlan(string programme, string year,
-        List<SelectedCourseDTO> selectedCourses, string studyPlanName, string studyPlanId)
+        List<SelectedCourseDTO> selectedCourses, string studyPlanName, string studyPlanId,
+        List<CustomCourseDTO> customCourses)
     {
         if (await IsReadOnly(studyPlanId))
         {
@@ -110,6 +122,7 @@ public class LinkShareManager : ILinkShareManager
         return new JsonResult(result);
     }
 
+    /// <inheritdoc />
     public async Task<IActionResult> GetReadOnlyIdFromId(string studyPlanId)
     {
         if (studyPlanId == string.Empty || await IsReadOnly(studyPlanId))
@@ -124,7 +137,7 @@ public class LinkShareManager : ILinkShareManager
             return new NotFoundResult();
         }
 
-        var result = new UniqueBlobDTO
+        var result = new StudyPlanIdResult
         {
             StudyPlanId = studyPlanId,
             StudyPlanReadOnlyId = readOnlyId

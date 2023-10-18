@@ -5,7 +5,7 @@ using StudyPlannerAPI.Extensions;
 
 namespace StudyPlannerAPI.Controllers.Validation;
 
-public class CustomCourseMinimalValidator : AbstractValidator<CustomCourseMinimalDTO>
+internal class CustomCourseMinimalValidator : AbstractValidator<CustomCourseMinimalDTO>
 {
     public CustomCourseMinimalValidator()
     {
@@ -26,7 +26,7 @@ public class CustomCourseMinimalValidator : AbstractValidator<CustomCourseMinima
             .WithMessage(c => ErrorUtil.OneChar(nameof(c.course_code).ToCamelCase()));
 
         RuleFor(c => c.level)
-            .Must(l => l is Constants.G1_CREDITS or Constants.G2_CREDITS or Constants.A_CREDITS)
+            .Must(l => l is Constants.G1 or Constants.G2 or Constants.A)
             .When(c => c.level != null)
             .WithErrorCode(ErrorCodes.INVALID_FORMAT)
             .WithMessage(c => $"[{c.course_code}] " + ErrorUtil.InvalidFormat(nameof(c.level).ToCamelCase()));

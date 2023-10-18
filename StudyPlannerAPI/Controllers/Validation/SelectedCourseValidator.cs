@@ -5,7 +5,7 @@ using StudyPlannerAPI.Extensions;
 
 namespace StudyPlannerAPI.Controllers.Validation;
 
-public class SelectedCourseValidator : AbstractValidator<SelectedCourseDTO>
+internal class SelectedCourseValidator : AbstractValidator<SelectedCourseDTO>
 {
     public SelectedCourseValidator()
     {

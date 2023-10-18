@@ -2,6 +2,7 @@
 using FluentValidation;
 using Microsoft.AspNetCore.Mvc;
 using StudyPlannerAPI.Controllers.Params;
+using StudyPlannerAPI.Database.DTO;
 using StudyPlannerAPI.Error;
 using StudyPlannerAPI.Extensions;
 using StudyPlannerAPI.Model;
@@ -18,21 +19,30 @@ public class LinkShareController : ControllerBase
     private readonly ILinkShareManager linkShareManager;
     private readonly IValidator<LinkShareParams> linkShareValidator;
     private readonly IValidator<StudyPlanIdResult> studyPlanIdValidator;
+    private readonly IValidator<SelectedCourseDTO> selectedCourseValidator;
+    private readonly IValidator<CustomCourseDTO> customCourseValidator;
     private readonly ILogger<LinkShareController> logger;
 
     /// <summary>
     ///     Constructor. DI will handle this
     /// </summary>
     /// <param name="linkShareManager"></param>
-    /// <param name="logger"></param>
     /// <param name="linkShareValidator"></param>
     /// <param name="studyPlanIdValidator"></param>
-    public LinkShareController(ILinkShareManager linkShareManager, ILogger<LinkShareController> logger,
-        IValidator<LinkShareParams> linkShareValidator, IValidator<StudyPlanIdResult> studyPlanIdValidator)
+    /// <param name="customCourseValidator"></param>
+    /// <param name="selectedCourseValidator"></param>
+    /// <param name="logger"></param>
+    public LinkShareController(ILinkShareManager linkShareManager,
+        IValidator<LinkShareParams> linkShareValidator, IValidator<StudyPlanIdResult> studyPlanIdValidator,
+        IValidator<CustomCourseDTO> customCourseValidator, IValidator<SelectedCourseDTO> selectedCourseValidator,
+        ILogger<LinkShareController> logger)
     {
         this.linkShareManager = linkShareManager;
         this.linkShareValidator = linkShareValidator;
         this.studyPlanIdValidator = studyPlanIdValidator;
+        this.customCourseValidator = customCourseValidator;
+        this.logger = logger;
+        this.selectedCourseValidator = selectedCourseValidator;
     }
 
     /// <summary>
@@ -50,11 +60,7 @@ public class LinkShareController : ControllerBase
         var validationResult = await linkShareValidator.ValidateAsync(linkShareParams);
         if (!validationResult.IsValid)
         {
-            return await this.PerformEndpointAction(async () =>
-                await linkShareManager.GetIdFromStudyPlan(linkShareParams.Programme, linkShareParams.Year,
-                    linkShareParams.SelectedCourses,
-                    linkShareParams.StudyPlanName ?? string.Empty,
-                    linkShareParams.StudyPlanId ?? string.Empty), logger);
+            return BadRequest(validationResult.Errors.Select(e => new ValidationError(e.ErrorCode, e.ErrorMessage)));
         }
 
         var allValid = true;
@@ -89,10 +95,10 @@ public class LinkShareController : ControllerBase
         }
 
         return await this.PerformEndpointAction(async () =>
-            await linkShareManager.GetUniqueBlobFromPlan(linkShareParams.Programme, linkShareParams.Year,
+            await linkShareManager.GetIdFromStudyPlan(linkShareParams.Programme, linkShareParams.Year,
                 linkShareParams.SelectedCourses,
                 linkShareParams.StudyPlanName ?? Constants.STUDY_PLAN_NAME_DEFAULT,
-                linkShareParams.UniqueBlob ?? string.Empty,
+                linkShareParams.StudyPlanId ?? string.Empty,
                 linkShareParams.CustomCourses), logger);
     }
 
@@ -119,8 +125,16 @@ public class LinkShareController : ControllerBase
         return BadRequest(errors);
     }
 
-    [HttpGet]
+    /// <summary>
+    ///     Gets the read only id associated with a given study plan id
+    /// </summary>
+    /// <param name="studyPlanId"></param>
+    /// <returns></returns>
     [Route(Routes.ID)]
+    [HttpGet]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> GetReadOnlyIdFromId([FromQuery] string studyPlanId)
     {
         return await this.PerformEndpointAction(async () => await linkShareManager.GetReadOnlyIdFromId(studyPlanId),

@@ -25,7 +25,8 @@ public class MasterCheckController : ControllerBase
     ///     Constructor. DI will handle this
     /// </summary>
     /// <param name="masterRequirementValidator"></param>
-    /// <param name="validator"></param>
+    /// <param name="masterCheckParamValidator"></param>
+    /// <param name="customCourseValidator"></param>
     /// <param name="logger"></param>
     public MasterCheckController(IMasterRequirementValidator masterRequirementValidator,
         IValidator<MasterCheckParams> masterCheckParamValidator,
@@ -34,8 +35,8 @@ public class MasterCheckController : ControllerBase
     {
         this.masterRequirementValidator = masterRequirementValidator;
         this.masterCheckParamValidator = masterCheckParamValidator;
-        this.logger = logger;
         this.customCourseValidator = customCourseValidator;
+        this.logger = logger;
     }
 
     /// <summary>

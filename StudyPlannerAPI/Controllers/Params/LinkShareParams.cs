@@ -38,7 +38,9 @@ public class LinkShareParams
     [JsonPropertyName(Constants.SELECTED_COURSES)]
     public List<SelectedCourseDTO> SelectedCourses { get; set; } = new();
 
-    // FIXME: change magic strings to constants. Depends on PR #54
-    [JsonPropertyName("customCourses")]
+    /// <summary>
+    ///     List of custom courses
+    /// </summary>
+    [JsonPropertyName(Constants.CUSTOM_COURSES)]
     public List<CustomCourseDTO> CustomCourses { get; set; } = new();
 }

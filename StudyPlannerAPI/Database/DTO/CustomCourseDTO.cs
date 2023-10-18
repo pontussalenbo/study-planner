@@ -3,28 +3,50 @@
 #pragma warning disable IDE1006
 namespace StudyPlannerAPI.Database.DTO;
 
+/// <summary>
+///     Data transfer object for custom courses
+/// </summary>
 public class CustomCourseDTO
 {
-    // FIXME: change magic strings to constants. Depends on PR #54
-
-    [JsonPropertyName("courseCode")]
+    /// <summary>
+    ///     Course code
+    /// </summary>
+    [JsonPropertyName(Constants.COURSE_CODE)]
     public string course_code { get; set; } = string.Empty;
 
-    [JsonPropertyName("courseName")]
+    /// <summary>
+    ///     Course name
+    /// </summary>
+    [JsonPropertyName(Constants.COURSE_NAME)]
     public string course_name { get; set; } = string.Empty;
 
-    [JsonPropertyName("level")]
+    /// <summary>
+    ///     Level
+    /// </summary>
+    [JsonPropertyName(Constants.LEVEL)]
     public string level { get; set; } = string.Empty;
 
-    [JsonPropertyName("credits")]
+    /// <summary>
+    ///     Credits
+    /// </summary>
+    [JsonPropertyName(Constants.CREDITS)]
     public float credits { get; set; } = -1;
 
-    [JsonPropertyName("studyYear")]
+    /// <summary>
+    ///     Study year
+    /// </summary>
+    [JsonPropertyName(Constants.STUDY_YEAR)]
     public int study_year { get; set; } = -1;
 
-    [JsonPropertyName("periodStart")]
+    /// <summary>
+    ///     Start period
+    /// </summary>
+    [JsonPropertyName(Constants.PERIOD_START)]
     public int period_start { get; set; } = -1;
 
-    [JsonPropertyName("periodEnd")]
+    /// <summary>
+    ///     End period
+    /// </summary>
+    [JsonPropertyName(Constants.PERIOD_END)]
     public int period_end { get; set; } = -1;
 }
