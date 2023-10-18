@@ -2,15 +2,23 @@
 using SqlKata;
 using StudyPlannerAPI.Database;
 using StudyPlannerAPI.Database.DTO;
-using StudyPlannerAPI.Model.Util;
 
 namespace StudyPlannerAPI.Model;
 
+/// <summary>
+///     Default implementation of the master requirements validator service
+/// </summary>
 public class MasterRequirementValidator : IMasterRequirementValidator
 {
     private readonly IDatabaseManager db;
     private readonly ILogger<MasterRequirementValidator> logger;
 
+    /// <summary>
+    ///     Constructor. DI will handle this
+    /// </summary>
+    /// <param name="databaseManager"></param>
+    /// <param name="configuration"></param>
+    /// <param name="logger"></param>
     public MasterRequirementValidator(IDatabaseManager databaseManager, IConfiguration configuration,
         ILogger<MasterRequirementValidator> logger)
     {
@@ -18,6 +26,7 @@ public class MasterRequirementValidator : IMasterRequirementValidator
         this.logger = logger;
     }
 
+    /// <inheritdoc />
     public async Task<IActionResult> ValidateCourseSelection(string programme,
         string year, List<string> selectedCourses, List<string> masterCodes, List<CustomCourseMinimalDTO> customCourses)
     {
@@ -92,8 +101,7 @@ public class MasterRequirementValidator : IMasterRequirementValidator
         };
     }
 
-    public async Task<MasterValidationResult> GetSummary(List<string> selectedCourses,
-        List<CustomCourseMinimalDTO> customCourses)
+    private async Task<MasterValidationResult> GetSummary(IReadOnlyCollection<string> selectedCourses)
     {
         var query = new Query(Tables.COURSES)
             .Select(Columns.COURSE_CODE).Distinct()

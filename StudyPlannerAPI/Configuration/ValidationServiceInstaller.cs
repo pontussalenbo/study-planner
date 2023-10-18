@@ -5,7 +5,7 @@ using StudyPlannerAPI.Model;
 
 namespace StudyPlannerAPI.Configuration;
 
-public class ValidationServiceInstaller : IServiceInstaller
+internal class ValidationServiceInstaller : IServiceInstaller
 {
     public void Install(IServiceCollection services, IConfiguration configuration)
     {

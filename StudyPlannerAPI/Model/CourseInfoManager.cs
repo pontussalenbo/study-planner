@@ -2,15 +2,23 @@
 using SqlKata;
 using StudyPlannerAPI.Database;
 using StudyPlannerAPI.Database.DTO;
-using StudyPlannerAPI.Model.Util;
 
 namespace StudyPlannerAPI.Model;
 
+/// <summary>
+///     Default implementation of ICourseInfoManager
+/// </summary>
 public class CourseInfoManager : ICourseInfoManager
 {
     private readonly IDatabaseManager db;
     private readonly ILogger<CourseInfoManager> logger;
 
+    /// <summary>
+    ///     Constructor. DI will handle this
+    /// </summary>
+    /// <param name="databaseManager"></param>
+    /// <param name="configuration"></param>
+    /// <param name="logger"></param>
     public CourseInfoManager(IDatabaseManager databaseManager, IConfiguration configuration,
         ILogger<CourseInfoManager> logger)
     {
@@ -18,6 +26,7 @@ public class CourseInfoManager : ICourseInfoManager
         this.logger = logger;
     }
 
+    /// <inheritdoc />
     public async Task<IActionResult> GetCoursesByProgrammeAndYear(string programme, string year, List<string> masters)
     {
         var table = ModelUtil.YearPatternToTable(year);
@@ -47,6 +56,7 @@ public class CourseInfoManager : ICourseInfoManager
         return new JsonResult(result);
     }
 
+    /// <inheritdoc />
     public async Task<IActionResult> GetCourses(List<string> courseCodes)
     {
         if (courseCodes.Count == 0)

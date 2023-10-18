@@ -3,7 +3,7 @@
 #pragma warning disable IDE1006
 namespace StudyPlannerAPI.Database.DTO;
 
-public class StudyPlanDTO
+internal class StudyPlanDTO
 {
     [JsonPropertyName(Constants.STUDY_PLAN_NAME)]
     public string study_plan_name { get; set; } = string.Empty;

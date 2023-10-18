@@ -1,6 +1,6 @@
 ﻿namespace StudyPlannerAPI.Configuration;
 
-public interface IServiceInstaller
+internal interface IServiceInstaller
 {
     void Install(IServiceCollection services, IConfiguration configuration);
 }

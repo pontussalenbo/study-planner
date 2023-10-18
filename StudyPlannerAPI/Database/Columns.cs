@@ -1,6 +1,6 @@
 ﻿namespace StudyPlannerAPI.Database;
 
-public static class Columns
+internal static class Columns
 {
     // Implicit column in each table
     public const string ROW_ID = "rowid";

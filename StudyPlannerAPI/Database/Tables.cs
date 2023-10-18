@@ -1,6 +1,6 @@
 ﻿namespace StudyPlannerAPI.Database;
 
-public static class Tables
+internal static class Tables
 {
     public const string COURSES = "courses";
     public const string MASTERS = "masters";

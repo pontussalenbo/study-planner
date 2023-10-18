@@ -2,7 +2,7 @@
 
 namespace StudyPlannerAPI.Configuration;
 
-public class ApplicationServiceInstaller : IServiceInstaller
+internal class ApplicationServiceInstaller : IServiceInstaller
 {
     public void Install(IServiceCollection services, IConfiguration configuration)
     {

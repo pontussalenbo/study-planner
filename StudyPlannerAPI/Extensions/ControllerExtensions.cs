@@ -2,8 +2,18 @@
 
 namespace StudyPlannerAPI.Extensions;
 
+/// <summary>
+///     Extensions for controllers
+/// </summary>
 public static class ControllerExtensions
 {
+    /// <summary>
+    ///     Perform and endpoint action and log potential errors
+    /// </summary>
+    /// <param name="controllerBase"></param>
+    /// <param name="action"></param>
+    /// <param name="logger"></param>
+    /// <returns></returns>
     public static async Task<IActionResult> PerformEndpointAction(this ControllerBase controllerBase,
         Func<Task<IActionResult>> action, ILogger logger)
     {

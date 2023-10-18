@@ -1,6 +1,6 @@
 ﻿namespace StudyPlannerAPI;
 
-public class Constants
+internal class Constants
 {
     public const string CORS_POLICY = "defaultCorsPolicy";
 
@@ -11,6 +11,7 @@ public class Constants
     public const string CONNECTION_STRING = "ConnectionString";
     public const string CONNECTION_STRING_PREFIX = "Data Source=";
 
+    public const string LEVEL = "level";
     public const string A = "A";
     public const string G1 = "G1";
     public const string G2 = "G2";
@@ -36,10 +37,10 @@ public class Constants
     public const string MASTER_CODE = "masterCode";
     public const string MASTER_CODES = "masterCodes";
     public const string SELECTED_COURSES = "selectedCourses";
-    public const string MASTER_NAME_SV = "masterNameSv";
-    public const string MASTER_NAME_EN = "masterNameEn";
-    public const string COURSE_NAME_SV = "courseNameSv";
-    public const string COURSE_NAME_EN = "courseNameEv";
+    public const string MASTER_NAME_SV = "masterName_sv";
+    public const string MASTER_NAME_EN = "masterName_en";
+    public const string COURSE_NAME_SV = "courseName_sv";
+    public const string COURSE_NAME_EN = "courseName_en";
     public const string PROGRAMME = "programme";
     public const string YEAR = "year";
     public const string PERIOD_START = "periodStart";
@@ -49,9 +50,10 @@ public class Constants
     public const string STUDY_YEAR = "studyYear";
     public const string PROGRAMME_CODE = "programmeCode";
     public const string REQUIREMENTS_FULFILLED = "requirementsFulfilled";
-    public const string ADVANCED_CREDITS = "advancedCredtis";
+    public const string CREDITS = "credits";
     public const string G1_CREDITS = "g1Credits";
     public const string G2_CREDITS = "g2Credits";
+    public const string ADVANCED_CREDITS = "advancedCredtis";
     public const string MASTER = "master";
     public const string IS_READ_ONLY = "isReadOnly";
 }

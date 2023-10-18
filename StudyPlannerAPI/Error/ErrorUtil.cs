@@ -1,6 +1,6 @@
 ﻿namespace StudyPlannerAPI.Error;
 
-public static class ErrorUtil
+internal static class ErrorUtil
 {
     public static string InvalidFormat(string param)
     {
