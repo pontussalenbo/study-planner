@@ -1,6 +1,6 @@
 ﻿namespace StudyPlannerAPI;
 
-public class Routes
+internal class Routes
 {
     // Endpoints
     public const string MASTER_CHECK = "studyplanner/masters";

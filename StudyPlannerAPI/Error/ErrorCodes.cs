@@ -1,6 +1,6 @@
 ﻿namespace StudyPlannerAPI.Error;
 
-public static class ErrorCodes
+internal static class ErrorCodes
 {
     public const string INVALID_FORMAT = "invalid_format";
     public const string PARAM_NULL = "param_null";

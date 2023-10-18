@@ -3,7 +3,7 @@ using StudyPlannerAPI.Database.DTO;
 
 namespace StudyPlannerAPI.Model;
 
-public class LinkShareResult
+internal class LinkShareResult
 {
     [JsonPropertyName(Constants.PROGRAMME)]
     public string Programme { get; set; } = string.Empty;

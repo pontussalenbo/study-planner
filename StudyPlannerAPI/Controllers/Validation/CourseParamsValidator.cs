@@ -1,11 +1,11 @@
 ﻿using FluentValidation;
 using StudyPlannerAPI.Controllers.Params;
 using StudyPlannerAPI.Error;
-using StudyPlannerAPI.Model.Util;
+using StudyPlannerAPI.Model;
 
 namespace StudyPlannerAPI.Controllers.Validation;
 
-public class CourseParamsValidator : AbstractValidator<CourseParams>
+internal class CourseParamsValidator : AbstractValidator<CourseParams>
 {
     public CourseParamsValidator()
     {

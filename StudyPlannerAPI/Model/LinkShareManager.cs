@@ -5,11 +5,20 @@ using StudyPlannerAPI.Database.DTO;
 
 namespace StudyPlannerAPI.Model;
 
+/// <summary>
+///     Default implementation of the link share service
+/// </summary>
 public class LinkShareManager : ILinkShareManager
 {
     private readonly IDatabaseManager db;
     private readonly ILogger<LinkShareManager> logger;
 
+    /// <summary>
+    ///     Constructor. DI will handle this
+    /// </summary>
+    /// <param name="databaseManager"></param>
+    /// <param name="logger"></param>
+    /// <param name="configuration"></param>
     public LinkShareManager(IDatabaseManager databaseManager, ILogger<LinkShareManager> logger,
         IConfiguration configuration)
     {
@@ -17,6 +26,7 @@ public class LinkShareManager : ILinkShareManager
         this.logger = logger;
     }
 
+    /// <inheritdoc />
     public async Task<IActionResult> GetStudyPlanFromId(string studyPlanId)
     {
         var isReadOnly = await IsReadOnly(studyPlanId);
@@ -59,6 +69,7 @@ public class LinkShareManager : ILinkShareManager
         return new JsonResult(result);
     }
 
+    /// <inheritdoc />
     public async Task<IActionResult> GetIdFromStudyPlan(string programme, string year,
         List<SelectedCourseDTO> selectedCourses, string studyPlanName, string studyPlanId)
     {
@@ -210,7 +221,11 @@ public class LinkShareManager : ILinkShareManager
 
         var cols = new List<string>
         {
-            Columns.STUDY_PLAN_ID, Columns.COURSE_CODE, Columns.STUDY_YEAR, Columns.PERIOD_START, Columns.PERIOD_END
+            Columns.STUDY_PLAN_ID,
+            Columns.COURSE_CODE,
+            Columns.STUDY_YEAR,
+            Columns.PERIOD_START,
+            Columns.PERIOD_END
         };
 
         var data = new List<List<object>>();

@@ -9,6 +9,9 @@ using StudyPlannerAPI.Model;
 
 namespace StudyPlannerAPI.Controllers;
 
+/// <summary>
+///     Controller for master requirements check
+/// </summary>
 [Route(Routes.MASTER_CHECK)]
 [ApiController]
 public class MasterCheckController : ControllerBase
@@ -18,6 +21,12 @@ public class MasterCheckController : ControllerBase
     private readonly IValidator<MasterCheckParams> masterCheckParamValidator;
     private readonly IValidator<CustomCourseMinimalDTO> customCourseValidator;
 
+    /// <summary>
+    ///     Constructor. DI will handle this
+    /// </summary>
+    /// <param name="masterRequirementValidator"></param>
+    /// <param name="validator"></param>
+    /// <param name="logger"></param>
     public MasterCheckController(IMasterRequirementValidator masterRequirementValidator,
         IValidator<MasterCheckParams> masterCheckParamValidator,
         IValidator<CustomCourseMinimalDTO> customCourseValidator,
@@ -29,8 +38,16 @@ public class MasterCheckController : ControllerBase
         this.customCourseValidator = customCourseValidator;
     }
 
+    /// <summary>
+    ///     Check if requirements are fulfilled given specific or all masters
+    /// </summary>
+    /// <param name="masterCheckParams"></param>
+    /// <returns></returns>
     [HttpPost]
     [Consumes(MediaTypeNames.Application.Json)]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public async Task<IActionResult> CheckMasterRequirements([FromBody] MasterCheckParams masterCheckParams)
     {
         var validationResult = await masterCheckParamValidator.ValidateAsync(masterCheckParams);

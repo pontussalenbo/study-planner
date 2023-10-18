@@ -4,7 +4,7 @@ using StudyPlannerAPI.Model;
 
 namespace StudyPlannerAPI.Controllers.Validation;
 
-public class StudyPlanIdValidator : AbstractValidator<StudyPlanIdResult>
+internal class StudyPlanIdValidator : AbstractValidator<StudyPlanIdResult>
 {
     public StudyPlanIdValidator()
     {
