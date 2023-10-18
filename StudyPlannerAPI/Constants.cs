@@ -37,8 +37,10 @@ internal class Constants
     public const string MASTER_CODE = "masterCode";
     public const string MASTER_CODES = "masterCodes";
     public const string SELECTED_COURSES = "selectedCourses";
+    public const string CUSTOM_COURSES = "customCourses";
     public const string MASTER_NAME_SV = "masterName_sv";
     public const string MASTER_NAME_EN = "masterName_en";
+    public const string COURSE_NAME = "courseName";
     public const string COURSE_NAME_SV = "courseName_sv";
     public const string COURSE_NAME_EN = "courseName_en";
     public const string PROGRAMME = "programme";

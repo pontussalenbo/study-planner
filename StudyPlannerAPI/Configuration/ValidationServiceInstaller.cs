@@ -1,6 +1,7 @@
 ﻿using FluentValidation;
 using StudyPlannerAPI.Controllers.Params;
 using StudyPlannerAPI.Controllers.Validation;
+using StudyPlannerAPI.Database.DTO;
 using StudyPlannerAPI.Model;
 
 namespace StudyPlannerAPI.Configuration;

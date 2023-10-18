@@ -5,6 +5,9 @@ namespace StudyPlannerAPI.Model;
 
 internal class LinkShareResult
 {
+    [JsonPropertyName(Constants.STUDY_PLAN_READ_ONLY_ID)]
+    public string StudyPlanReadOnlyId { get; set; } = string.Empty;
+
     [JsonPropertyName(Constants.PROGRAMME)]
     public string Programme { get; set; } = string.Empty;
 

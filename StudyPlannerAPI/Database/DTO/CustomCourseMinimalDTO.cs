@@ -4,14 +4,26 @@
 
 namespace StudyPlannerAPI.Database.DTO;
 
+/// <summary>
+///     Data transfer object for custom courses with minimal info for master check
+/// </summary>
 public class CustomCourseMinimalDTO
 {
-    [JsonPropertyName("courseCode")]
+    /// <summary>
+    ///     Course code
+    /// </summary>
+    [JsonPropertyName(Constants.COURSE_CODE)]
     public string course_code { get; set; } = string.Empty;
 
-    [JsonPropertyName("level")]
+    /// <summary>
+    ///     Level
+    /// </summary>
+    [JsonPropertyName(Constants.LEVEL)]
     public string level { get; set; } = string.Empty;
 
-    [JsonPropertyName("credits")]
+    /// <summary>
+    ///     Credits
+    /// </summary>
+    [JsonPropertyName(Constants.CREDITS)]
     public float credits { get; set; } = -1;
 }

@@ -15,6 +15,7 @@ public interface IMasterRequirementValidator
     /// <param name="year"></param>
     /// <param name="selectedCourses"></param>
     /// <param name="masterCodes"></param>
+    /// <param name="customCourses"></param>
     /// <returns></returns>
     Task<IActionResult> ValidateCourseSelection(string programme, string year, List<string> selectedCourses,
         List<string> masterCodes, List<CustomCourseMinimalDTO> customCourses);

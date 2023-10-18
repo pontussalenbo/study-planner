@@ -10,6 +10,6 @@ public class CourseListParams
     /// <summary>
     ///     List of course codes
     /// </summary>
-    [JsonPropertyName("courseCodes")]
+    [JsonPropertyName(Constants.COURSE_CODES)]
     public List<string> CourseCodes { get; set; } = new();
 }

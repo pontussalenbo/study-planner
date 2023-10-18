@@ -69,6 +69,7 @@ public class CourseController : ControllerBase
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public async Task<IActionResult> GetCourses([FromBody] CourseCodesParams courseCodes)
     {
-        return await this.PerformEndpointAction(async () => await courseInfoManager.GetCourses(courseCodes.CourseCodes), logger);
+        return await this.PerformEndpointAction(async () => await courseInfoManager.GetCourses(courseCodes.CourseCodes),
+            logger);
     }
 }

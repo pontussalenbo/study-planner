@@ -101,7 +101,8 @@ public class MasterRequirementValidator : IMasterRequirementValidator
         };
     }
 
-    private async Task<MasterValidationResult> GetSummary(IReadOnlyCollection<string> selectedCourses)
+    private async Task<MasterValidationResult> GetSummary(IReadOnlyCollection<string> selectedCourses,
+        IReadOnlyCollection<CustomCourseMinimalDTO> customCourses)
     {
         var query = new Query(Tables.COURSES)
             .Select(Columns.COURSE_CODE).Distinct()

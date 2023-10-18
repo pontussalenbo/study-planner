@@ -2,15 +2,38 @@
 
 namespace StudyPlannerAPI.Extensions;
 
+/// <summary>
+///     Naming convention enum
+/// </summary>
 public enum Convention
 {
+    /// <summary>
+    ///     camelCase
+    /// </summary>
     CAMEL_CASE,
+
+    /// <summary>
+    ///     PascalCase
+    /// </summary>
     PASCAL_CASE,
+
+    /// <summary>
+    ///     snake_case
+    /// </summary>
     SNAKE_CASE
 }
 
+/// <summary>
+///     Extensions for strings
+/// </summary>
 public static class StringExtensions
 {
+    /// <summary>
+    ///     Convert the provided string to the camelCase format
+    /// </summary>
+    /// <param name="value"></param>
+    /// <param name="inputConvention"></param>
+    /// <returns></returns>
     public static string ToCamelCase(this string value, Convention inputConvention = Convention.SNAKE_CASE)
     {
         return inputConvention switch
