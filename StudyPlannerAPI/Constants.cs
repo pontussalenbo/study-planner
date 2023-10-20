@@ -58,4 +58,5 @@ internal class Constants
     public const string ADVANCED_CREDITS = "advancedCredtis";
     public const string MASTER = "master";
     public const string IS_READ_ONLY = "isReadOnly";
+    public const string PERIOD = "period";
 }

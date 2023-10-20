@@ -23,12 +23,18 @@ public class SelectedCourseDTO
     /// <summary>
     ///     Start period
     /// </summary>
-    [JsonPropertyName(Constants.PERIOD_START)]
+    [JsonIgnore]
     public int period_start { get; set; } = 0;
 
     /// <summary>
     ///     End period
     /// </summary>
-    [JsonPropertyName(Constants.PERIOD_END)]
+    [JsonIgnore]
     public int period_end { get; set; } = 0;
+
+    /// <summary>
+    ///     Period dto
+    /// </summary>
+    [JsonPropertyName(Constants.PERIOD)]
+    public PeriodDTO Period => new(period_start, period_end);
 }
