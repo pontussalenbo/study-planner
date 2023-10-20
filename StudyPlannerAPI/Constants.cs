@@ -55,7 +55,7 @@ internal class Constants
     public const string CREDITS = "credits";
     public const string G1_CREDITS = "g1Credits";
     public const string G2_CREDITS = "g2Credits";
-    public const string ADVANCED_CREDITS = "advancedCredtis";
+    public const string ADVANCED_CREDITS = "advancedCredits";
     public const string MASTER = "master";
     public const string IS_READ_ONLY = "isReadOnly";
     public const string PERIOD = "period";

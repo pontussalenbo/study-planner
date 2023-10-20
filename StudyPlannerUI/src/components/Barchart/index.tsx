@@ -11,17 +11,15 @@ interface HorizontalBarChartProps {
 
 function HorizontalBarChart({ year }: HorizontalBarChartProps): JSX.Element {
   const { courses, customCourses } = useStudyplanContext();
-
-  console.log(customCourses[year]);
   const allCourses = [...courses[year], ...customCourses[year]];
+
   const chartData = sortCourses(allCourses).map(course => {
-    console.log(course);
     // If there is a selected period, use that, otherwise use the first period (and only one)
-    const start = course.selectedPeriod?.start || course.periods[0].start;
-    const end = (course.selectedPeriod?.end ?? course.periods[0].end) + 1;
+    const start = course.period?.start ?? course.periods[0].start;
+    const end = (course.period?.end ?? course.periods[0].end) + 1;
 
     return {
-      name: course.course_code,
+      name: course.courseCode,
       period: [start, end]
     };
   });

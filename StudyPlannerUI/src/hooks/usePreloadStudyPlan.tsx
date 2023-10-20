@@ -3,29 +3,25 @@ import { useParams } from 'react-router-dom';
 import { StudyPlanCourse, getPlan } from 'api/studyplan';
 import { StudyPlanCoursesResponse, getCourseInfoByCode } from 'api/courses';
 import { SelectedCourses } from '../reducers/courseContext';
+import { Filters } from 'interfaces/Types';
 
 const parseCourse = (selectedCourse: StudyPlanCourse, courses: StudyPlanCoursesResponse) => {
-  const courseData = courses[selectedCourse.course_code];
+  const courseData = courses[selectedCourse.courseCode];
 
   if (!courseData) {
-    throw new Error(`Course ${selectedCourse.course_code} not found in database.`);
+    throw new Error(`Course ${selectedCourse.courseCode} not found in database.`);
   }
-
-  const selectedPeriod: API.Period = {
-    start: selectedCourse.period_start,
-    end: selectedCourse.period_end
-  };
 
   // This is the data that represents a course in the Context.
   const course: CourseData.SelectedCourse = {
-    course_code: selectedCourse.course_code,
-    course_name: courseData.courseName_en,
-    course_name_other: courseData.courseName_sv,
+    courseCode: selectedCourse.courseCode,
+    courseName: courseData.courseName_en,
+    courseName_other: courseData.courseName_sv,
     credits: courseData.credits,
     level: courseData.level,
-    selectedYear: selectedCourse.study_year,
-    selectedPeriod,
-    periods: [selectedPeriod]
+    studyYear: selectedCourse.studyYear,
+    period: selectedCourse.period,
+    periods: [selectedCourse.period]
   };
 
   return course;
@@ -38,7 +34,7 @@ function parseCourses(selectedCourses: StudyPlanCourse[], courses: StudyPlanCour
   };
   selectedCourses.forEach(course => {
     const data = parseCourse(course, courses);
-    plan[course.study_year].push(data);
+    plan[course.studyYear].push(data);
   });
 
   return plan;
@@ -56,10 +52,8 @@ interface Data {
   url: string;
   id: string;
   selectedCourses: SelectedCourses;
-  filters: {
-    Programme: string;
-    Year: string;
-  };
+  customCourses: SelectedCourses;
+  filters: Filters;
 }
 
 interface State {
@@ -97,19 +91,35 @@ const useFetchStudyPlan = () => {
 
       try {
         const response = await getPlan(id, signal);
-        const { IsReadOnly, StudyPlanName, Programme, Year, SelectedCourses } = response;
+        const { isReadOnly, studyPlanName, programme, year, selectedCourses, customCourses } =
+          response;
 
-        const courseCodes = SelectedCourses.map(course => course.course_code);
+        const courseCodes = selectedCourses.map(course => course.courseCode);
         const courseData = await getCourseInfoByCode(courseCodes);
-        const plan = parseCourses(SelectedCourses, courseData);
+        const plan = parseCourses(selectedCourses, courseData);
+
+        const customPlan: SelectedCourses = {
+          4: [],
+          5: []
+        };
+        customCourses?.map(course => {
+          const data = {
+            ...course,
+            // FIXME: This is a hack to make the course appear in the UI
+            periods: [course.period!],
+            custom: true
+          };
+          customPlan[course.studyYear].push(data);
+        });
 
         const data = {
-          isReadOnly: IsReadOnly,
+          isReadOnly,
           id,
-          name: StudyPlanName,
-          url: `${id}`,
+          name: studyPlanName,
+          url: id,
           selectedCourses: plan,
-          filters: { Programme, Year }
+          customCourses: customPlan,
+          filters: { programme, year }
         };
 
         dispatch({ type: 'SUCCESS', data });

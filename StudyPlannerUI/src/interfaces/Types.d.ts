@@ -1,6 +1,6 @@
 export interface Filters {
-    Programme: string;
-    Year: string;
+    programme: string;
+    year: string;
 }
 
 export type TransformFn = (

@@ -16,11 +16,11 @@ const ProgrammeFilter: React.FC<ProgrammeFilterProps> = ({
   years
 }) => {
   const handleProgrammeChange = (value: string) => {
-    onFilterChange(value, 'Programme');
+    onFilterChange(value, 'programme');
   };
 
   const handleYearChange = (value: string) => {
-    onFilterChange(value, 'Year');
+    onFilterChange(value, 'year');
   };
 
   function reverse(arr: string[] = []): string[] {
@@ -44,7 +44,7 @@ const ProgrammeFilter: React.FC<ProgrammeFilterProps> = ({
   return (
     <>
       <Select
-        value={filters.Programme}
+        value={filters.programme}
         placeholder='Select Programme'
         label='Programme'
         onChange={handleProgrammeChange}
@@ -57,7 +57,7 @@ const ProgrammeFilter: React.FC<ProgrammeFilterProps> = ({
         ))}
       </Select>
       <Select
-        value={filters.Year}
+        value={filters.year}
         placeholder='Select Class'
         label='Class'
         onChange={handleYearChange}

@@ -73,10 +73,10 @@ export const CourseContainer: React.FC<CourseContainerProps> = ({ courses, maste
     return masters
       .filter(
         master =>
-          master.SelectedCourses.includes(course.course_code) &&
-          master.Master !== MASTERS_SUMMARY_NAME
+          master.selectedCourses.includes(course.courseCode) &&
+          master.master !== MASTERS_SUMMARY_NAME
       )
-      .map(master => master.Master);
+      .map(master => master.master);
   };
 
   return (
@@ -85,9 +85,9 @@ export const CourseContainer: React.FC<CourseContainerProps> = ({ courses, maste
         .flat()
         .map(course => (
           <Course
-            key={course.course_code}
-            name={course.course_name}
-            code={course.course_code}
+            key={course.courseCode}
+            name={course.courseName}
+            code={course.courseCode}
             masters={getCourseMasters(course)}
             colors={colorMap}
           />

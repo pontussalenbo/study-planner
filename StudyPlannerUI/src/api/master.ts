@@ -1,10 +1,9 @@
 import { Endpoints } from 'api/constants';
+import { Filters } from 'interfaces/Types';
 import { GET, POST } from 'utils/fetch';
 
-export interface MasterStatsBody {
+export interface MasterStatsBody extends Filters {
     selectedCourses: string[];
-    Programme: string;
-    Year: string;
 }
 
 export function getMasterStats(body: MasterStatsBody, signal?: AbortController) {
