@@ -1,6 +1,7 @@
 ﻿using FluentValidation;
 using Microsoft.AspNetCore.Mvc;
 using StudyPlannerAPI.Controllers.Params;
+using StudyPlannerAPI.Database.DTO;
 using StudyPlannerAPI.Error;
 using StudyPlannerAPI.Extensions;
 using StudyPlannerAPI.Model;
@@ -38,6 +39,7 @@ public class GeneralController : ControllerBase
     /// <returns></returns>
     [HttpGet]
     [Route(Routes.PROGRAMMES)]
+    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(List<string>))]
     public async Task<IActionResult> GetProgrammes()
     {
         return await this.PerformEndpointAction(generalInfoManager.GetProgrammes, logger);
@@ -49,6 +51,7 @@ public class GeneralController : ControllerBase
     /// <returns></returns>
     [HttpGet]
     [Route(Routes.ACADEMIC_YEARS)]
+    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(List<string>))]
     public async Task<IActionResult> GetAcademicYears()
     {
         return await this.PerformEndpointAction(generalInfoManager.GetAcademicYears, logger);
@@ -60,6 +63,7 @@ public class GeneralController : ControllerBase
     /// <returns></returns>
     [HttpGet]
     [Route(Routes.CLASS_YEARS)]
+    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(List<string>))]
     public async Task<IActionResult> GetClassYears()
     {
         return await this.PerformEndpointAction(generalInfoManager.GetClassYears, logger);
@@ -73,6 +77,7 @@ public class GeneralController : ControllerBase
     /// <returns></returns>
     [HttpGet]
     [Route(Routes.MASTERS)]
+    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(List<MasterDTO>))]
     public async Task<IActionResult> GetMastersByProgramme([FromQuery] string programme, [FromQuery] string year)
     {
         var validationResult = await validator.ValidateAsync(new ProgrammeMastersParams

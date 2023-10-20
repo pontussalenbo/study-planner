@@ -52,7 +52,7 @@ public class LinkShareController : ControllerBase
     /// <returns>A study plan id paired with a read-only id</returns>
     [HttpPost]
     [Consumes(MediaTypeNames.Application.Json)]
-    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(StudyPlanIdResult))]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public async Task<IActionResult> GetStudyPlanShareLink([FromBody] LinkShareParams linkShareParams)
@@ -108,7 +108,7 @@ public class LinkShareController : ControllerBase
     /// <param name="studyPlanId"></param>
     /// <returns>The full study plan, including a field determining whether a read only id was used or not</returns>
     [HttpGet]
-    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(LinkShareDTO))]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public async Task<IActionResult> GetStudyPlanFromId([FromQuery] string studyPlanId)
@@ -132,7 +132,7 @@ public class LinkShareController : ControllerBase
     /// <returns></returns>
     [Route(Routes.ID)]
     [HttpGet]
-    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(StudyPlanIdResult))]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> GetReadOnlyIdFromId([FromQuery] string studyPlanId)
