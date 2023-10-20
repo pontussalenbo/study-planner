@@ -21,7 +21,7 @@ function CreditsTable({ masters, stats }: CreditsTableProps) {
   const colorMap = useMemo(() => {
     const colors = generateColors(masters.length);
     const colorMap: [string, string][] = masters.map((master, idx) => [
-      master.master_code,
+      master.masterCode,
       colors[idx]
     ]);
     return new Map(colorMap);

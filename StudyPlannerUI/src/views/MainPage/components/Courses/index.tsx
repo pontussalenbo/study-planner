@@ -3,7 +3,8 @@ import Col from 'components/Flex/Col.style';
 import Row from 'components/Flex/Row.style';
 import useFetch from 'hooks/useFetch';
 import { BASE_URL, Endpoints } from 'api/constants';
-import type { Filters, TransformFn } from 'interfaces/Types';
+import { type Filters, type TransformFn } from 'interfaces/Types';
+import { DEFAULT_LANG } from 'interfaces/constants';
 import { CoursesFilter } from '../CoursesFilter';
 import SearchBar from '../CoursesFilter/SearchBar';
 import CreditsTable from './CreditsTable';
@@ -32,8 +33,8 @@ interface CourseProps {
 }
 
 const initialFilters: Filters = {
-  Programme: '',
-  Year: ''
+  programme: '',
+  year: ''
 };
 
 const Courses: React.FC<CourseProps> = ({ initFilters = initialFilters }) => {
@@ -56,13 +57,13 @@ const Courses: React.FC<CourseProps> = ({ initFilters = initialFilters }) => {
   useEffect(() => {
     const signal = new AbortController();
 
-    if (!filters.Programme || !filters.Year) {
+    if (!filters.programme || !filters.year) {
       return;
     }
 
     const params = {
-      programme: filters.Programme,
-      year: filters.Year
+      programme: filters.programme,
+      year: filters.year
     };
 
     getMasters(params, signal).then(data => {
@@ -72,7 +73,7 @@ const Courses: React.FC<CourseProps> = ({ initFilters = initialFilters }) => {
     return () => {
       signal.abort();
     };
-  }, [filters.Programme, filters.Year]);
+  }, [filters.programme, filters.year]);
 
   useEffect(() => {
     const signal = new AbortController();
@@ -82,7 +83,7 @@ const Courses: React.FC<CourseProps> = ({ initFilters = initialFilters }) => {
     }
 
     handleUpdateMasterStats(signal);
-    handleGetCourses(filters.Year.toString());
+    handleGetCourses(filters.year.toString());
 
     return () => {
       signal.abort();
@@ -126,13 +127,13 @@ const Courses: React.FC<CourseProps> = ({ initFilters = initialFilters }) => {
 
   const handleGetCourses = (filterYear: string, masters?: string[]) => {
     const filter = {
-      Programme: filters.Programme,
-      Year: filterYear,
-      MasterCodes: masters
+      programme: filters.programme,
+      year: filterYear,
+      masterCodes: masters
     };
 
     getCoursesByProgramme(filter).then(resp => {
-      const parsedData = dataParser(resp, 'course_name_en');
+      const parsedData = dataParser(resp, DEFAULT_LANG);
       setCourses(parsedData);
       setFilteredCourses(parsedData);
       setMatches(parsedData.length > 0);
@@ -140,7 +141,7 @@ const Courses: React.FC<CourseProps> = ({ initFilters = initialFilters }) => {
   };
 
   const handleUpdateMasterStats = async (signal?: AbortController) => {
-    const courseCodes = selectedCourses.map(course => course.course_code);
+    const courseCodes = selectedCourses.map(course => course.courseCode);
     const body = {
       ...filters,
       selectedCourses: courseCodes

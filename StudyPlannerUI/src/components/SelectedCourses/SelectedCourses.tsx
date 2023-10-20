@@ -25,13 +25,13 @@ function SelectedCoursesTable({ year }: CreditsTableProps): JSX.Element {
         <ButtonCell>Action</ButtonCell>
       </TableRow>
       {yearCourses.map(course => (
-        <TableRow key={course.course_code}>
-          <TableCell>{course.course_code}</TableCell>
-          <NameCell>{course.course_name}</NameCell>
+        <TableRow key={course.courseCode}>
+          <TableCell>{course.courseCode}</TableCell>
+          <NameCell>{course.courseName}</NameCell>
           <TableCell>{getDisplayPeriod(course.periods[0])}</TableCell>
           <TableCell>
             <ArrowButton
-              onClick={() => changeYear(course.course_code, year === 4 ? 5 : 4, course?.custom)}
+              onClick={() => changeYear(course.courseCode, year === 4 ? 5 : 4, course.custom)}
             >
               {year === 4 ? '\u2192' : '\u2190'}
             </ArrowButton>
@@ -41,7 +41,7 @@ function SelectedCoursesTable({ year }: CreditsTableProps): JSX.Element {
               variant='error'
               type='button'
               icon={<RemoveIcon />}
-              onClick={() => removeCourse(course.course_code, year)}
+              onClick={() => removeCourse(course.courseCode, year)}
             >
               Remove
             </IconButton>

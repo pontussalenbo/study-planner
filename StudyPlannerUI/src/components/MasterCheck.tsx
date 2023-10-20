@@ -48,7 +48,7 @@ interface MasterCheckProps {
 
 const MasterCheck: React.FC<MasterCheckProps> = ({ masters, stats, colorMap }) => {
   const totalCredits = (summary: API.MasterStatus) => {
-    return summary.G1Credits + summary.G2Credits + summary.AdvancedCredits;
+    return summary.g1Credits + summary.g2Credits + summary.advancedCredits;
   };
 
   /** Because Andreas can't answer with summary capitalized ;) */
@@ -66,14 +66,14 @@ const MasterCheck: React.FC<MasterCheckProps> = ({ masters, stats, colorMap }) =
 
     sortedMasters.sort((a, b) => {
       // "General" should be placed at the end
-      if (a.master_name_en === CREDITS_TOTAL_KEY) {
+      if (a.masterName_en === CREDITS_TOTAL_KEY) {
         return 1;
       }
-      if (b.master_name_en === CREDITS_TOTAL_KEY) {
+      if (b.masterName_en === CREDITS_TOTAL_KEY) {
         return -1;
       }
       // Sort alphabetically
-      return a.master_name_en.localeCompare(b.master_name_en);
+      return a.masterName_en.localeCompare(b.masterName_en);
     });
 
     return sortedMasters;
@@ -82,48 +82,48 @@ const MasterCheck: React.FC<MasterCheckProps> = ({ masters, stats, colorMap }) =
   /** Cache the sorted masters, so that we dont sort them on each re-render */
   const sortedMasters = useMemo(() => sortMasters(masters), [masters]);
 
-  const summary = stats.find(master => master.Master === MASTERS_SUMMARY_NAME);
+  const summary = stats.find(master => master.master === MASTERS_SUMMARY_NAME);
   return (
     <>
       <ListContainer>
         <Header />
         {sortedMasters.map(master => {
-          const masterStat = stats.find(stat => stat.Master === master.master_code);
+          const masterStat = stats.find(stat => stat.master === master.masterCode);
 
           if (!masterStat) {
             return null;
           }
 
-          const fulfilled = masterStat.RequirementsFulfilled;
+          const fulfilled = masterStat.requirementsFulfilled;
           const total = totalCredits(masterStat);
-          const color = colorMap.get(master.master_code);
+          const color = colorMap.get(master.masterCode);
 
           if (total > 0) {
             return (
-              <FilledTableRow fulfilled={fulfilled} key={master.master_code}>
-                <NameCell>{master.master_name_en}</NameCell>
+              <FilledTableRow fulfilled={fulfilled} key={master.masterCode}>
+                <NameCell>{master.masterName_en}</NameCell>
                 <TableCell>
-                  {master.master_code !== CREDITS_TOTAL_KEY.toLowerCase() && (
-                    <Pill key={master.master_code} color={color}>
-                      {master.master_code.slice(0, 3)}
+                  {master.masterCode !== CREDITS_TOTAL_KEY.toLowerCase() && (
+                    <Pill key={master.masterCode} color={color}>
+                      {master.masterCode.slice(0, 3)}
                     </Pill>
                   )}
                 </TableCell>
-                <TableCell>{masterStat.G1Credits}</TableCell>
-                <TableCell>{masterStat.G2Credits}</TableCell>
-                <TableCell>{masterStat.AdvancedCredits}</TableCell>
+                <TableCell>{masterStat.g1Credits}</TableCell>
+                <TableCell>{masterStat.g2Credits}</TableCell>
+                <TableCell>{masterStat.advancedCredits}</TableCell>
                 <TableCell>{total}</TableCell>
               </FilledTableRow>
             );
           }
         })}
         {summary && (
-          <TableRow key={summary.Master}>
-            <BoldNameCell>{capitalizeFirstLetter(summary.Master)}</BoldNameCell>
+          <TableRow key={summary.master}>
+            <BoldNameCell>{capitalizeFirstLetter(summary.master)}</BoldNameCell>
             <TableCell />
-            <BoldCell>{summary.G1Credits}</BoldCell>
-            <BoldCell>{summary.G2Credits}</BoldCell>
-            <BoldCell>{summary.AdvancedCredits}</BoldCell>
+            <BoldCell>{summary.g1Credits}</BoldCell>
+            <BoldCell>{summary.g2Credits}</BoldCell>
+            <BoldCell>{summary.advancedCredits}</BoldCell>
             <BoldCell>{totalCredits(summary)}</BoldCell>
           </TableRow>
         )}

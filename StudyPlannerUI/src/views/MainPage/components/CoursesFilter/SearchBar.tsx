@@ -23,10 +23,10 @@ const SearchBar: React.FC<SearchBarProps> = ({ matches, filter }: SearchBarProps
     const transformFn = (courses: CourseData.DataWithLocale[]) => {
       return courses.filter(
         course =>
-          course.course_name.toLowerCase().includes(search) ||
+          course.courseName.toLowerCase().includes(search) ||
           // Support for search in other language (en/sv)
-          course.course_name_other?.toLowerCase().includes(search) ||
-          course.course_code.toLowerCase().includes(search)
+          course.courseName_other?.toLowerCase().includes(search) ||
+          course.courseCode.toLowerCase().includes(search)
       );
     };
     filter(transformFn);

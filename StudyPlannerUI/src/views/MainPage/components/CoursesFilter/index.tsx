@@ -32,7 +32,7 @@ export const CoursesFilter: React.FC<CoursesFilterProps> = ({
   /* Filter by Class or Year (selected type) */
   const [filterType, setFilterType] = React.useState<FILTERS>(FILTERS.None);
   /* Selected Class/Year */
-  const [classYearFilter, setClassYearFilter] = React.useState<string>(filters.Year);
+  const [classYearFilter, setClassYearFilter] = React.useState<string>(filters.year);
   /* All masters that is selected in the filter */
   const [multiSelectValue, setMultiSelectValue] = useState<string[]>([]);
 
@@ -41,10 +41,10 @@ export const CoursesFilter: React.FC<CoursesFilterProps> = ({
 
   useEffect(() => {
     // Check if filters.Year has value and classYearFilter does not have a value
-    if (filters.Year && !classYearFilter) {
-      setClassYearFilter(filters.Year);
+    if (filters.year && !classYearFilter) {
+      setClassYearFilter(filters.year);
     }
-  }, [filters.Year]);
+  }, [filters.year]);
 
   const fetchFilterValues = async (filter: ClassYearFilter) => {
     const data = await getFilterByValues(filter);
@@ -52,8 +52,7 @@ export const CoursesFilter: React.FC<CoursesFilterProps> = ({
   };
 
   const handleMasterFilter = (masters: string[]) => {
-    const { Programme, Year } = filters;
-    const body = { Programme, Year, MasterCodes: masters };
+    const body = { ...filters, masterCodes: masters };
 
     getCoursesByProgramme(body)
       .then(data => dataParser(data))
@@ -63,7 +62,7 @@ export const CoursesFilter: React.FC<CoursesFilterProps> = ({
   const handleChangeMasters = (value: string[]) => {
     // If the user just selected the "select all" option
     if (value.includes(ALL_MASTERS) && !multiSelectValue.includes(ALL_MASTERS)) {
-      const allMasters = masters.map(master => master.master_code);
+      const allMasters = masters.map(master => master.masterCode);
       // Add all masters along with the "select all" option
       setMultiSelectValue([...allMasters, ALL_MASTERS]);
       handleMasterFilter(allMasters);
@@ -94,8 +93,8 @@ export const CoursesFilter: React.FC<CoursesFilterProps> = ({
     }
   };
 
-  const hasProgramme = filters.Programme !== FILTERS.None;
-  const hasYear = filters.Year !== FILTERS.None;
+  const hasProgramme = filters.programme !== FILTERS.None;
+  const hasYear = filters.year !== FILTERS.None;
   const hasFilterBy = filterType !== FILTERS.None;
 
   const disableMasterSelection = !hasProgramme || !hasYear;
@@ -138,8 +137,8 @@ export const CoursesFilter: React.FC<CoursesFilterProps> = ({
         >
           <Option value=''>All (Default)</Option>
           {masters.map(master => (
-            <Option key={master.master_code} value={master.master_code}>
-              {master.master_name_en}
+            <Option key={master.masterCode} value={master.masterCode}>
+              {master.masterName_en}
             </Option>
           ))}
         </Select>

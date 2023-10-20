@@ -61,31 +61,21 @@ const SavePlanModal: FC<SavePlanModalProps> = ({ data, isOpen, onClose }) => {
 
   const parseCourses = (courses: CourseData.SelectedCourse[]) => {
     return courses.map(course => ({
-      course_code: course.course_code,
-      period_start: course.periods[0].start,
-      period_end: course.periods[0].end,
-      study_year: course.selectedYear
+      courseCode: course.courseCode,
+      period: course.periods[0],
+      studyYear: course.studyYear
     }));
   };
 
   const submitData = async () => {
-    // convert courses to an array of object with year and course_code
-    const yearFour = parseCourses(courses[4]);
-    const yearFive = parseCourses(courses[5]);
-    const SelectedCourses = [...yearFour, ...yearFive];
-    // FIXME: Pascal to camel case
-    const customYearFour = parseCourses(custom[4]);
-    const customYearFive = parseCourses(custom[5]);
-
+    const selectedCourses = [...parseCourses(courses[4]), ...parseCourses(courses[5])];
     // TODO: Add custom course to body
-    const customCourses = [...customYearFour, ...customYearFive];
+    const customCourses = [...custom[4], ...custom[5]];
 
-    const { Programme, Year } = data;
     const body = {
-      StudyPlanName: planName,
-      Programme,
-      Year,
-      SelectedCourses
+      studyPlanName: planName,
+      ...data,
+      selectedCourses
     };
 
     try {
@@ -93,8 +83,8 @@ const SavePlanModal: FC<SavePlanModalProps> = ({ data, isOpen, onClose }) => {
 
       const BASE_URL = window.location.origin + Endpoints.studyPlan;
       const urls = {
-        sId: BASE_URL + '/' + response.StudyPlanId,
-        sIdReadOnly: BASE_URL + '/' + response.StudyPlanReadOnlyId
+        sId: BASE_URL + '/' + response.studyPlanId,
+        sIdReadOnly: BASE_URL + '/' + response.studyPlanReadOnlyId
       };
 
       setSubmitSuccess(true);

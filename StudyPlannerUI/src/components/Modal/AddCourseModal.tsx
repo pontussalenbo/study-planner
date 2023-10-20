@@ -42,13 +42,13 @@ interface AddCourseModalProps {
 }
 
 const defaultCourse: CourseData.SelectedCourse = {
-  course_code: '',
-  course_name: '',
+  courseCode: '',
+  courseName: '',
   credits: 0,
   level: '',
   periods: [{ start: 0, end: 0 }],
-  selectedPeriod: null,
-  selectedYear: 4
+  period: null,
+  studyYear: 4
 };
 
 interface ErrorObject {
@@ -64,8 +64,8 @@ const AddCourseModal: React.FC<AddCourseModalProps> = ({ isOpen, onClose }) => {
   const [course, setCourse] = useState<CourseData.SelectedCourse>(defaultCourse);
   const [addedCourse, setAddedCourse] = useState<string>('');
   const [errors, setErrors] = useState<any>({
-    course_code: '',
-    course_name: '',
+    courseCode: '',
+    courseName: '',
     credits: '',
     level: '',
     periods: [{ start: '', end: '' }]
@@ -151,9 +151,9 @@ const AddCourseModal: React.FC<AddCourseModalProps> = ({ isOpen, onClose }) => {
       custom: true
     };
 
-    addCourse(customCourse, course.selectedYear, course.selectedPeriod);
+    addCourse(customCourse, course.studyYear, course.periods[0]);
     setSubmitSuccess(true);
-    setAddedCourse(course.course_code);
+    setAddedCourse(course.courseCode);
     setCourse(defaultCourse);
   };
 
@@ -177,10 +177,10 @@ const AddCourseModal: React.FC<AddCourseModalProps> = ({ isOpen, onClose }) => {
         <FormRow>
           <FormInput
             label='Course Name'
-            id='course_name'
-            name='course_name'
+            id='courseName'
+            name='courseName'
             type='text'
-            value={course.course_name}
+            value={course.courseName}
             onChange={handleChange}
             errorMsg={errors.course_name}
             required
@@ -188,10 +188,10 @@ const AddCourseModal: React.FC<AddCourseModalProps> = ({ isOpen, onClose }) => {
 
           <FormInput
             label='Course Code'
-            id='course_code'
-            name='course_code'
+            id='courseCode'
+            name='courseCode'
             type='text'
-            value={course.course_code}
+            value={course.courseCode}
             onChange={handleChange}
             errorMsg={errors.course_code}
             required

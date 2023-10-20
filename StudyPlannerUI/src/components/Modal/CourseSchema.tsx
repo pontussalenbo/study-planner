@@ -1,8 +1,8 @@
 import { z } from 'zod';
 
 const errorMsgs = {
-  course_code: 'Course code is required',
-  course_name: 'Course name is required',
+  courseCode: 'Course code is required',
+  courseName: 'Course name is required',
   credits: 'Credits must be between 1 and 30',
   level: 'Level must be G1, G2 or A',
   start: {
@@ -16,8 +16,8 @@ const errorMsgs = {
 };
 
 export const courseSchema = z.object({
-  course_code: z.string().min(1, errorMsgs.course_code),
-  course_name: z.string().min(1, errorMsgs.course_name),
+  courseCode: z.string().min(1, errorMsgs.courseCode),
+  courseName: z.string().min(1, errorMsgs.courseName),
   credits: z.number().min(1, errorMsgs.credits).max(30, errorMsgs.credits),
   level: z.enum(['G1', 'G2', 'A'], { required_error: errorMsgs.level }),
   periods: z.array(

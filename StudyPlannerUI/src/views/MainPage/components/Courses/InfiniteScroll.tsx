@@ -36,14 +36,14 @@ const Row = ({ index, data }: RowProps) => {
   const handleButtonClick = () => {
     const selectedCourse: CourseData.SelectedCourse = {
       ...course,
-      selectedPeriod,
-      selectedYear: 4
+      period: selectedPeriod,
+      studyYear: 4
     };
     addCourse(selectedCourse, 4, selectedPeriod);
   };
 
   const handleRemoveClick = () => {
-    removeCourse(course.course_code);
+    removeCourse(course.courseCode);
   };
 
   const handlePeriodChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
@@ -53,12 +53,12 @@ const Row = ({ index, data }: RowProps) => {
 
   const course: CourseData.DataWithLocale = data.courses[index];
   const hasMultiplePeriods = course.periods.length > 1;
-  const isSelected = hasCourse(course.course_code);
+  const isSelected = hasCourse(course.courseCode);
 
   return (
     <TableRow>
-      <TableCell>{course.course_code}</TableCell>
-      <NameCell>{course.course_name}</NameCell>
+      <TableCell>{course.courseCode}</TableCell>
+      <NameCell>{course.courseName}</NameCell>
       <TableCell>{course.credits}</TableCell>
       <TableCell>{course.level}</TableCell>
       <TableCell>
@@ -107,7 +107,7 @@ const VirtualizedTable: React.FC<VirtualizedTableProps> = ({ courses }) => {
     <ListContainer>
       <Header />
       {courses.map((course, index) => (
-        <Row key={course.course_code} index={index} data={{ courses }} />
+        <Row key={course.courseCode} index={index} data={{ courses }} />
       ))}
     </ListContainer>
   );

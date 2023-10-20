@@ -15,7 +15,7 @@ function StudyPlan() {
     return <div>loading...</div>;
   }
 
-  const { isReadOnly, name, url, selectedCourses, filters, id } = data;
+  const { isReadOnly, name, url, selectedCourses, customCourses, filters, id } = data;
 
   const loadedPlan: LoadedPlan = {
     readOnly: isReadOnly,
@@ -28,8 +28,7 @@ function StudyPlan() {
 
   const initState: State = {
     selectedCourses,
-    // FIXME: This is a hack to make the custom courses work
-    customCourses: { 4: [], 5: [] },
+    customCourses,
     loaded: true,
     unsavedChanges: false,
     loadedPlan,

@@ -31,7 +31,7 @@ const ReadOnlyView: React.FC<CoursesProps> = ({ filters }) => {
   const selectedCourses = [...courses[4], ...courses[5], ...customCourses[4], ...customCourses[5]];
 
   const updateMasterStats = async (signal?: AbortController) => {
-    const courseCodes = selectedCourses.map(course => course.course_code);
+    const courseCodes = selectedCourses.map(course => course.courseCode);
     const body = {
       ...filters,
       selectedCourses: courseCodes
@@ -55,8 +55,8 @@ const ReadOnlyView: React.FC<CoursesProps> = ({ filters }) => {
     const signal = new AbortController();
 
     const params = {
-      programme: filters.Programme,
-      year: filters.Year
+      programme: filters.programme,
+      year: filters.year
     };
 
     getMasters(params, signal).then(data => {
@@ -83,7 +83,7 @@ const ReadOnlyView: React.FC<CoursesProps> = ({ filters }) => {
   const colorMap = useMemo(() => {
     const colors = generateColors(masters.length);
     const colorMap: [string, string][] = masters.map((master, idx) => [
-      master.master_code,
+      master.masterCode,
       colors[idx]
     ]);
     return new Map(colorMap);
@@ -95,8 +95,8 @@ const ReadOnlyView: React.FC<CoursesProps> = ({ filters }) => {
         <Col xs={12} id='courses'>
           <Heading2>Select Programme</Heading2>
           <FilterContainer>
-            <ReadonlyField label='Programme' value={filters.Programme} />
-            <ReadonlyField label='Year' value={filters.Year} />
+            <ReadonlyField label='Programme' value={filters.programme} />
+            <ReadonlyField label='Year' value={filters.year} />
           </FilterContainer>
         </Col>
       </Row>

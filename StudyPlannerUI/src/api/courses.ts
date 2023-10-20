@@ -3,7 +3,7 @@ import { Filters } from 'interfaces/Types';
 import { GET, POST } from 'utils/fetch';
 
 export interface CourseFilters extends Filters {
-    MasterCodes: string[] | undefined;
+    masterCodes: string[] | undefined;
 }
 
 export enum FILTERS {

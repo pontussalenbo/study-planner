@@ -4,9 +4,10 @@ import { Filters } from 'interfaces/Types';
 import { LoadedPlan, SelectedCourses, State, URLS, reducer } from '../reducers/courseContext';
 
 interface ExisitingPlan extends StudyPlan {
-  UniqueBlob: string;
+  studyPlanId: string;
 }
 
+// TODO: extend State interface
 export interface CtxType {
   /**
    * The courses that are currently selected in the study plan.
@@ -137,23 +138,23 @@ export function StudyplanProvider({ children, initState }: ProviderProps) {
 
   const hasCourse = (courseCode: string) => {
     return (
-      state.selectedCourses[4].some(course => course.course_code === courseCode) ||
-      state.selectedCourses[5].some(course => course.course_code === courseCode)
+      state.selectedCourses[4].some(course => course.courseCode === courseCode) ||
+      state.selectedCourses[5].some(course => course.courseCode === courseCode)
     );
   };
 
   const addCourse = (
     course: CourseData.SelectedCourse,
-    year: CourseData.YEAR = course.selectedYear,
+    year: CourseData.YEAR = course.studyYear,
     period: API.Period | null
   ) => {
-    if (hasCourse(course.course_code)) {
+    if (hasCourse(course.courseCode)) {
       return;
     }
 
     const updatedCourse = {
       ...course,
-      selectedPeriod: period
+      period: period
     };
 
     const updatedSelectedCourses = {
@@ -177,14 +178,14 @@ export function StudyplanProvider({ children, initState }: ProviderProps) {
     const updatedSelectedCourses = { ...state.selectedCourses };
     if (year) {
       updatedSelectedCourses[year] = updatedSelectedCourses[year].filter(
-        c => c.course_code !== courseName
+        c => c.courseCode !== courseName
       );
     } else {
       updatedSelectedCourses[4] = updatedSelectedCourses[4].filter(
-        c => c.course_code !== courseName
+        c => c.courseCode !== courseName
       );
       updatedSelectedCourses[5] = updatedSelectedCourses[5].filter(
-        c => c.course_code !== courseName
+        c => c.courseCode !== courseName
       );
     }
     dispatch({ type: 'SET_SELECTED_COURSES', payload: updatedSelectedCourses });
@@ -194,13 +195,13 @@ export function StudyplanProvider({ children, initState }: ProviderProps) {
     if (year) {
       const updatedCustomCourses = { ...state.customCourses };
       updatedCustomCourses[year] = updatedCustomCourses[year].filter(
-        c => c.course_code !== courseName
+        c => c.courseCode !== courseName
       );
       dispatch({ type: 'SET_CUSTOM_COURSES', payload: updatedCustomCourses });
     } else {
       const updatedCustomCourses = { ...state.customCourses };
-      updatedCustomCourses[4] = updatedCustomCourses[4].filter(c => c.course_code !== courseName);
-      updatedCustomCourses[5] = updatedCustomCourses[5].filter(c => c.course_code !== courseName);
+      updatedCustomCourses[4] = updatedCustomCourses[4].filter(c => c.courseCode !== courseName);
+      updatedCustomCourses[5] = updatedCustomCourses[5].filter(c => c.courseCode !== courseName);
       dispatch({ type: 'SET_CUSTOM_COURSES', payload: updatedCustomCourses });
     }
   };
@@ -210,29 +211,29 @@ export function StudyplanProvider({ children, initState }: ProviderProps) {
 
     const courses = custom ? state.customCourses : state.selectedCourses;
 
-    const course = courses[prevYear].find(c => c.course_code === courseName);
+    const course = courses[prevYear].find(c => c.courseCode === courseName);
 
     if (!course) {
       return;
     }
 
-    course.selectedYear = year;
+    course.studyYear = year;
+    console.log('custom', course);
 
     if (custom) {
       const updatedCustomCourses = {
         ...state.customCourses,
-        [prevYear]: state.customCourses[prevYear].filter(c => c.course_code !== courseName),
+        [prevYear]: state.customCourses[prevYear].filter(c => c.courseCode !== courseName),
         [year]: [...state.customCourses[year], course]
       };
 
-      console.log(updatedCustomCourses);
       dispatch({ type: 'SET_CUSTOM_COURSES', payload: updatedCustomCourses });
       return;
     }
 
     const updatedSelectedCourses = {
       ...state.selectedCourses,
-      [prevYear]: state.selectedCourses[prevYear].filter(c => c.course_code !== courseName),
+      [prevYear]: state.selectedCourses[prevYear].filter(c => c.courseCode !== courseName),
       [year]: [...state.selectedCourses[year], course]
     };
 
@@ -253,10 +254,12 @@ export function StudyplanProvider({ children, initState }: ProviderProps) {
 
   const parseCourses = (courses: CourseData.SelectedCourse[]) => {
     return courses.map(course => ({
-      course_code: course.course_code,
-      period_start: course.periods[0].start,
-      period_end: course.periods[0].end,
-      study_year: course.selectedYear
+      courseCode: course.courseCode,
+      period: course.periods[0],
+      credits: course.credits,
+      level: course.level,
+      courseName: course.courseName,
+      studyYear: course.studyYear
     }));
   };
 
@@ -273,20 +276,20 @@ export function StudyplanProvider({ children, initState }: ProviderProps) {
     const customCourses = parseCourses([...state.customCourses[4], ...state.customCourses[5]]);
 
     const plan: ExisitingPlan = {
-      UniqueBlob: state.urls.sId,
-      StudyPlanName: state.loadedPlan.name,
-      SelectedCourses: SelectedCourses,
-      CustomCourses: customCourses,
-      Programme: filters.Programme,
-      Year: filters.Year
+      studyPlanId: state.urls.sId,
+      studyPlanName: state.loadedPlan.name,
+      selectedCourses: SelectedCourses,
+      customCourses: customCourses,
+      programme: filters.programme,
+      year: filters.year
     };
 
     try {
       const response = await savePlanAPI(plan);
-      const { StudyPlanId, StudyPlanReadOnlyId } = response;
+      const { studyPlanId, studyPlanReadOnlyId } = response;
       setUrls({
-        sId: StudyPlanId,
-        sIdReadOnly: StudyPlanReadOnlyId
+        sId: studyPlanId,
+        sIdReadOnly: studyPlanReadOnlyId
       });
       dispatch({ type: 'SET_UNSAVED_CHANGES', payload: false });
     } catch (error) {

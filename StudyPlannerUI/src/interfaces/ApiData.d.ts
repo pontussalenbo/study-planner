@@ -8,9 +8,9 @@ declare namespace API {
         end: number;
     }
     export interface CourseData {
-        course_code: string;
-        course_name_sv: string;
-        course_name_en: string;
+        courseCode: string;
+        courseName_sv: string;
+        courseName_en: string;
         credits: number;
         level: string;
         periods: Period[];
@@ -21,17 +21,17 @@ declare namespace API {
     }
 
     export interface MasterStatus {
-        Master: string;
-        AdvancedCredits: number;
-        G1Credits: number;
-        G2Credits: number;
-        RequirementsFulfilled: boolean;
-        SelectedCourses: string[];
+        master: string;
+        advancedCredits: number;
+        g1Credits: number;
+        g2Credits: number;
+        requirementsFulfilled: boolean;
+        selectedCourses: string[];
     }
 
     export interface Master {
-        master_code: string;
-        master_name_en: string;
-        master_name_sv: string;
+        masterCode: string;
+        masterName_en: string;
+        masterName_sv: string;
     }
 }
