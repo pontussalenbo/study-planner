@@ -46,7 +46,7 @@ public class MasterCheckController : ControllerBase
     /// <returns></returns>
     [HttpPost]
     [Consumes(MediaTypeNames.Application.Json)]
-    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(List<MasterValidationResult>))]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public async Task<IActionResult> CheckMasterRequirements([FromBody] MasterCheckParams masterCheckParams)

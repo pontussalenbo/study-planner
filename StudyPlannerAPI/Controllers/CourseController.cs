@@ -2,6 +2,7 @@
 using FluentValidation;
 using Microsoft.AspNetCore.Mvc;
 using StudyPlannerAPI.Controllers.Params;
+using StudyPlannerAPI.Database.DTO;
 using StudyPlannerAPI.Error;
 using StudyPlannerAPI.Extensions;
 using StudyPlannerAPI.Model;
@@ -40,7 +41,7 @@ public class CourseController : ControllerBase
     /// <returns></returns>
     [HttpPost]
     [Consumes(MediaTypeNames.Application.Json)]
-    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(List<CourseDTO>))]
     [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(ValidationError))]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public async Task<IActionResult> GetCoursesByProgrammeAndYear([FromBody] CourseParams courseParams)
@@ -62,10 +63,10 @@ public class CourseController : ControllerBase
     /// </summary>
     /// <param name="courseCodes"></param>
     /// <returns></returns>
-    [Route(Routes.INFO)]
     [HttpPost]
+    [Route(Routes.INFO)]
     [Consumes(MediaTypeNames.Application.Json)]
-    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(Dictionary<string, CourseInfoDTO>))]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public async Task<IActionResult> GetCourses([FromBody] CourseCodesParams courseCodes)
     {
