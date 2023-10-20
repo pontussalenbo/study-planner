@@ -54,5 +54,13 @@ public class CustomCourseDTO
     ///     Period dto
     /// </summary>
     [JsonPropertyName(Constants.PERIOD)]
-    public PeriodDTO Period => new(period_start, period_end);
+    public PeriodDTO Period
+    {
+        get => new(period_start, period_end);
+        set
+        {
+            period_start = value.start;
+            period_end = value.end;
+        }
+    }
 }
