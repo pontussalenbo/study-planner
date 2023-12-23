@@ -8,7 +8,6 @@ import CopyButton from './CopyButton';
 import { FormContainer, FormRow } from 'components/Form/styles';
 import { FormInput } from 'components/Form';
 import { StyledButton } from 'components/Button/style';
-import { savePlan } from 'api/studyplan';
 import { Endpoints } from 'api/constants';
 
 interface SavePlanModalProps {
@@ -26,13 +25,7 @@ const SavePlanModal: FC<SavePlanModalProps> = ({ data, isOpen, onClose }) => {
   const [submitSuccess, setSubmitSuccess] = useState(false);
   const [urls, setUrls] = useState<URLS | null>(null);
 
-  const {
-    courses,
-    customCourses: custom,
-    loaded,
-    loadedPlan,
-    setUrls: setContextUrls
-  } = useStudyplanContext();
+  const { loaded, loadedPlan, setUrls: setContextUrls, savePlan } = useStudyplanContext();
 
   const focusInputRef = useRef<HTMLInputElement | null>(null);
   const wasOpened = useRef(false);
@@ -59,37 +52,25 @@ const SavePlanModal: FC<SavePlanModalProps> = ({ data, isOpen, onClose }) => {
     navigator?.clipboard?.writeText(url);
   };
 
-  const parseCourses = (courses: CourseData.SelectedCourse[]) => {
-    return courses.map(course => ({
-      courseCode: course.courseCode,
-      period: course.periods[0],
-      studyYear: course.studyYear
-    }));
-  };
-
   const submitData = async () => {
-    const selectedCourses = [...parseCourses(courses[4]), ...parseCourses(courses[5])];
-    // TODO: Add custom course to body
-    const customCourses = [...custom[4], ...custom[5]];
-
-    const body = {
-      studyPlanName: planName,
-      ...data,
-      selectedCourses
-    };
-
     try {
-      const response = await savePlan(body);
-
+      // const response = await savePlan(body);
+      const { urls: planUrls } = await savePlan(data);
       const BASE_URL = window.location.origin + Endpoints.studyPlan;
+
       const urls = {
-        sId: BASE_URL + '/' + response.studyPlanId,
-        sIdReadOnly: BASE_URL + '/' + response.studyPlanReadOnlyId
+        sId: BASE_URL + '/' + planUrls?.sId,
+        sIdReadOnly: BASE_URL + '/' + planUrls?.sIdReadOnly
+      };
+
+      const urlIds = {
+        sId: planUrls?.sId ?? '',
+        sIdReadOnly: planUrls?.sIdReadOnly ?? ''
       };
 
       setSubmitSuccess(true);
       setUrls(urls);
-      setContextUrls(urls);
+      setContextUrls(urlIds);
     } catch (error) {
       setSubmitSuccess(false);
       // TODO: Handle error
