@@ -5,7 +5,7 @@ using StudyPlannerAPI.Database;
 
 namespace StudyPlannerAPI.Configuration;
 
-public class DatabaseServiceInstaller : IServiceInstaller
+internal class DatabaseServiceInstaller : IServiceInstaller
 {
     public void Install(IServiceCollection services, IConfiguration configuration)
     {

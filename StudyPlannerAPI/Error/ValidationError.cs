@@ -1,3 +1,9 @@
-﻿namespace StudyPlannerAPI.Error;
+﻿#pragma warning disable IDE1006
+namespace StudyPlannerAPI.Error;
 
-public record ValidationError(string Code, string Message);
+/// <summary>
+///     Generic record for some sort of validation error
+/// </summary>
+/// <param name="code"></param>
+/// <param name="message"></param>
+public record ValidationError(string code, string message);

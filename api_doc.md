@@ -74,7 +74,7 @@
 
   __Query params__:
   * __Programme__ - Programme code, e.g 'D'
-  
+
   Request query example:\
   ```<host>/studyplanner/general/master?Programme=D'```
 
@@ -83,14 +83,14 @@
   ```json
   [
     {
-      "master_code": "bg",
-      "master_name_sv": "Bilder och grafik",
-      "master_name_en": "Images and Computer Graphics"
+      "masterCode": "bg",
+      "masterNameSv": "Bilder och grafik",
+      "masterNameEn": "Images and Computer Graphics"
     },
     {
-      "master_code": "dpd",
-      "master_name_sv": "Design av processorer och digitala system",
-      "master_name_en": "Design of Processors and Digital Sytems"
+      "masterCode": "dpd",
+      "masterNameSv": "Design av processorer och digitala system",
+      "masterNameEn": "Design of Processors and Digital Sytems"
     },
     ...
   ]
@@ -109,8 +109,8 @@
 
   ```json
   {
-    "Programme": "D",
-    "Year": "22_23"
+    "programme": "D",
+    "year": "H19",
   }
   ```
 
@@ -119,28 +119,28 @@
   ```json
   [
     {
-      "course_code": "BMEN15",
-      "course_name_sv": "Signalseparation - oberoende komponenter",
-      "course_name_en": "Signal Separation - Independent Components",
+      "courseCode": "BMEF10",
+      "courseNameSv": "Sensorteknik",
+      "courseNameEn": "Transducer Technology",
       "credits": 7.5,
-      "level": "A",
-      "periods": [
-        {
-          "start": 2,
-          "end": 2
-        }
-      ]
-    },
-    {
-      "course_code": "EDAP10",
-      "course_name_sv": "Flertrådad programmering",
-      "course_name_en": "Concurrent Programming",
-      "credits": 7.5,
-      "level": "A",
+      "level": "G2",
       "periods": [
         {
           "start": 1,
           "end": 1
+        }
+      ]
+    },
+    {
+      "courseCode": "BMEM05",
+      "courseNameSv": "Examensarbete i elektrisk mätteknik",
+      "courseNameEn": "Degree Project in Electrical Measurements",
+      "credits": 30,
+      "level": "A",
+      "periods": [
+        {
+          "start": 0,
+          "end": 0
         }
       ]
     },
@@ -152,9 +152,12 @@
 
   ```json
   {
-    "Programme": "D",
-    "Year": "H19",
-    "Master": "pv"
+    "programme": "D",
+    "year": "H19",
+    "masterCodes":[
+      "pv",
+      "is"
+    ]
   }
   ```
 
@@ -163,9 +166,9 @@
   ```json
   [
     {
-      "course_code": "EDAF05",
-      "course_name_sv": "Algoritmer, datastrukturer och komplexitet",
-      "course_name_en": "Algorithms, Data Structures and Complexity",
+      "courseCode": "EDAF05",
+      "courseNameSv": "Algoritmer, datastrukturer och komplexitet",
+      "courseNameEn": "Algorithms, Data Structures and Complexity",
       "credits": 5,
       "level": "G2",
       "periods": [
@@ -176,9 +179,9 @@
       ]
     },
     {
-      "course_code": "EDAF35",
-      "course_name_sv": "Operativsystem",
-      "course_name_en": "Operating Systems",
+      "courseCode": "EDAF35",
+      "courseNameSv": "Operativsystem",
+      "courseNameEn": "Operating Systems",
       "credits": 7.5,
       "level": "G2",
       "periods": [
@@ -216,33 +219,64 @@
 
   ```json
   {
-    "Programme": "D",
-    "Year": "H19",
-    "StudyPlanName": "My cool plan",
-    "MasterCodes": [
-      "is",
-      "pv",
-      ...
-    ],
-    "SelectedCourses": [
+    "programme": "D",
+    "year": "H19",
+    "studyPlanName": "My cool plan",
+    "selectedCourses": [
       {
-        "course_code": "EDAN75",
-        "study_year": 4
+        "courseCode": "EDAN75",
+        "studyYear": 4
       },
       {
-        "course_code": "EDAP15",
-        "study_year": 5
+        "courseCode": "EDAP15",
+        "studyYear": 5
       },
       ...
     ]
   }
   ```
 
-  Example response body:
+  Response body:
 
   ```json
   {
-    "StudyPlanId": "b097d745c1c2579cf70a5f4ebc545a8f"
+    "studyPlanId": "b097d745c1c2579cf70a5f4ebc545a8f",
+    "studyPlanReadOnlyId":"315150173ece2a65bc5d717d2e9a69b9"
+  }
+  ```
+
+  Example request body (updating a study plan):
+
+  ```json
+  {
+    "studyPlanId": "b097d745c1c2579cf70a5f4ebc545a8f",
+    "programme": "D",
+    "year": "H19",
+    "studyPlanName": "My cool plan - revised",
+    "selectedCourses": [
+      {
+        "courseCode": "EDAN75",
+        "studyYear": 4
+      },
+      {
+        "courseCode": "EDAP15",
+        "studyYear": 5
+      },
+      {
+        "courseCode": "EDAN26",
+        "studyYear": 5
+      }
+      ...
+    ]
+  }
+  ```
+
+  Response body:
+
+  ```json
+  {
+    "studyPlanId": "b097d745c1c2579cf70a5f4ebc545a8f",
+    "studyPlanReadOnlyId":"315150173ece2a65bc5d717d2e9a69b9"
   }
   ```
 
@@ -257,29 +291,28 @@
   * __Uniqueblob__ - Unique blob connected to a certain plan
 
   Example request query:\
-  ```<host>/studyplanner/links?UniqueBlob=b097d745c1c2579cf70a5f4ebc545a8f```
+  ```<host>/studyplanner/links?studyPlanId=b097d745c1c2579cf70a5f4ebc545a8f```
 
   Example response body:
 
   ```json
   {
-    "Programme": "D",
-    "Year": "H19",
-    "StudyPlanName": "My cool plan",
-    "MasterCodes": [
-      "is",
-      "pv",
-      ...
-    ],
-    "SelectedCourses": [
+    "programme": "D",
+    "year": "H19",
+    "studyPlanName": "My cool plan - revised",
+    "selectedCourses": [
       {
-        "course_code": "EDAN75",
-        "study_year": 4
+        "courseCode": "EDAN75",
+        "studyYear": 4
       },
       {
-        "course_code": "EDAP15",
-        "study_year": 5
+        "courseCode": "EDAP15",
+        "studyYear": 5
       },
+      {
+        "courseCode": "EDAN26",
+        "studyYear": 5
+      }
       ...
     ]
   }
@@ -287,9 +320,9 @@
 
   Response codes:
   * __200__ - If OK
-  * __400__ - If unique blob does not exist
+  * __400__ - If study plan id does not exist
   * __500__ - If database encountered an error
-  
+
 ### Route: ```/studyplanner/masters```
 
 * __POST__
@@ -298,13 +331,13 @@
 
   ```json
   {
-    "Programme": "D",
-    "Year": "H19",
-    "MasterCodes": [
+    "programme": "D",
+    "year": "H19",
+    "masterCodes": [
       "pv",
       "se"
     ],
-    "SelectedCourses": [
+    "selectedCourses": [
       "EDAP10",
       "EDAF75",
       "EDAN65",
@@ -327,27 +360,27 @@
   ```json
   {
     "pv": {
-      "G1Credits": 0,
-      "G2Credits": 22.5,
-      "AdvancedCredits": 75,
-      "RequirementsFulfilled": true
+      "g1Credits": 0,
+      "g2Credits": 22.5,
+      "advancedCredits": 75,
+      "requirementsFulfilled": true
     },
     "se": {
-      "G1Credits": 0,
-      "G2Credits": 15,
-      "AdvancedCredits": 15,
-      "RequirementsFulfilled": false
+      "g1Credits": 0,
+      "g2Credits": 15,
+      "advancedCredits": 15,
+      "requirementsFulfilled": false
     },
     "general": {
-      "G1Credits": 0,
-      "G2Credits": 22.5,
-      "AdvancedCredits": 75,
-      "RequirementsFulfilled": true
+      "g1Credits": 0,
+      "g2Credits": 22.5,
+      "advancedCredits": 75,
+      "requirementsFulfilled": true
     }
   }
   ```
 
   Response codes:
   * __200__ - If OK
-  * __400__ - If any field is null or contains an empty array
+  * __400__ - If any field is null or selectedCourses is empty (masterCodes may be omitted)
   * __500__ - If database encountered an error

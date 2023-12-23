@@ -1,15 +1,28 @@
 ﻿using System.Text.RegularExpressions;
 using StudyPlannerAPI.Database;
 
-namespace StudyPlannerAPI.Model.Util;
+namespace StudyPlannerAPI.Model;
 
+/// <summary>
+///     Utility functions for common stuff
+/// </summary>
 public static partial class ModelUtil
 {
+    /// <summary>
+    ///     Validate year format
+    /// </summary>
+    /// <param name="year"></param>
+    /// <returns></returns>
     public static bool IsYearPatternValid(string year)
     {
         return YearPatternToColumn(year) != string.Empty && YearPatternToTable(year) != string.Empty;
     }
 
+    /// <summary>
+    ///     Get appropriate database table given a year
+    /// </summary>
+    /// <param name="year"></param>
+    /// <returns></returns>
     public static string YearPatternToTable(string year)
     {
         var matches = AcademicYearRegex().Matches(year);
@@ -27,6 +40,11 @@ public static partial class ModelUtil
         return string.Empty;
     }
 
+    /// <summary>
+    ///     Get appropriate database column given a year
+    /// </summary>
+    /// <param name="year"></param>
+    /// <returns></returns>
     public static string YearPatternToColumn(string year)
     {
         var matches = AcademicYearRegex().Matches(year);
@@ -44,6 +62,11 @@ public static partial class ModelUtil
         return string.Empty;
     }
 
+    /// <summary>
+    ///     Get appropriate database table given a year
+    /// </summary>
+    /// <param name="year"></param>
+    /// <returns></returns>
     public static string YearPatternToPeriodTable(string year)
     {
         var matches = AcademicYearRegex().Matches(year);

@@ -1,11 +1,11 @@
 ﻿using FluentValidation;
 using StudyPlannerAPI.Controllers.Params;
 using StudyPlannerAPI.Error;
-using StudyPlannerAPI.Model.Util;
+using StudyPlannerAPI.Model;
 
 namespace StudyPlannerAPI.Controllers.Validation;
 
-public class MasterCheckParamsValidator : AbstractValidator<MasterCheckParams>
+internal class MasterCheckParamsValidator : AbstractValidator<MasterCheckParams>
 {
     public MasterCheckParamsValidator()
     {
@@ -28,6 +28,6 @@ public class MasterCheckParamsValidator : AbstractValidator<MasterCheckParams>
         RuleFor(mcp => mcp.SelectedCourses)
             .Must(courses => courses.Count > 0)
             .WithErrorCode(ErrorCodes.COUNT_LEQ_ZERO)
-            .WithMessage(ErrorUtil.LeqZero(nameof(MasterCheckParams.SelectedCourses)));
+            .WithMessage(ErrorUtil.CountLeqZero(nameof(MasterCheckParams.SelectedCourses)));
     }
 }

@@ -12,6 +12,7 @@ const GlobalStyles = createGlobalStyle<{ theme: CustomTheme }>`
 
 html {
   font-size: 100%;
+  scroll-behavior: smooth;
 }
 
 body {
@@ -20,9 +21,6 @@ body {
   overflow-x: hidden;
   min-height: 100vh;
   text-rendering: optimizeSpeed;
-  font-family: sans-serif;
-  font-size: 1rem;
-  line-height: 1;
   background-color: ${({ theme }) => theme.background};
   color: ${({ theme }) => theme.onBackground};
 }
@@ -92,7 +90,7 @@ select {
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
     scroll-behavior: auto !important;
-  }import { customTheme } from 'style/Theme';
+  }
 
 }
 ::-webkit-scrollbar {
@@ -101,17 +99,17 @@ select {
 
 /* Track */
 ::-webkit-scrollbar-track {
-  background: #f1f1f1; 
+  background: #f1f1f1;
 }
- 
+
 /* Handle */
 ::-webkit-scrollbar-thumb {
-  background: #888; 
+  background: #888;
 }
 
 /* Handle on hover */
 ::-webkit-scrollbar-thumb:hover {
-  background: #555; 
+  background: #555;
 }
 `;
 

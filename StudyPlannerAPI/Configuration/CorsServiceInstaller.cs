@@ -3,7 +3,7 @@ using StudyPlannerAPI.Error;
 
 namespace StudyPlannerAPI.Configuration;
 
-public class CorsServiceInstaller : IServiceInstaller
+internal class CorsServiceInstaller : IServiceInstaller
 {
     public void Install(IServiceCollection services, IConfiguration configuration)
     {

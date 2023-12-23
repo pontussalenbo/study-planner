@@ -1,6 +1,6 @@
 ﻿namespace StudyPlannerAPI;
 
-public class Routes
+internal class Routes
 {
     // Endpoints
     public const string MASTER_CHECK = "studyplanner/masters";
@@ -14,4 +14,6 @@ public class Routes
     public const string MASTERS = "masters";
     public const string ACADEMIC_YEARS = "academic_years";
     public const string CLASS_YEARS = "class_years";
+    public const string INFO = "info";
+    public const string ID = "id";
 }

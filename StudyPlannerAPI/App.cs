@@ -3,8 +3,15 @@ using StudyPlannerAPI.Extensions;
 
 namespace StudyPlannerAPI;
 
+/// <summary>
+///     Application entry point
+/// </summary>
 public class App
 {
+    /// <summary>
+    ///     Duh
+    /// </summary>
+    /// <param name="args"></param>
     public static void Main(string[] args)
     {
         var builder = WebApplication.CreateBuilder(args);

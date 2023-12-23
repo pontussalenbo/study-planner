@@ -1,16 +1,20 @@
-import ScrollArrow from './components/ScrollArrow';
 import { Container, Wrapper } from './style';
 import Courses from './components/Courses';
-import HorizontalBarChart from './components/SelectedCourses/HorizontalBarChart';
 import Col from 'components/Flex/Col.style';
 import Row from 'components/Flex/Row.style';
+import { Filters } from 'interfaces/Types';
+import HorizontalBarChart from 'components/Barchart';
 
-function MainPage(): JSX.Element {
+interface MainPageProps {
+  filters?: Filters;
+}
+
+const MainPage: React.FC<MainPageProps> = ({ filters }) => {
   return (
     <Container>
       <Wrapper>
-        <Courses />
-        <Row>
+        <Courses initFilters={filters} />
+        <Row id='graphs'>
           <Col md={6}>
             <HorizontalBarChart year={4} />
           </Col>
@@ -19,9 +23,8 @@ function MainPage(): JSX.Element {
           </Col>
         </Row>
       </Wrapper>
-      <ScrollArrow />
     </Container>
   );
-}
+};
 
 export default MainPage;

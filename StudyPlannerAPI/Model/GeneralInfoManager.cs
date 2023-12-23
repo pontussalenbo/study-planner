@@ -2,19 +2,27 @@
 using SqlKata;
 using StudyPlannerAPI.Database;
 using StudyPlannerAPI.Database.DTO;
-using StudyPlannerAPI.Model.Util;
 
 namespace StudyPlannerAPI.Model;
 
+/// <summary>
+///     Default implementation of the general info service
+/// </summary>
 public class GeneralInfoManager : IGeneralInfoManager
 {
     private readonly IDatabaseManager db;
 
+    /// <summary>
+    ///     Constructor. DI will handle this
+    /// </summary>
+    /// <param name="databaseManager"></param>
+    /// <param name="configuration"></param>
     public GeneralInfoManager(IDatabaseManager databaseManager, IConfiguration configuration)
     {
         db = DatabaseUtil.ConfigureDatabaseManager(databaseManager, configuration, Constants.CONNECTION_STRING);
     }
 
+    /// <inheritdoc />
     public async Task<IActionResult> GetProgrammes()
     {
         var query = new Query(Tables.PROGRAMMES)
@@ -24,6 +32,7 @@ public class GeneralInfoManager : IGeneralInfoManager
         return new JsonResult(result);
     }
 
+    /// <inheritdoc />
     public async Task<IActionResult> GetAcademicYears()
     {
         var query = new Query(Tables.PROGRAMME_MASTER_COURSE_YEAR)
@@ -34,6 +43,7 @@ public class GeneralInfoManager : IGeneralInfoManager
         return new JsonResult(result);
     }
 
+    /// <inheritdoc />
     public async Task<IActionResult> GetClassYears()
     {
         var query = new Query(Tables.PROGRAMME_MASTER_COURSE_CLASS)
@@ -44,6 +54,7 @@ public class GeneralInfoManager : IGeneralInfoManager
         return new JsonResult(result);
     }
 
+    /// <inheritdoc />
     public async Task<IActionResult> GetMasters(string programme, string year)
     {
         var table = ModelUtil.YearPatternToTable(year);
@@ -56,7 +67,6 @@ public class GeneralInfoManager : IGeneralInfoManager
             .Where(Columns.PROGRAMME_CODE, programme)
             .Where(column, year);
         var result = await db.ExecuteQuery<MasterDTO>(query);
-
         return new JsonResult(result);
     }
 }

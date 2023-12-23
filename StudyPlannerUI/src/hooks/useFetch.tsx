@@ -8,8 +8,17 @@ interface State<T> {
 
 type Cache<T> = Record<string, T>;
 
+enum ActionType {
+  ERROR = 'error',
+  FETCHED = 'fetched',
+  LOADING = 'loading'
+}
+
 // discriminated union type
-type Action<T> = { type: 'error'; payload: Error } | { type: 'fetched'; payload: T } | { type: 'loading' };
+type Action<T> =
+  | { type: ActionType.ERROR; payload: Error }
+  | { type: ActionType.FETCHED; payload: T }
+  | { type: ActionType.LOADING };
 
 function useFetch<T = unknown>(url?: string, options?: RequestInit): State<T> {
   const cache = useRef<Cache<T>>({});
@@ -26,11 +35,11 @@ function useFetch<T = unknown>(url?: string, options?: RequestInit): State<T> {
   // Keep state logic separated
   const fetchReducer = (state: State<T>, action: Action<T>): State<T> => {
     switch (action.type) {
-      case 'loading':
+      case ActionType.LOADING:
         return { ...initialState, loading: true };
-      case 'fetched':
+      case ActionType.FETCHED:
         return { ...initialState, data: action.payload };
-      case 'error':
+      case ActionType.ERROR:
         return { ...initialState, error: action.payload };
       default:
         return state;
@@ -44,32 +53,40 @@ function useFetch<T = unknown>(url?: string, options?: RequestInit): State<T> {
     if (!url) return undefined;
 
     cancelRequest.current = false;
+    const controller = new AbortController();
 
     const fetchData = async (): Promise<void> => {
-      dispatch({ type: 'loading' });
+      dispatch({ type: ActionType.LOADING });
 
       // If a cache exists for this url, return it
       if (cache.current[url]) {
-        dispatch({ type: 'fetched', payload: cache.current[url] });
+        dispatch({ type: ActionType.FETCHED, payload: cache.current[url] });
         return;
       }
 
+      const optionsWithSignal = { ...options, signal: controller.signal };
+
       try {
-        const response = await fetch(url, options);
+        const response = await fetch(url, optionsWithSignal);
         if (!response.ok) {
           throw new Error(response.statusText);
         }
 
-        const data = (await response.json()) as T;
+        const data: T = await response.json();
         // eslint-disable-next-line require-atomic-updates
         cache.current[url] = data;
-        if (cancelRequest.current) return;
+        if (cancelRequest.current) {
+          dispatch({ type: ActionType.ERROR, payload: new Error('Request cancelled') });
+          return;
+        }
 
-        dispatch({ type: 'fetched', payload: data });
+        dispatch({ type: ActionType.FETCHED, payload: data });
       } catch (error) {
-        if (cancelRequest.current) return;
+        if (cancelRequest.current) {
+          dispatch({ type: ActionType.ERROR, payload: new Error('Request cancelled') });
+        }
 
-        dispatch({ type: 'error', payload: error as Error });
+        dispatch({ type: ActionType.ERROR, payload: error as Error });
       }
     };
 
@@ -79,6 +96,7 @@ function useFetch<T = unknown>(url?: string, options?: RequestInit): State<T> {
     // ...state update after the component was unmounted
     return () => {
       cancelRequest.current = true;
+      controller.abort();
     };
   }, [options, url]);
 

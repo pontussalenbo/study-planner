@@ -1,26 +1,36 @@
-import { BASE_URL } from './URL';
+import { BASE_URL } from 'api/constants';
 
-// TODO: Implement object export methods to get each respective endpoint
-// TODO: Pretty unbareable to handle at large scale, but it's a start
-
-// TODO: Replace T = any with unknown
-export async function POST<T = unknown>(endpoint: string, data: unknown): Promise<T> {
+export async function POST<T = unknown>(
+    endpoint: string,
+    data: unknown,
+    abort?: AbortController
+): Promise<T> {
     const body = JSON.stringify(data);
+    const config: RequestInit = {
+        body,
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        signal: abort?.signal
+    };
     try {
-        const response = await fetch(BASE_URL + endpoint, {
-            body,
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' }
-        });
+        const response = await fetch(BASE_URL + endpoint, config);
+
+        if (response.status !== 200) {
+            throw new APIError({ message: 'Error', code: response.status, rest: {} });
+        }
+
         const json = await response.json();
         return json;
     } catch (error) {
+        console.error(error);
+
         throw error as APIError;
     }
 }
 
 /**
- * TODO: Replace T = any with unknown
  * Send a GET request to the specified endpoint and parse the response as JSON.
  *
  * @template T The expected return type of the API response.
@@ -32,7 +42,11 @@ export async function POST<T = unknown>(endpoint: string, data: unknown): Promis
  * @throws {APIError} If an error occurs during the fetch operation, it will throw an error of type APIError.
  */
 
-export async function GET<T = unknown>(endpoint: string, params?: URLSearchParams): Promise<T> {
+export async function GET<T = unknown>(
+    endpoint: string,
+    params?: URLSearchParams,
+    abort?: AbortController
+): Promise<T> {
     try {
         const url = new URL(BASE_URL + endpoint);
 
@@ -40,7 +54,12 @@ export async function GET<T = unknown>(endpoint: string, params?: URLSearchParam
             url.search = params.toString();
         }
 
-        const response = await fetch(url.toString());
+        const response = await fetch(url.toString(), { signal: abort?.signal });
+
+        if (response.status !== 200) {
+            throw new APIError({ message: 'Error', code: response.status, rest: {} });
+        }
+
         const json = await response.json();
         return json;
     } catch (error) {

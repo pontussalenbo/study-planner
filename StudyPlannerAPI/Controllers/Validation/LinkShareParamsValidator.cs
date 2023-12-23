@@ -1,11 +1,11 @@
 ﻿using FluentValidation;
 using StudyPlannerAPI.Controllers.Params;
 using StudyPlannerAPI.Error;
-using StudyPlannerAPI.Model.Util;
+using StudyPlannerAPI.Model;
 
 namespace StudyPlannerAPI.Controllers.Validation;
 
-public class LinkShareParamsValidator : AbstractValidator<LinkShareParams>
+internal class LinkShareParamsValidator : AbstractValidator<LinkShareParams>
 {
     public LinkShareParamsValidator()
     {
@@ -28,6 +28,6 @@ public class LinkShareParamsValidator : AbstractValidator<LinkShareParams>
         RuleFor(lsp => lsp.SelectedCourses)
             .Must(courses => courses.Count > 0)
             .WithErrorCode(ErrorCodes.COUNT_LEQ_ZERO)
-            .WithMessage(ErrorUtil.LeqZero(nameof(LinkShareParams.SelectedCourses)));
+            .WithMessage(ErrorUtil.CountLeqZero(nameof(LinkShareParams.SelectedCourses)));
     }
 }
