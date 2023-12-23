@@ -7,6 +7,11 @@ interface ExisitingPlan extends StudyPlan {
   studyPlanId: string;
 }
 
+interface SavePlanResp {
+  success: boolean;
+  urls: URLS | null;
+}
+
 // TODO: extend State interface
 export interface CtxType {
   /**
@@ -42,7 +47,7 @@ export interface CtxType {
   /**
    * Saves the study plan to the database.
    */
-  savePlan: (filters: Filters) => Promise<boolean>;
+  savePlan: (filters: Filters) => Promise<SavePlanResp>;
 
   /**
    * Sets the urls (editable and readonly) for the study plan.
@@ -265,7 +270,13 @@ export function StudyplanProvider({ children, initState }: ProviderProps) {
 
   const savePlan = async (filters: Filters) => {
     if (!state.unsavedChanges) {
-      return true;
+      return {
+        success: true,
+        urls: {
+          sId: state.urls.sId,
+          sIdReadOnly: state.urls.sIdReadOnly
+        }
+      };
     }
 
     const SelectedCourses = parseCourses([
@@ -292,12 +303,20 @@ export function StudyplanProvider({ children, initState }: ProviderProps) {
         sIdReadOnly: studyPlanReadOnlyId
       });
       dispatch({ type: 'SET_UNSAVED_CHANGES', payload: false });
+      return {
+        success: true,
+        urls: {
+          sId: studyPlanId,
+          sIdReadOnly: studyPlanReadOnlyId
+        }
+      };
     } catch (error) {
       console.error(error);
-      return false;
+      return {
+        success: false,
+        urls: null
+      };
     }
-
-    return true;
   };
 
   const contextValue: CtxType = {
