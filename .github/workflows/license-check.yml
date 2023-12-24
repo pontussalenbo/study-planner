@@ -6,5 +6,19 @@
 # (at your option) any later version. See the included LICENSE file for
 # the full text of the GNU General Public License.
 
-node_modules/
-.vscode/
+name: License Header Check
+
+on: [push, pull_request]
+
+jobs:
+    check-license-header:
+        runs-on: ubuntu-latest
+
+        steps:
+            - name: Check out code
+              uses: actions/checkout@v2
+
+            - name: Check License Headers
+              uses: apache/skywalking-eyes/header@main
+              with:
+                  config: '.github/license-eye.yml'
