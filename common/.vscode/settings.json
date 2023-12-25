@@ -1,9 +1,0 @@
-{
-    "azureFunctions.deploySubpath": "azure",
-    "azureFunctions.postDeployTask": "yarn install (functions)",
-    "azureFunctions.projectLanguage": "JavaScript",
-    "azureFunctions.projectRuntime": "~4",
-    "debug.internalConsoleOptions": "neverOpen",
-    "azureFunctions.projectLanguageModel": 4,
-    "azureFunctions.preDeployTask": "yarn prune (functions)"
-}
