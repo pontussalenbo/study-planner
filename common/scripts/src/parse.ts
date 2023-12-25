@@ -2,7 +2,6 @@ import * as fs from 'fs';
 import * as path from 'path';
 
 import {
-	CourseData,
 	CourseDataWithClass,
 	CourseDataWithPeriods,
 	Period,
@@ -15,23 +14,45 @@ type Column = keyof CourseDataWithPeriods;
 type ColumnType = Record<string, string>;
 type PeriodKey = keyof Period;
 
-const defaultCourseDir = './courses.json';
+const defaultCourseDir = 'courses.json';
 const mappings = m as Record<string, Column>;
+const ENCODING = 'utf8';
+const DEGREE_PROJECT_PERIODS = [{ periodStart: 1, periodEnd: 2 }, { periodStart: 3, periodEnd: 4 }];
 
 const readCourseData = (
 	courseDir: string = defaultCourseDir
 ): CourseDataWithClass[] =>
-	JSON.parse(fs.readFileSync(path.join(__dirname, 'courses.json'), 'utf-8'));
+	JSON.parse(fs.readFileSync(path.join(__dirname, courseDir), { encoding: ENCODING }));
 
+
+/**
+ * Parses time plans to find periods for a course.
+ *
+ * LTH API returns time plans for a course, where each object in the timePlans array
+ * represents which study period(s) the course is being taught.
+ *
+ * @param timePlans array of objects representing time plans for a course (the index of the object
+ * represents the study period in which the course is being taught).
+ * @returns Array of period objects for a course.
+ */
 function findCoursePeriods(timePlans: TimePlan[]) {
+	const [firstTimePlan, ...rest] = timePlans;
+	/* The course is a degree project, thus can be conducted at any time between two periods */
+	if (firstTimePlan !== null && rest.every(timePlan => timePlan === null)) {
+		return DEGREE_PROJECT_PERIODS;
+	}
+
 	return timePlans.map(timePlan => {
 		const periods = timePlan.studyPeriods
 			.map((period, idx) => (period !== null ? idx + 1 : 0))
 			.filter(period => period !== 0);
 
+		/* If the course is not being taught in any period,
+		return 0 for both periodStart and periodEnd
 		if (periods.length === 0) {
 			return { periodStart: 0, periodEnd: 0 };
 		}
+		*/
 
 		const periodStart = Math.min(...periods);
 		const periodEnd = Math.max(...periods);
@@ -58,7 +79,7 @@ const sqlSchema = (table: string) => {
 		__dirname,
 		`${FILE_PATHS.DB_TABLES}/${table}.sql`
 	);
-	return fs.readFileSync(filepath, 'utf8');
+	return fs.readFileSync(filepath, { encoding: ENCODING });
 };
 
 /**
@@ -183,7 +204,8 @@ const createValuesForInsert = (
 };
 
 /**
- * Generates SQL table creation with insert statements from course data based on SQL schema and needed columns for the table.
+ * Generates SQL table creation with insert statements from course data
+ * Wbased on SQL schema and needed columns for the table.
  * @param schema SQL schema as string
  * @param data parsed course data from LTH API
  * @param colTypes column type mappings
@@ -215,7 +237,7 @@ const generateSqlInserts = (
 const output = (sqlInserts: string, table: string) => {
 	try {
 		console.log(
-			`Writing to file for table: ${FILE_PATHS.DB_DATA_OUT_DIR}}`
+			`Writing to file for table: ${FILE_PATHS.DB_DATA_OUT_DIR}`
 		);
 		const filepath = `${FILE_PATHS.DB_DATA_OUT_DIR}/${table}.sql`;
 		console.log(`Writing to file: ${filepath}`);
@@ -225,7 +247,7 @@ const output = (sqlInserts: string, table: string) => {
 		fs.promises.writeFile(
 			`${FILE_PATHS.DB_DATA_OUT_DIR}/${table}.sql`,
 			sqlInserts,
-			'utf8'
+			{ encoding: ENCODING }
 		);
 	} catch (err) {
 		console.error('Error writing to file for table: ' + table + '\n');

@@ -6,9 +6,9 @@ export async function upload() {
     const client = new ftp.Client();
     client.ftp.ipFamily = 4;
     client.ftp.verbose = true
-    const { FTP_URL, FTP_USER, FTP_PASS } = process.env;
+    const { FTP_URL, FTP_USER, FTP_PASS, FTP_DB_ROOT } = process.env;
     const dbPath = `./db/${DB_FILE_NAME}`;
-    const serverDir = '/site/wwwroot/Database';
+    const serverDir = FTP_DB_ROOT!;
 
     console.log(FTP_URL, FTP_USER, FTP_PASS)
 
@@ -34,8 +34,9 @@ export async function upload() {
         client.trackProgress();
     } catch (err) {
         console.log(err);
+    } finally {
+        client.close();
     }
-    client.close();
 }
 
 if (require.main === module) {

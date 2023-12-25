@@ -104,7 +104,7 @@ export async function main(filePath: string = __dirname) {
 	const json = JSON.stringify(coursesWithClass);
 	const fullPath = path.join(filePath, 'courses.json');
 	console.log(`Writing to ${fullPath}`);
-	
+
 	await fs.promises.writeFile(fullPath, json);
 };
 /*
