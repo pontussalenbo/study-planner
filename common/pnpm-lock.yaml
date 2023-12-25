@@ -1,12 +1,16 @@
 lockfileVersion: '6.0'
 
+settings:
+  autoInstallPeers: true
+  excludeLinksFromLockfile: false
+
 overrides:
   axios@>=0.8.1 <1.6.0: '>=1.6.0'
 
 dependencies:
   axios:
-    specifier: ^1.2.6
-    version: 1.2.6
+    specifier: '>=1.6.0'
+    version: 1.6.0
   basic-ftp:
     specifier: ^5.0.2
     version: 5.0.2
@@ -656,8 +660,8 @@ packages:
     engines: {node: '>=4'}
     dev: true
 
-  /axios@1.2.6:
-    resolution: {integrity: sha512-rC/7F08XxZwjMV4iuWv+JpD3E0Ksqg9nac4IIg6RwNuF0JTeWoCo/mBNG54+tNhhI11G3/VDRbdDQTs9hGp4pQ==}
+  /axios@1.6.0:
+    resolution: {integrity: sha512-EZ1DYihju9pwVB+jg67ogm+Tmqc6JmhamRN6I4Zt8DfZu5lbcQGw3ozH9lFejSJgs/ibaef3A9PMXPLeefFGJg==}
     dependencies:
       follow-redirects: 1.15.3
       form-data: 4.0.0
