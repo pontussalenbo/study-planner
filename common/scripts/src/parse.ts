@@ -36,9 +36,8 @@ const readCourseData = (
  * @returns Array of period objects for a course.
  */
 function findCoursePeriods(timePlans: TimePlan[]) {
-	const [firstTimePlan, ...rest] = timePlans;
 	/* The course is a degree project, thus can be conducted at any time between two periods */
-	if (firstTimePlan !== null && rest.every(timePlan => timePlan === null)) {
+	if (timePlans[0].studyPeriods.every(timePlan => timePlan === null)) {
 		return DEGREE_PROJECT_PERIODS;
 	}
 
