@@ -48,3 +48,4 @@ __queuestorage__
 local.settings.json
 test
 heroku_release.*
+check_rows.bat
