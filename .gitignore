@@ -47,3 +47,4 @@ __blobstorage__
 __queuestorage__
 local.settings.json
 test
+heroku_release.*

@@ -5,9 +5,10 @@
 	"main": "index.js",
 	"scripts": {
 		"build": "lerna run build",
-		"db:cli": "ts-node ./scripts/cli.ts",
-		"db:update": "ts-node ./scripts/ftp.ts",
-		"courses": "ts-node ./scripts/getCourses.ts"
+		"db:cli": "ts-node ./scripts/src/cli.ts",
+		"db:update": "ts-node ./scripts/src/update_db.ts",
+		"db:ftp": "ts-node ./scripts/src/ftp.ts",
+		"courses": "ts-node ./scripts/src/getCourses.ts"
 	},
 	"author": "",
 	"license": "ISC",

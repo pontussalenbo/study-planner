@@ -9,6 +9,7 @@ import {
 } from './API';
 import m from '../all.json';
 import { DB_TABLES, FILE_PATHS } from './utils/constants';
+import { exit } from 'process';
 
 type Column = keyof CourseDataWithPeriods;
 type ColumnType = Record<string, string>;
@@ -74,7 +75,7 @@ function parse(data: CourseDataWithClass[]): CourseDataWithPeriods[] {
 
 // Helper to get SQL schema from file.
 const sqlSchema = (table: string) => {
-	const filepath = path.join(
+	const filepath = path.resolve(
 		__dirname,
 		`${FILE_PATHS.DB_TABLES}/${table}.sql`
 	);
@@ -238,19 +239,25 @@ const output = (sqlInserts: string, table: string) => {
 		console.log(
 			`Writing to file for table: ${FILE_PATHS.DB_DATA_OUT_DIR}`
 		);
-		const filepath = `${FILE_PATHS.DB_DATA_OUT_DIR}/${table}.sql`;
+
+		const dir = path.resolve(__dirname, `${FILE_PATHS.DB_DATA_OUT_DIR}`);
+		console.log(dir);
+
+		const filepath = path.resolve(dir, `${table}.sql`);
+
 		console.log(`Writing to file: ${filepath}`);
 
-		fs.promises.mkdir(`${FILE_PATHS.DB_DATA_OUT_DIR}`, { recursive: true });
+		fs.promises.mkdir(dir, { recursive: true });
 		// Write to file
 		fs.promises.writeFile(
-			`${FILE_PATHS.DB_DATA_OUT_DIR}/${table}.sql`,
+			filepath,
 			sqlInserts,
 			{ encoding: ENCODING }
 		);
 	} catch (err) {
 		console.error('Error writing to file for table: ' + table + '\n');
 		console.error(err);
+		exit(1);
 	}
 };
 

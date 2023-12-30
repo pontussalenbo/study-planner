@@ -12,11 +12,17 @@ export const DB_TABLES = [
 
 export const DB_FILE_NAME = 'study-planner.db';
 
+const DB_TABLES_DIR = '../db/tables';
+const DB_TABLES_MAPPINGS = DB_TABLES_DIR + '/mappings';
+const DB_DATA_OUT_DIR = '../db/data';
+
+
 export const FILE_PATHS = {
-    DB_TABLES: 'db/tables',
-    DB_TABLES_MAPPINGS: 'db/tables/mappings',
-    DB_DATA_OUT_DIR: 'db/data',
-};
+    DB_TABLES: DB_TABLES_DIR,
+    DB_TABLES_MAPPINGS,
+    DB_DATA_OUT_DIR,
+}
+
 
 export const START_YEAR = 2007;
 export const END_YEAR = new Date().getFullYear() - 1;

@@ -21,11 +21,6 @@ export interface StudyPlan {
     studyPlanId?: string;
     customCourses?: PlanCourse[];
 }
-
-export async function savePlan(plan: StudyPlan): Promise<SavePlanResponse> {
-    return POST<SavePlanResponse>(Endpoints.savePlan, plan);
-}
-
 export interface StudyPlanCourse {
     courseCode: string;
     period: API.Period;
@@ -58,4 +53,8 @@ export async function getPlan(
     );
 
     return plan || emptyPlan;
+}
+
+export async function savePlan(plan: StudyPlan): Promise<SavePlanResponse> {
+    return POST<SavePlanResponse>(Endpoints.savePlan, plan);
 }
