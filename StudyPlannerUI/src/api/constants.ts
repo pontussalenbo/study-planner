@@ -2,9 +2,9 @@ export const CREDITS_TOTAL_KEY = 'General';
 export const MASTERS_SUMMARY_NAME = 'summary';
 
 const DEV_URL = 'https://localhost:7266/studyplanner';
-const PROD_URL = 'https://study-planner-api.azurewebsites.net/studyplanner';
+const PROD_URL = 'https://studyplanner-api-5b6c45da61c3.herokuapp.com/studyplanner';
 
-export const BASE_URL = process.env.NODE_ENV === 'development' ? DEV_URL : PROD_URL;
+export const BASE_URL = process.env.NODE_ENV === 'production' ? PROD_URL : DEV_URL;
 
 export const Endpoints = {
     courses: '/courses',
