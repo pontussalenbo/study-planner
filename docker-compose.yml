@@ -5,13 +5,12 @@ services:
     build:
       context: .
       dockerfile: StudyPlannerAPI/Dockerfile
-    ports:
-      - "8000:80"  # Expose the app on port 8000
     volumes:
       - ./StudyPlannerAPI:/app  # Mount the app directory
     environment:
-      - ASPNETCORE_ENVIRONMENT=Development
-      - ConnectionStrings__DefaultConnection=Host=db;Database=studyplanner;Username=postgres;Password=secret
+      - PORT=5000
+      - ASPNETCORE_URLS=http://*:$PORT
+      - ASPNETCORE_ENVIRONMENT=Production
     networks:
       - app-network
     depends_on:

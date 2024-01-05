@@ -1,0 +1,17 @@
+# Use the official image as a parent image
+FROM mcr.microsoft.com/dotnet/sdk:7.0 AS base
+
+ENV ASPNETCORE_Kestrel__Certificates__Default__Password="secret"
+ENV ASPNETCORE_Kestrel__Certificates__Default__Path=/https/aspnetapp.pfx
+
+# Set the working directory
+WORKDIR /App2
+
+# Copy the project file
+COPY ["StudyPlannerAPI", "./"]
+
+# Restore dependencies
+RUN dotnet restore
+
+# Start the app
+CMD ["dotnet", "watch", "run"]

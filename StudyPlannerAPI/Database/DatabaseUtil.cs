@@ -20,9 +20,12 @@ public static class DatabaseUtil
         IConfiguration configuration,
         string connectionStringParam)
     {
-        var connectionString = configuration[connectionStringParam] ??
+        var databaseUrl = Environment.GetEnvironmentVariable(Constants.DATABASE_URL) ??
                                throw new ConfigurationErrorsException(
                                    ErrorUtil.ConfigurationParam(connectionStringParam));
+        var uri = new Uri(databaseUrl);
+        var userInfo = uri.UserInfo.Split(':');
+        var connectionString = $"Host={uri.Host};Port={uri.Port};Database={uri.AbsolutePath[1..]};Username={userInfo[0]};Password={userInfo[1]}";
         databaseManager.SetConnectionString(connectionString);
         return databaseManager;
     }

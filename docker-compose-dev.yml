@@ -1,0 +1,18 @@
+version: '3.8'
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: StudyPlannerAPI/Dockerfile.dev
+    ports:
+      - "5085:5085"
+      - "7266:7266"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - DATABASE_URL=postgress://postgres:secret@db:5432/studyplanner
+    volumes:
+      - .:/app
+      - ~/.nuget/packages:/root/.nuget/packages
+      - ~/.aspnet/https:/https
+    command: ["dotnet", "watch", "run"]

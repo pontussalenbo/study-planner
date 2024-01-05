@@ -9,6 +9,7 @@ internal class Constants
     public const string ORIGINS = "Origins";
 
     public const string CONNECTION_STRING = "ConnectionString";
+    public const string DATABASE_URL = "DATABASE_URL";
     public const string CONNECTION_STRING_PREFIX = "Data Source=";
 
     public const string LEVEL = "level";

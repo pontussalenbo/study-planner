@@ -221,6 +221,7 @@ public class LinkShareManager : ILinkShareManager
         var query = new Query(Tables.STUDY_PLAN)
             .Select(Columns.STUDY_PLAN_READ_ONLY_ID)
             .Where(Columns.STUDY_PLAN_ID, studyPlanId);
+        logger.LogInformation("Getting read only id for plan with id: {id}", studyPlanId);
         var result = await db.ExecuteQuery<string>(query);
         return result.FirstOrDefault(string.Empty);
     }

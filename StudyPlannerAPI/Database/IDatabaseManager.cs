@@ -35,7 +35,7 @@ public interface IDatabaseManager
     /// <param name="connectionString"></param>
     void SetConnectionString(string connectionString)
     {
-        Connection.ConnectionString = $"{Constants.CONNECTION_STRING_PREFIX}{connectionString}";
+        Connection.ConnectionString = connectionString;
     }
 
     /// <summary>

@@ -24,10 +24,11 @@ public class App
             app.UseSwagger();
             app.UseSwaggerUI();
         }
+        Console.WriteLine(Environment.GetEnvironmentVariable("PORT"));
+        app.UseHttpsRedirection();
 
         app.UseCors(Constants.CORS_POLICY);
 
-        app.UseHttpsRedirection();
         app.UseAuthorization();
 
         app.MapControllers();
