@@ -241,7 +241,6 @@ const output = (sqlInserts: string, table: string) => {
 		);
 
 		const dir = path.resolve(__dirname, `${FILE_PATHS.DB_DATA_OUT_DIR}`);
-		console.log(dir);
 
 		const filepath = path.resolve(dir, `${table}.sql`);
 

@@ -12,9 +12,9 @@ export const DB_TABLES = [
 
 export const DB_FILE_NAME = 'study-planner.db';
 
-const DB_TABLES_DIR = '../db/tables';
+const DB_TABLES_DIR = '../../db/tables';
 const DB_TABLES_MAPPINGS = DB_TABLES_DIR + '/mappings';
-const DB_DATA_OUT_DIR = '../db/data';
+const DB_DATA_OUT_DIR = '../../db/data';
 
 
 export const FILE_PATHS = {

@@ -1,6 +1,9 @@
-PRAGMA foreign_keys = off;
+BEGIN;
+
+SET CONSTRAINTS ALL DEFERRED;
 
 DROP TABLE IF EXISTS programme_master_course_year;
+
 CREATE TABLE programme_master_course_year(
     course_code TEXT NOT NULL,
     master_code TEXT NOT NULL,
@@ -12,3 +15,5 @@ CREATE TABLE programme_master_course_year(
     FOREIGN KEY (master_code) REFERENCES masters (master_code),
     FOREIGN KEY (programme_code) REFERENCES programmes (programme_code)
 );
+
+COMMIT;
