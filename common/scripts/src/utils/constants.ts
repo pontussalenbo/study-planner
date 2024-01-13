@@ -1,3 +1,23 @@
+/*
+ * Copyright Andreas Bartilson & Pontus Salenbo 2023-2024
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version. See the included LICENSE file for
+ * the full text of the GNU General Public License.
+ */
+
+/*
+ * Copyright Andreas Bartilson & Pontus Salenbo 2023
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version. See the included LICENSE file for
+ * the full text of the GNU General Public License.
+ */
+
 import generateArrayOfYears from './getYears';
 
 export const DB_TABLES = [
@@ -12,7 +32,7 @@ export const DB_TABLES = [
 
 export const DB_FILE_NAME = 'study-planner.db';
 
-const DB_TABLES_DIR = '../../db/tables';
+const DB_TABLES_DIR = '../../db/tables/psql';
 const DB_TABLES_MAPPINGS = DB_TABLES_DIR + '/mappings';
 const DB_DATA_OUT_DIR = '../../db/data';
 

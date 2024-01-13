@@ -1,3 +1,23 @@
+/*
+ * Copyright Andreas Bartilson & Pontus Salenbo 2023-2024
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version. See the included LICENSE file for
+ * the full text of the GNU General Public License.
+ */
+
+/*
+ * Copyright Andreas Bartilson & Pontus Salenbo 2023
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version. See the included LICENSE file for
+ * the full text of the GNU General Public License.
+ */
+
 import * as fs from 'fs';
 import * as path from 'path';
 
@@ -79,8 +99,11 @@ const sqlSchema = (table: string) => {
 		__dirname,
 		`${FILE_PATHS.DB_TABLES}/${table}.sql`
 	);
-	return fs.readFileSync(filepath, { encoding: ENCODING });
-};
+	const fileContent = fs.readFileSync(filepath, { encoding: ENCODING });
+	const commentRegex = /--.*/g;
+
+	return fileContent.replace(commentRegex, '').trimStart();
+}
 
 /**
  * Extracts columns from SQL schema.
@@ -134,7 +157,7 @@ const createSqlInsertStatement = (
 	table: string,
 	columns: Array<Column>
 ): string => {
-	let sqlInsert = `${schema}\nINSERT OR REPLACE INTO ${table}(`;
+	let sqlInsert = `${schema}\nINSERT INTO ${table}(`;
 	sqlInsert += columns.join(', ') + ') VALUES\n';
 	return sqlInsert;
 };
