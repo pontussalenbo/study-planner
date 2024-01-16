@@ -1,3 +1,13 @@
+<!--
+  ~ Copyright Andreas Bartilson & Pontus Salenbo 2023-2024
+  ~
+  ~ This program is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU General Public License as published by
+  ~ the Free Software Foundation, either version 3 of the License, or
+  ~ (at your option) any later version. See the included LICENSE file for
+  ~ the full text of the GNU General Public License.
+-->
+
 <p align="center">
   <a href="https://studyplanner.se"><img src="https://github-production-user-asset-6210df.s3.amazonaws.com/45301555/242436813-54269264-13b7-42db-af82-47c39b48c8ba.svg?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAIWNJYAX4CSVEH53A%2F20230531%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20230531T233337Z&X-Amz-Expires=300&X-Amz-Signature=7db8c76f354b49d5c5bdeb4c74c91302bb98732bd8f359266853710197aff43e&X-Amz-SignedHeaders=host&actor_id=45301555&key_id=0&repo_id=590166546" alt="Logo" height=170></a>
 </p>
