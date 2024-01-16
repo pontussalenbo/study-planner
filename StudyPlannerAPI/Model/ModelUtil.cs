@@ -8,7 +8,7 @@
  * the full text of the GNU General Public License.
  */
 
-﻿using System.Text.RegularExpressions;
+using System.Text.RegularExpressions;
 using StudyPlannerAPI.Database;
 
 namespace StudyPlannerAPI.Model;

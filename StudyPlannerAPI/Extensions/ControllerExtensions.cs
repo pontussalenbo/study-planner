@@ -8,7 +8,7 @@
  * the full text of the GNU General Public License.
  */
 
-﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc;
 
 namespace StudyPlannerAPI.Extensions;
 

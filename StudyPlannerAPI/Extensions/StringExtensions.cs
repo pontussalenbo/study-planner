@@ -8,7 +8,7 @@
  * the full text of the GNU General Public License.
  */
 
-﻿using System.Globalization;
+using System.Globalization;
 
 namespace StudyPlannerAPI.Extensions;
 

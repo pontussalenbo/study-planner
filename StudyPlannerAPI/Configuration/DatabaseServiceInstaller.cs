@@ -1,4 +1,4 @@
-/*
+﻿/*
  * Copyright Andreas Bartilson & Pontus Salenbo 2023-2024
  *
  * This program is free software: you can redistribute it and/or modify
@@ -8,7 +8,7 @@
  * the full text of the GNU General Public License.
  */
 
-﻿using System.Data;
+using System.Data;
 using Npgsql;
 using SqlKata.Compilers;
 using StudyPlannerAPI.Database;

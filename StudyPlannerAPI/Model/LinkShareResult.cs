@@ -8,7 +8,7 @@
  * the full text of the GNU General Public License.
  */
 
-﻿using System.Text.Json.Serialization;
+using System.Text.Json.Serialization;
 using StudyPlannerAPI.Database.DTO;
 
 namespace StudyPlannerAPI.Model;

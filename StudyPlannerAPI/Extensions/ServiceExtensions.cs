@@ -8,7 +8,7 @@
  * the full text of the GNU General Public License.
  */
 
-﻿using System.Reflection;
+using System.Reflection;
 using StudyPlannerAPI.Configuration;
 
 namespace StudyPlannerAPI.Extensions;

@@ -8,7 +8,7 @@
  * the full text of the GNU General Public License.
  */
 
-﻿using System.Text.Json.Serialization;
+using System.Text.Json.Serialization;
 
 #pragma warning disable IDE1006
 namespace StudyPlannerAPI.Database.DTO;

@@ -8,7 +8,7 @@
  * the full text of the GNU General Public License.
  */
 
-﻿using FluentValidation;
+using FluentValidation;
 using Microsoft.AspNetCore.Mvc;
 using StudyPlannerAPI.Controllers.Params;
 using StudyPlannerAPI.Database.DTO;
@@ -91,7 +91,7 @@ public class GeneralController : ControllerBase
     public async Task<IActionResult> GetMastersByProgramme([FromQuery] string programme, [FromQuery] string year)
     {
         var validationResult = await validator.ValidateAsync(new ProgrammeMastersParams
-            { Programme = programme, Year = year });
+        { Programme = programme, Year = year });
         if (validationResult.IsValid)
         {
             return await this.PerformEndpointAction(async () => await generalInfoManager.GetMasters(programme, year),

@@ -8,7 +8,7 @@
  * the full text of the GNU General Public License.
  */
 
-﻿namespace StudyPlannerAPI.Error;
+namespace StudyPlannerAPI.Error;
 
 internal static class ErrorCodes
 {

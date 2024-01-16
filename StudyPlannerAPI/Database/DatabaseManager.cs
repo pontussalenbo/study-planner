@@ -8,7 +8,7 @@
  * the full text of the GNU General Public License.
  */
 
-﻿using System.Data;
+using System.Data;
 using SqlKata;
 using SqlKata.Compilers;
 using SqlKata.Execution;

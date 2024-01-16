@@ -8,7 +8,7 @@
  * the full text of the GNU General Public License.
  */
 
-﻿using FluentValidation;
+using FluentValidation;
 using StudyPlannerAPI.Database.DTO;
 using StudyPlannerAPI.Error;
 using StudyPlannerAPI.Extensions;

@@ -8,7 +8,7 @@
  * the full text of the GNU General Public License.
  */
 
-﻿using StudyPlannerAPI.Database;
+using StudyPlannerAPI.Database;
 
 namespace StudyPlannerAPI.Model;
 

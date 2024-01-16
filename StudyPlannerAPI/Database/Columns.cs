@@ -8,7 +8,7 @@
  * the full text of the GNU General Public License.
  */
 
-﻿namespace StudyPlannerAPI.Database;
+namespace StudyPlannerAPI.Database;
 
 internal static class Columns
 {

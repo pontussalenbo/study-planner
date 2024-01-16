@@ -8,7 +8,7 @@
  * the full text of the GNU General Public License.
  */
 
-﻿namespace StudyPlannerAPI.Model;
+namespace StudyPlannerAPI.Model;
 
 /// <summary>
 ///     Interface for the health check service

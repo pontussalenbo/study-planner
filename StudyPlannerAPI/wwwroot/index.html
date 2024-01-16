@@ -15,7 +15,7 @@
     <title>Study-planner status</title>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script>
-        function checkStatus() {
+        (function checkStatus() {
             $.ajax({
                 url: "/studyplanner/health",
                 type: "GET",
@@ -26,7 +26,7 @@
                     $("#status").text(textStatus);
                 }
             });
-        }
+        })();
     </script>
 </head>
 

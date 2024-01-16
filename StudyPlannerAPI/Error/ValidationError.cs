@@ -8,7 +8,7 @@
  * the full text of the GNU General Public License.
  */
 
-﻿#pragma warning disable IDE1006
+#pragma warning disable IDE1006
 namespace StudyPlannerAPI.Error;
 
 /// <summary>

@@ -8,7 +8,7 @@
  * the full text of the GNU General Public License.
  */
 
-﻿namespace StudyPlannerAPI.Configuration;
+namespace StudyPlannerAPI.Configuration;
 
 internal interface IServiceInstaller
 {

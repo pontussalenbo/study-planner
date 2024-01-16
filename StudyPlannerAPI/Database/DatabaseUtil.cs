@@ -8,7 +8,7 @@
  * the full text of the GNU General Public License.
  */
 
-﻿using System.Configuration;
+using System.Configuration;
 using StudyPlannerAPI.Error;
 
 namespace StudyPlannerAPI.Database;
