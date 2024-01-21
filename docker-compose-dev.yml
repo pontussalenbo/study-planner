@@ -22,8 +22,11 @@ services:
     volumes:
       - ./StudyPlannerAPI:/backend
       - ~/.nuget/packages:/root/.nuget/packages
-      - ~/.aspnet/https:/https
+      - ${WINDOWS_HOME}/.aspnet/https:/https
     command: ["dotnet", "watch", "run"]
+    depends_on:
+      - db
+
   frontend:
     build:
       context: .
@@ -35,3 +38,30 @@ services:
     volumes:
       - ./StudyPlannerUI:/app
       - /app/node_modules
+
+  pgadmin:
+    image: dpage/pgadmin4
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@email.com
+      PGADMIN_DEFAULT_PASSWORD: password
+    # env_file: .env
+    depends_on:
+      - db
+    ports:
+      - 5050:80
+
+  db:
+    image: postgres:16
+    environment:
+      POSTGRES_DB: studyplanner
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: secret
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    networks:
+      - app-network
+    ports:
+      - "5432:5432"
+
+volumes:
+  postgres-data:

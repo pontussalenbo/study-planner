@@ -16,11 +16,44 @@
 
 [!["Buy Me A Coffee"](https://www.buymeacoffee.com/assets/img/custom_images/orange_img.png)](https://www.buymeacoffee.com/studyplannerLTH)
 
-
-
 ## About
+>
 > When we sat down and tried to plan our master years here at LTH, we found the process to be mildly (very) confusing and tedious (endless soup of excel sheets...). Taking into account the rules of what courses may be included, the credits and level requirements, AND on top of that finding interesting courses to fill up the entire years in order to construct a comprehensive schedule!?
 
 So basically, we built an app to simplify the process of planning your masters studies, hopefully making the average LTH student's life easier :)
 
-This project is devolped and maintained by [Pontus Salenbo](https://github.com/pontussalenbo) and [Andreas Bartilson](https://github.com/IIAndreasII), it is idealistic, non-profit and open-source. We are not affiliated with Lund University or LTH in any way. We are just a couple of students who want to help other students. If you like the application and want to support us with the fees associated with hosting, domain etc. please consider buying us a coffee! :)
+This project is devolped and maintained by [Pontus Salenbo](https://github.com/pontussalenbo) and [Andreas Bartilson](https://github.com/IIAndreasII), it is idealistic, non-profit and open-source. We are not affiliated with Lund University or LTH in any way.
+
+ We are just a couple of students who want to help other students. If you like the application and want to support us with the fees associated with hosting, domain etc. please consider buying us a coffee! :)
+
+## Getting Started
+
+This project is based on React and TypeScript for the UI and C# dotnet for the backend. The easiest way to get started is to use Docker to set up the complete runtime environment. This requires you to have [Docker](https://www.docker.com/) installed locally on your machine.
+
+To get started with Docker, run the following in your terminal of choice:
+
+```bash
+source common/scripts/env.sh
+```
+
+And you should be good to go! The frontend application should now be running on [localhost:5173](http://localhost:5173/) whereas the backend should be running the HTTP instance on [http://localhost:5085](http://localhost:5085/) and the HTTPS on [https://localhost:7266](https://localhost:7266).
+
+If you want to run the application locally without Docker, you need to set up the runtime environment yourself. See the [Prerequisites]((#prerequisites)) section for more information.
+
+### Prerequisites
+
+* [Node.js](https://nodejs.org/en/) - JavaScript runtime environment
+* [pnpm](https://pnpm.js.org/) - Package manager used for frontend
+* [PostgreSQL](https://www.postgresql.org/) - Open source relational database used for backend
+* [Docker](https://www.docker.com/) - Containerization platform used for setting up the complete runtime environment
+* [PGAdmin](https://www.pgadmin.org/) - PostgreSQL administration and development platform. GUI for the database (optional)
+
+**HINT**: For Installing pnpm, run the following in your terminal of choice:
+
+```bash
+npm install -g pnpm
+```
+
+### License
+
+StudyPlanner is [GPL licensed](./LICENSE).

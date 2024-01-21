@@ -16,10 +16,13 @@ ENV ASPNETCORE_Kestrel__Certificates__Default__Path=/https/aspnetapp.pfx
 WORKDIR /backend
 
 # Copy the project file
-COPY ["StudyPlannerAPI", "./"]
+COPY ["StudyPlannerAPI/StudyPlannerAPI.csproj", "./"]
 
 # Restore dependencies
 RUN dotnet restore
+
+# Copy the rest of the code
+COPY ["StudyPlannerAPI", "./"]
 
 # Start the app
 CMD ["dotnet", "watch", "run"]

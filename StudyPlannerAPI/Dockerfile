@@ -7,17 +7,22 @@
 # the full text of the GNU General Public License.
 
 FROM mcr.microsoft.com/dotnet/sdk:7.0 AS build-env
-WORKDIR /backend
+WORKDIR /App
 
-# Copy everything
-COPY ["StudyPlannerAPI", "./"]
+# Copy the project file
+COPY ["StudyPlannerAPI/StudyPlannerAPI.csproj", "./"]
+
 # Restore as distinct layers
 RUN dotnet restore
+
+# Copy the rest of the code
+COPY ["StudyPlannerAPI", "./"]
+
 # Build and publish a release
 RUN dotnet publish -c Release -o out
 
 # Build runtime image
 FROM mcr.microsoft.com/dotnet/aspnet:7.0
-WORKDIR /backend
+WORKDIR /App
 COPY --from=build-env /App/out .
-ENTRYPOINT ["dotnet", "StudyPlannerAPI.dll"]
+CMD ASPNETCORE_URLS=http://*:$PORT dotnet StudyPlannerAPI.dll
