@@ -5,8 +5,7 @@
 	"scripts": {
 		"build": "rimraf dist && tsc -b",
 		"db:cli": "ts-node ./src/cli.ts",
-		"courses": "ts-node ./src/getCourses.ts --run",
-		"postbuild": "node postbuild.js"
+		"courses": "ts-node ./src/getCourses.ts"
 	},
 	"keywords": [],
 	"author": "",

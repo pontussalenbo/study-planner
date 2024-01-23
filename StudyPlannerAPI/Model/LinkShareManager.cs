@@ -1,4 +1,14 @@
-﻿using Microsoft.AspNetCore.Mvc;
+/*
+ * Copyright Andreas Bartilson & Pontus Salenbo 2023-2024
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version. See the included LICENSE file for
+ * the full text of the GNU General Public License.
+ */
+
+using Microsoft.AspNetCore.Mvc;
 using SqlKata;
 using StudyPlannerAPI.Database;
 using StudyPlannerAPI.Database.DTO;
@@ -221,6 +231,7 @@ public class LinkShareManager : ILinkShareManager
         var query = new Query(Tables.STUDY_PLAN)
             .Select(Columns.STUDY_PLAN_READ_ONLY_ID)
             .Where(Columns.STUDY_PLAN_ID, studyPlanId);
+        logger.LogInformation("Getting read only id for plan with id: {id}", studyPlanId);
         var result = await db.ExecuteQuery<string>(query);
         return result.FirstOrDefault(string.Empty);
     }

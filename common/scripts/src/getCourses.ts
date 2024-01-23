@@ -1,7 +1,17 @@
+/*
+ * Copyright Andreas Bartilson & Pontus Salenbo 2023-2024
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version. See the included LICENSE file for
+ * the full text of the GNU General Public License.
+ */
+
 /* eslint-disable no-shadow */
 import axios from 'axios';
-import * as path from 'path';
-import * as fs from 'fs';
+import path from 'path';
+import fs from 'fs';
 import { CourseData } from './API';
 
 interface Query {
@@ -9,6 +19,7 @@ interface Query {
 	kull: string;
 }
 
+// All programme codes to fetch courses for.
 const programmeCode = [
 	'B',
 	'C',
@@ -25,6 +36,8 @@ const programmeCode = [
 	'V',
 	'W',
 ];
+
+// All classes to fetch courses for.
 const classes = [
 	'H10',
 	'H11',
@@ -38,16 +51,35 @@ const classes = [
 	'H19',
 	'H20',
 ];
-const delayBetweenRequests = 500;
 
+// Time to wait between requests to the LTH API.
+const delayBetweenRequests = 500;
+const LTH_API_URL = 'https://api.lth.lu.se/lot/courses';
+/**
+ * Fetches course data from the LTH API for a given programme and class.
+ * @param queryObj query parameters for the LTH API.
+ * @returns an array of course data.
+ */
 async function getCourses(queryObj: Partial<Query>) {
-	const queryParams = Object.keys(queryObj) as Array<keyof Query>;
-	const queries = queryParams.map(key => `${key}=${queryObj[key]}`).join('&');
-	const url = `https://api.lth.lu.se/lot/courses?${queries}}`;
+	const queryParams = Object.entries(queryObj)
+		.map(([key, value]) => `${key}=${value}`)
+		.join('&');
+
+	const url = `${LTH_API_URL}?${queryParams}}`;
+
 	const resp = await axios.get<CourseData[]>(url);
+
 	return resp.data;
 }
 
+/**
+ * Fetches course data for a given programme and class.
+ * Helper function for {@linkcode fetchByClass}.
+ *
+ * @param programmeCode the programme code.
+ * @param kull the class to fetch courses for (e.g H19).
+ * @returns an array of course data.
+*/
 const fetchCourseData = async (programmeCode: string, kull: string) => {
 	console.log(
 		`Retrieving course data for programme: ${programmeCode} and class: ${kull}...`
@@ -69,6 +101,16 @@ const fetchCourseData = async (programmeCode: string, kull: string) => {
 	}
 };
 
+/**
+ * Fetches course data for a given programme and class.
+ *
+ * Wrapper for {@linkcode fetchCourseData} which waits a given amount of time
+ * between requests to avoid overloading the LTH API.
+ *
+ * @param programme the programme code.
+ * @param clazz the class to fetch courses for (e.g H19).
+ * @returns an promise which resolves to an array of course data.
+ */
 const fetchByClass = async (programme: string, clazz: string) =>
 	new Promise((resolve, reject) => {
 		const intervalId = setTimeout(async () => {
@@ -86,6 +128,11 @@ const fetchByClass = async (programme: string, clazz: string) =>
 		}, delayBetweenRequests);
 	});
 
+/**
+ * Gets course data for all classes in a given programme.
+ * @param programme the programme code.
+ * @returns an array of promises which resolve to course data.
+ */
 const getCoursesByProgramme = (programme: string) =>
 	classes.map(kull => fetchByClass(programme, kull));
 
@@ -107,12 +154,8 @@ export async function main(filePath: string = __dirname) {
 
 	await fs.promises.writeFile(fullPath, json);
 };
-/*
-if (process.argv[2] === '--run') {
-	main();
-}
-*/
 
+// Run the script if it is called directly. (i.e not imported, but invoked by `node getCourse.ts`)
 if (require.main === module) {
 	main();
 }

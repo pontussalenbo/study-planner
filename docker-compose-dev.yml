@@ -1,0 +1,70 @@
+# Copyright Andreas Bartilson & Pontus Salenbo 2023-2024
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version. See the included LICENSE file for
+# the full text of the GNU General Public License.
+
+version: '3.8'
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: StudyPlannerAPI/Dockerfile.dev
+      args:
+        - DOTNET_CERT_PASSWORD=${DOTNET_CERT_PASSWORD}
+    ports:
+      - "5085:5085"
+      - "7266:7266"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - DATABASE_URL=postgress://postgres:secret@db:5432/studyplanner
+      - DOTNET_CERT_PASSWORD=${DOTNET_CERT_PASSWORD}
+    volumes:
+      - ./StudyPlannerAPI:/backend
+      - ~/.nuget/packages:/root/.nuget/packages
+      - ~/.aspnet/https:/https
+    command: ["dotnet", "watch", "run"]
+    depends_on:
+      - db
+
+  frontend:
+    build:
+      context: .
+      dockerfile: StudyPlannerUI/Dockerfile.dev
+    environment:
+      - NODE_ENV=development
+    ports:
+      - "5173:5173"
+    volumes:
+      - ./StudyPlannerUI:/app
+      - /app/node_modules
+
+  pgadmin:
+    image: dpage/pgadmin4
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@email.com
+      PGADMIN_DEFAULT_PASSWORD: password
+    # env_file: .env
+    depends_on:
+      - db
+    ports:
+      - 5050:80
+
+  db:
+    image: postgres:16
+    environment:
+      POSTGRES_DB: studyplanner
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: secret
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    networks:
+      - app-network
+    ports:
+      - "5432:5432"
+
+volumes:
+  postgres-data:

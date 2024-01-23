@@ -1,4 +1,14 @@
-﻿using System.Data;
+/*
+ * Copyright Andreas Bartilson & Pontus Salenbo 2023-2024
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version. See the included LICENSE file for
+ * the full text of the GNU General Public License.
+ */
+
+using System.Data;
 using SqlKata;
 
 namespace StudyPlannerAPI.Database;
@@ -35,7 +45,7 @@ public interface IDatabaseManager
     /// <param name="connectionString"></param>
     void SetConnectionString(string connectionString)
     {
-        Connection.ConnectionString = $"{Constants.CONNECTION_STRING_PREFIX}{connectionString}";
+        Connection.ConnectionString = connectionString;
     }
 
     /// <summary>

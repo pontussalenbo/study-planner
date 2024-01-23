@@ -1,0 +1,31 @@
+# Copyright Andreas Bartilson & Pontus Salenbo 2023-2024
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version. See the included LICENSE file for
+# the full text of the GNU General Public License.
+
+# Use the official image as a parent image
+FROM mcr.microsoft.com/dotnet/sdk:7.0 AS base
+
+ARG DOTNET_CERT_PASSWORD
+ENV DOTNET_CERT_PASSWORD=${DOTNET_CERT_PASSWORD}
+
+ENV ASPNETCORE_Kestrel__Certificates__Default__Password=${DOTNET_CERT_PASSWORD}
+ENV ASPNETCORE_Kestrel__Certificates__Default__Path=/https/aspnetapp.pfx
+
+# Set the working directory
+WORKDIR /backend
+
+# Copy the project file
+COPY ["StudyPlannerAPI/StudyPlannerAPI.csproj", "./"]
+
+# Restore dependencies
+RUN dotnet restore
+
+# Copy the rest of the code
+COPY ["StudyPlannerAPI", "./"]
+
+# Start the app
+CMD ["dotnet", "watch", "run"]

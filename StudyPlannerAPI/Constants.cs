@@ -1,4 +1,14 @@
-﻿namespace StudyPlannerAPI;
+/*
+ * Copyright Andreas Bartilson & Pontus Salenbo 2023-2024
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version. See the included LICENSE file for
+ * the full text of the GNU General Public License.
+ */
+
+namespace StudyPlannerAPI;
 
 internal class Constants
 {
@@ -9,6 +19,7 @@ internal class Constants
     public const string ORIGINS = "Origins";
 
     public const string CONNECTION_STRING = "ConnectionString";
+    public const string DATABASE_URL = "DATABASE_URL";
     public const string CONNECTION_STRING_PREFIX = "Data Source=";
 
     public const string LEVEL = "level";

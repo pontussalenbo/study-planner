@@ -1,0 +1,47 @@
+# Copyright Andreas Bartilson & Pontus Salenbo 2023-2024
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version. See the included LICENSE file for
+# the full text of the GNU General Public License.
+
+version: '3.8'
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: StudyPlannerAPI/Dockerfile
+    volumes:
+      - ./StudyPlannerAPI:/backend  # Mount the app directory
+    environment:
+      - ASPNETCORE_URLS=http://*:$PORT
+      - ASPNETCORE_ENVIRONMENT=Production
+      - DATABASE_URL=postgres://postgres:secret@db:5432/studyplanner
+    ports:
+      - "5000:80"
+    networks:
+      - app-network
+    depends_on:
+      - db
+
+  db:
+    image: postgres:16
+    environment:
+      POSTGRES_DB: studyplanner
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: secret
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    networks:
+      - app-network
+    ports:
+      - "5432:5432"
+
+volumes:
+  postgres-data:
+
+networks:
+  app-network:
+    driver: bridge

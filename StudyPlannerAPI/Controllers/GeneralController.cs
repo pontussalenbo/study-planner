@@ -1,4 +1,14 @@
-﻿using FluentValidation;
+/*
+ * Copyright Andreas Bartilson & Pontus Salenbo 2023-2024
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version. See the included LICENSE file for
+ * the full text of the GNU General Public License.
+ */
+
+using FluentValidation;
 using Microsoft.AspNetCore.Mvc;
 using StudyPlannerAPI.Controllers.Params;
 using StudyPlannerAPI.Database.DTO;
@@ -81,7 +91,7 @@ public class GeneralController : ControllerBase
     public async Task<IActionResult> GetMastersByProgramme([FromQuery] string programme, [FromQuery] string year)
     {
         var validationResult = await validator.ValidateAsync(new ProgrammeMastersParams
-            { Programme = programme, Year = year });
+        { Programme = programme, Year = year });
         if (validationResult.IsValid)
         {
             return await this.PerformEndpointAction(async () => await generalInfoManager.GetMasters(programme, year),

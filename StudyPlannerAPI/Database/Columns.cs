@@ -1,9 +1,19 @@
-﻿namespace StudyPlannerAPI.Database;
+/*
+ * Copyright Andreas Bartilson & Pontus Salenbo 2023-2024
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version. See the included LICENSE file for
+ * the full text of the GNU General Public License.
+ */
+
+namespace StudyPlannerAPI.Database;
 
 internal static class Columns
 {
     // Implicit column in each table
-    public const string ROW_ID = "rowid";
+    public const string ROW_ID = "id";
 
     // courses
     public const string COURSE_CODE = "course_code";
@@ -26,7 +36,7 @@ internal static class Columns
     public const string ACADEMIC_YEAR = "academic_year";
 
     // study plan
-    public const string YEAR = "Year";
+    public const string YEAR = "year";
     public const string STUDY_PLAN_ID = "study_plan_id";
     public const string STUDY_PLAN_READ_ONLY_ID = "study_plan_read_only_id";
     public const string STUDY_PLAN_NAME = "study_plan_name";
