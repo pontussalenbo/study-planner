@@ -55,7 +55,7 @@ function doppler_secrets() {
 }
 
 function dotnet_cert_setup() {
-    dotnet dev-certs https -ep ~/.aspnet/https/aspnetapp.pfx -p $DOTNET_CERT_PASSWORD
+    sudo dotnet dev-certs https -ep ~/.aspnet/https/aspnetapp.pfx -p $DOTNET_CERT_PASSWORD
 }
 
 # Start docker containers
@@ -86,6 +86,10 @@ if [ $EXIT_CODE -eq 1 ]; then
     echo "docker-compose failed with exit code $EXIT_CODE, is Docker running?\n"
     echo "HINT: If you are running Docker on Windows, make sure that Docker Desktop is running."
 fi
+}
+
+function docker_start() {
+    start_docker()
 }
 
 # Push Docker image to Heroku
