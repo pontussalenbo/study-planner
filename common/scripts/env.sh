@@ -25,18 +25,42 @@ NPM_SCRIPTS_DIR="$BUILD_TOP/common"
 # Load environment variables from .env file
 source .env
 
+# Create symbolic link to internal repo if running on Windows
+# Needed for VS Code to show the internal repo in the file explorer
+if command -v powershell.exe >/dev/null 2>&1; then
+    powershell.exe -Command "Start-Process PowerShell -ArgumentList '-NoProfile -ExecutionPolicy Bypass -Command \"cd $(wslpath -w $(pwd)); New-Item -ItemType SymbolicLink -Path internal -Target ../study-planner-internal\"' -Verb RunAs"
+else
+    ln -s  $BUILD_TOP/../study-planner-internal $BUILD_TOP/internal
+fi
+
+# Display help regarding the functions in this script
+function env_help() {
+
+cat <<EOF
+
+Invoke "source common/script/env.sh" from your shell to add the following functions to your environment:
+
+- doppler_secrets:    Download secrets from Doppler and save them to .env file.
+- dotnet_cert_setup:  Setup .NET Core HTTPS development certificate.
+- start_docker:       Start Docker containers (--dev) or (--prod).
+- heroku_release:     Push Docker image to Heroku PRODUCTION.
+- update_db:          Run database update scripts.
+
+EOF
+}
+
 # Download secrets from Doppler and save them to .env file
 function doppler_secrets() {
     doppler secrets download --no-file --format env > .env
 }
 
+function dotnet_cert_setup() {
+    dotnet dev-certs https -ep ~/.aspnet/https/aspnetapp.pfx -p $DOTNET_CERT_PASSWORD
+}
+
 # Start docker containers
 # $1: --dev or --prod - which compose file to use (dev or prod mode)
 function start_docker() {
-
-    if [ -z "$1" ]; then
-        echo "Invalid argument, please use --dev or --prod flag when running."
-    fi
 
     # Check if argument is --prod
     if [ "$1" == "--prod" ]; then
@@ -55,6 +79,13 @@ function start_docker() {
     echo "Using compose file(s): $COMPOSE_FILE"
 
     docker-compose -f $COMPOSE_FILE up --build
+
+    EXIT_CODE=$?
+
+if [ $EXIT_CODE -eq 1 ]; then
+    echo "docker-compose failed with exit code $EXIT_CODE, is Docker running?\n"
+    echo "HINT: If you are running Docker on Windows, make sure that Docker Desktop is running."
+fi
 }
 
 # Push Docker image to Heroku

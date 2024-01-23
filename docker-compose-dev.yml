@@ -13,16 +13,19 @@ services:
     build:
       context: .
       dockerfile: StudyPlannerAPI/Dockerfile.dev
+      args:
+        - DOTNET_CERT_PASSWORD=${DOTNET_CERT_PASSWORD}
     ports:
       - "5085:5085"
       - "7266:7266"
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
       - DATABASE_URL=postgress://postgres:secret@db:5432/studyplanner
+      - DOTNET_CERT_PASSWORD=${DOTNET_CERT_PASSWORD}
     volumes:
       - ./StudyPlannerAPI:/backend
       - ~/.nuget/packages:/root/.nuget/packages
-      - ${WINDOWS_HOME}/.aspnet/https:/https
+      - ~/.aspnet/https:/https
     command: ["dotnet", "watch", "run"]
     depends_on:
       - db

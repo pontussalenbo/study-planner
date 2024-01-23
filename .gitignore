@@ -41,7 +41,11 @@ dist-ssr
 **/bin/*
 !**/bin/www
 
+# Internal
 common/**/data/
+internal/*
+internal
+
 .eslintcache
 coverage
 **/.env
@@ -49,7 +53,6 @@ coverage
 courses.json
 
 # Azure
-
 __azurite_db*__.json
 __blobstorage__
 __queuestorage__

@@ -9,7 +9,10 @@
 # Use the official image as a parent image
 FROM mcr.microsoft.com/dotnet/sdk:7.0 AS base
 
-ENV ASPNETCORE_Kestrel__Certificates__Default__Password="secret"
+ARG DOTNET_CERT_PASSWORD
+ENV DOTNET_CERT_PASSWORD=${DOTNET_CERT_PASSWORD}
+
+ENV ASPNETCORE_Kestrel__Certificates__Default__Password=${DOTNET_CERT_PASSWORD}
 ENV ASPNETCORE_Kestrel__Certificates__Default__Path=/https/aspnetapp.pfx
 
 # Set the working directory
