@@ -14,6 +14,7 @@ fi
 
 BUILD_TOP=$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)
 export BUILD_TOP
+
 # Make sure we are in the root directory no matter where we are running the script from
 cd $BUILD_TOP
 
@@ -49,11 +50,26 @@ Invoke "source common/script/env.sh" from your shell to add the following functi
 EOF
 }
 
-# Download secrets from Doppler and save them to .env file
-function doppler_secrets() {
-    doppler secrets download --no-file --format env > .env
+function _execute_in_build_top() {
+    # Save the current directory
+    local old_dir=$(pwd)
+
+    # Change to the BUILD_TOP directory
+    pushd $BUILD_TOP > /dev/null
+
+    # Execute the function passed as the first argument
+    $1
+
+    # Change back to the old directory
+    popd > /dev/null
 }
 
+# Download secrets from Doppler and save them to .env file
+function doppler_secrets() {
+    _execute_in_build_top doppler secrets download --no-file --format env > .env
+}
+
+# Generate .NET Core HTTPS development certificate
 function dotnet_cert_setup() {
     sudo dotnet dev-certs https -ep ~/.aspnet/https/aspnetapp.pfx -p $DOTNET_CERT_PASSWORD
 }
@@ -61,6 +77,7 @@ function dotnet_cert_setup() {
 # Start docker containers
 # $1: --dev or --prod - which compose file to use (dev or prod mode)
 function start_docker() {
+    pushd $BUILD_TOP > /dev/null
 
     # Check if argument is --prod
     if [ "$1" == "--prod" ]; then
@@ -80,20 +97,23 @@ function start_docker() {
 
     docker-compose -f $COMPOSE_FILE up --build
 
+    popd > /dev/null
+
     EXIT_CODE=$?
 
-if [ $EXIT_CODE -eq 1 ]; then
-    echo "docker-compose failed with exit code $EXIT_CODE, is Docker running?\n"
-    echo "HINT: If you are running Docker on Windows, make sure that Docker Desktop is running."
-fi
+    if [ $EXIT_CODE -eq 1 ]; then
+        echo -e "docker-compose failed with exit code $EXIT_CODE, is Docker running?\n"
+        echo "HINT: If you are running Docker on Windows, make sure that Docker Desktop is running."
+    fi
 }
 
 function docker_start() {
-    start_docker()
+    start_docker $1
 }
 
 # Push Docker image to Heroku
 function heroku_release() {
+    pushd $BUILD_TOP > /dev/null
     echo "Building Docker image..."
     docker-compose build app
 
@@ -120,11 +140,19 @@ function heroku_release() {
     else
         echo "Build failed. Not pushing Docker image."
     fi
+
+    popd > /dev/null
 }
 
 # Run database update scripts
 function update_db() {
     pushd $NPM_SCRIPTS_DIR
     npm run db:cli
+    popd
+}
+
+function fetch_courses() {
+    pushd $NPM_SCRIPTS_DIR
+    npm run courses
     popd
 }

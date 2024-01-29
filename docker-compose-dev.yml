@@ -36,6 +36,7 @@ services:
       dockerfile: StudyPlannerUI/Dockerfile.dev
     environment:
       - NODE_ENV=development
+      - CHOKIDAR_USEPOLLING=true
     ports:
       - "5173:5173"
     volumes:
