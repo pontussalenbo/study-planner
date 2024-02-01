@@ -8,16 +8,17 @@
  * the full text of the GNU General Public License.
  */
 
-import { ThemeProvider } from 'styled-components';
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { BrowserRouter, Route, Routes } from 'react-router-dom';
+import StudyplanProvider from 'hooks/CourseContext';
+import ToastProvider from 'hooks/useToast';
 import GlobalStyles from 'style/GlobalStyles';
 import { customDarkTheme } from 'style/Theme';
+import { ThemeProvider } from 'styled-components';
 import MainPage from 'views/MainPage';
-import Navbar from 'components/Navbar';
 import StudyPlan from 'views/StudyPlan';
-import StudyplanProvider from 'hooks/CourseContext';
+
+import Navbar from 'components/Navbar';
 import ScrollArrow from 'components/ScrollArrow';
-import ToastProvider from 'hooks/useToast';
 
 function App(): JSX.Element {
   return (

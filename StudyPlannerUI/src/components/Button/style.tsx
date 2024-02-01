@@ -8,9 +8,9 @@
  * the full text of the GNU General Public License.
  */
 
-import styled from 'styled-components';
 import { CustomTheme } from 'style/Theme';
 import { Tokens } from 'style/tokens';
+import styled from 'styled-components';
 
 type Token = keyof typeof Tokens;
 type ThemeColor = keyof CustomTheme;

@@ -9,24 +9,26 @@
  */
 
 import { useEffect, useMemo, useState } from 'react';
+import { getMasters, getMasterStats } from 'api/master';
+import { useStudyplanContext } from 'hooks/CourseContext';
+import type { Filters } from 'interfaces/Types';
+import { generateColors } from 'utils/colors';
+
+import IconButton from 'components/Button/Button';
+import StickyButton from 'components/Button/StickyButton';
+import { CourseContainer } from 'components/CoursesWithMaster';
 import Col from 'components/Flex/Col.style';
 import Row from 'components/Flex/Row.style';
-import IconButton from 'components/Button/Button';
 import ReloadIcon from 'components/Icons/Reload';
-import Tooltip from 'components/Tooltip';
-import type { Filters } from 'interfaces/Types';
-import { Heading2 } from 'components/Typography/Heading2';
-import { FilterContainer, GetStatsBar } from 'components/Temp/styles';
-import SelectedCoursesTable from 'components/SelectedCourses/SelectedCourses';
-import { generateColors } from 'utils/colors';
 import MasterCheck from 'components/MasterCheck';
-import { CourseContainer } from 'components/CoursesWithMaster';
-import StickyButton from 'components/Button/StickyButton';
 import SavePlanModal from 'components/Modal/SavePlanModal';
-import { useStudyplanContext } from 'hooks/CourseContext';
-import { TwoColumnWrapper } from './style';
 import { ReadonlyField } from 'components/ReadonlyField';
-import { getMasterStats, getMasters } from 'api/master';
+import SelectedCoursesTable from 'components/SelectedCourses/SelectedCourses';
+import { FilterContainer, GetStatsBar } from 'components/Temp/styles';
+import Tooltip from 'components/Tooltip';
+import { Heading2 } from 'components/Typography/Heading2';
+
+import { TwoColumnWrapper } from './style';
 
 interface CoursesProps {
   filters: Filters;

@@ -10,6 +10,7 @@
 
 /* eslint-disable @typescript-eslint/explicit-function-return-type */
 import { createGlobalStyle } from 'styled-components';
+
 import { CustomTheme } from './Theme';
 
 const GlobalStyles = createGlobalStyle<{ theme: CustomTheme }>`
