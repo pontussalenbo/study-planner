@@ -8,15 +8,16 @@
  * the full text of the GNU General Public License.
  */
 
-// TODO: Rename file to a more appropriate name
 import { useState } from 'react';
-import IconButton from 'components/Button/Button';
 import { ReactComponent as RemoveIcon } from 'assets/remove-outline.svg';
-import AddIcon from 'components/Icons/Add';
-import { getDisplayPeriod } from 'utils/sortCourses';
-import { TableRow, TableCell, NameCell, ButtonCell } from 'components/Table/style';
-import { ListContainer } from './InfiniteScroll.style';
 import { useStudyplanContext } from 'hooks/CourseContext';
+import { getDisplayPeriod } from 'utils/sortCourses';
+
+import IconButton from 'components/Button/Button';
+import AddIcon from 'components/Icons/Add';
+import { ButtonCell, NameCell, TableCell, TableRow } from 'components/Table/style';
+
+import { ListContainer } from './style';
 
 const Header: React.FC = () => {
   return (
@@ -73,7 +74,7 @@ const Row = ({ index, data }: RowProps) => {
       <TableCell>{course.level}</TableCell>
       <TableCell>
         {hasMultiplePeriods ? (
-          <select style={{ minWidth: 'max-content' }} defaultValue='' onChange={handlePeriodChange}>
+          <select defaultValue='' onChange={handlePeriodChange}>
             <option value='' disabled>
               Select
             </option>
@@ -112,7 +113,7 @@ interface VirtualizedTableProps {
   courses: CourseData.DataWithLocale[];
 }
 
-const VirtualizedTable: React.FC<VirtualizedTableProps> = ({ courses }) => {
+const CourseList: React.FC<VirtualizedTableProps> = ({ courses }) => {
   return (
     <ListContainer>
       <Header />
@@ -123,4 +124,4 @@ const VirtualizedTable: React.FC<VirtualizedTableProps> = ({ courses }) => {
   );
 };
 
-export default VirtualizedTable;
+export default CourseList;

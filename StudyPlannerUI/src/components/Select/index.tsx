@@ -8,7 +8,8 @@
  * the full text of the GNU General Public License.
  */
 
-import React, { useState, ReactNode, useContext, useEffect, useRef, FC } from 'react';
+import React, { FC, ReactNode, useContext, useEffect, useRef, useState } from 'react';
+
 import {
   Arrow,
   Checkbox,
@@ -70,7 +71,7 @@ export const Option: React.FC<OptionProps> = ({ value, children }) => {
   const isSelected = multiple ? (selectValue as string[]).includes(value) : selectValue === value;
 
   return (
-    <OptionItem data-value={value} onClick={handleClick}>
+    <OptionItem role='option' data-value={value} onClick={handleClick}>
       {multiple && <Checkbox type='checkbox' checked={isSelected} readOnly />}
       {children}
     </OptionItem>
@@ -140,6 +141,8 @@ export const Select = <T extends boolean, S extends Value>({
       isOpen={isOpen}
       ref={selectRef}
       onClick={handleContainerClick}
+      role='combobox'
+      tabIndex={0}
     >
       <SelectLabel isOpen={isOpen}>{selectedValues || placeholder || label}</SelectLabel>
       {Array.isArray(value) && pills && (
@@ -152,9 +155,14 @@ export const Select = <T extends boolean, S extends Value>({
         </div>
       )}
       <Arrow isOpen={isOpen}>&#x25BC;</Arrow>
-      <DropdownList data-visible={isOpen} onClick={handleDropdownClick}>
+      <DropdownList
+        role='listbox'
+        tabIndex={-1}
+        data-visible={isOpen}
+        onClick={handleDropdownClick}
+      >
         <SelectContext.Provider
-          value={{ selectValue: value, setSelectValue: onChange, multiple: multiple || false }}
+          value={{ selectValue: value, setSelectValue: onChange, multiple: !!multiple }}
         >
           {children}
         </SelectContext.Provider>

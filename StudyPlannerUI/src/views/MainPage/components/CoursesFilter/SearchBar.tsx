@@ -8,24 +8,37 @@
  * the full text of the GNU General Public License.
  */
 
-import { TransformFn } from 'interfaces/Types';
 import React, { ChangeEvent, useState } from 'react';
-import { InputWithLabel, SearchError } from './style';
 import { useMemo } from 'react';
+import { TransformFn } from 'interfaces/Types';
+
+import { InputWithLabel, SearchError } from './style';
 
 interface SearchBarProps {
-  matches: boolean;
-  filter: (transformFn: TransformFn) => void | Promise<void>;
+  courses: CourseData.DataWithLocale[];
+  setFilteredCourses: React.Dispatch<React.SetStateAction<CourseData.DataWithLocale[]>>;
 }
 
-const SearchBar: React.FC<SearchBarProps> = ({ matches, filter }: SearchBarProps) => {
+const SearchBar: React.FC<SearchBarProps> = ({ courses, setFilteredCourses }: SearchBarProps) => {
   const [query, setQuery] = useState('');
-
+  const [matches, setMatches] = useState(false);
   const shouldError = useMemo(() => !matches && query.length > 0, [matches, query]);
 
   const handleSearchChange = (event: ChangeEvent<HTMLInputElement>) => {
     setQuery(event.target.value);
     handleFilter(event.target.value);
+  };
+
+  const filterCourses = (transformFn: TransformFn) => {
+    const result = transformFn([...courses]);
+
+    // If result is a Promise, handle it
+    Promise.resolve(result).then(results => {
+      const hasMatches = results.length > 0;
+      const newCourses = hasMatches ? results : courses;
+      setFilteredCourses(newCourses);
+      setMatches(hasMatches);
+    });
   };
 
   const handleFilter = (query: string) => {
@@ -39,7 +52,7 @@ const SearchBar: React.FC<SearchBarProps> = ({ matches, filter }: SearchBarProps
           course.courseCode.toLowerCase().includes(search)
       );
     };
-    filter(transformFn);
+    filterCourses(transformFn);
   };
 
   return (

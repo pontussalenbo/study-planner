@@ -9,8 +9,9 @@
  */
 
 import React from 'react';
-import { Select, Option } from 'components/Select';
 import { Filters } from 'interfaces/Types';
+
+import { Option, Select } from 'components/Select';
 
 interface ProgrammeFilterProps {
   filters: Filters;
@@ -51,6 +52,7 @@ const ProgrammeFilter: React.FC<ProgrammeFilterProps> = ({
       return a.localeCompare(b);
     });
   }
+
   return (
     <>
       <Select

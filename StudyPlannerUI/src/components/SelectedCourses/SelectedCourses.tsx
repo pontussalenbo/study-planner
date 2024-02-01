@@ -9,13 +9,15 @@
  */
 
 import { useMemo } from 'react';
-import { useStudyplanContext } from 'hooks/CourseContext';
-import { ArrowButton } from './styles';
-import IconButton from 'components/Button/Button';
-import { getDisplayPeriod, sortCourses } from 'utils/sortCourses';
-import { TableRow, TableCell, NameCell, ButtonCell } from 'components/Table/style';
-import { ListContainer } from 'views/MainPage/components/Courses/InfiniteScroll.style';
 import { ReactComponent as RemoveIcon } from 'assets/remove-outline.svg';
+import { useStudyplanContext } from 'hooks/CourseContext';
+import { getDisplayPeriod, sortCourses } from 'utils/sortCourses';
+import { ListContainer } from 'views/MainPage/components/Courses/style';
+
+import IconButton from 'components/Button/Button';
+import { ButtonCell, NameCell, TableCell, TableRow } from 'components/Table/style';
+
+import { ArrowButton } from './styles';
 interface CreditsTableProps {
   year: CourseData.YEAR;
 }

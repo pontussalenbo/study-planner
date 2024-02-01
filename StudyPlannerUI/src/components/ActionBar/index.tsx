@@ -9,15 +9,14 @@
  */
 
 import { useState } from 'react';
-import IconButton from 'components/Button/Button';
+import { useStudyplanContext } from 'hooks/CourseContext';
+import { useToastContext } from 'hooks/useToast';
+import { Filters } from 'interfaces/Types';
+
 import StickyButton from 'components/Button/StickyButton';
 import ReloadIcon from 'components/Icons/Reload';
 import SavePlanModal from 'components/Modal/SavePlanModal';
 import { GetStatsBar } from 'components/Temp/styles';
-import Tooltip from 'components/Tooltip';
-import { useStudyplanContext } from 'hooks/CourseContext';
-import { useToastContext } from 'hooks/useToast';
-import { Filters } from 'interfaces/Types';
 
 interface ActionBarProps {
   filters: Filters;
@@ -44,15 +43,6 @@ function ActionBar({ filters, updateMasterStats, selectedCourses }: ActionBarPro
 
   return (
     <GetStatsBar>
-      <Tooltip enabled={!enoughCourses} text='Needs atleast 4 courses'>
-        <IconButton
-          disabled={!enoughCourses}
-          onClick={updateMasterStats}
-          icon={<ReloadIcon fill='white' width='0.8rem' />}
-        >
-          Check Masters
-        </IconButton>
-      </Tooltip>
       <StickyButton
         disabled={!enoughCourses}
         variant='primary'

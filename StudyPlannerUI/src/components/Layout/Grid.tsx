@@ -8,8 +8,8 @@
  * the full text of the GNU General Public License.
  */
 
-import styled from 'styled-components';
 import React from 'react';
+import styled from 'styled-components';
 import { floatToHex } from 'utils/colors';
 
 interface ContainerProps {
@@ -58,6 +58,7 @@ export function Grid({ children, columns, gap, breakpoint }: LayoutProps) {
 }
 
 export const TwoColumnGrid = styled.div`
+  width: 100%;
   background-color: ${({ theme }) => theme.tertiary + floatToHex(0.2)}};
   border-radius: 10px;
   padding: 10px 20px;
