@@ -2,6 +2,30 @@
 . "$(dirname "$0")/_/husky.sh"
 
 exec >/dev/tty 2>&1
+
+echo "Checking License headers..."
+output=$(license-eye -c .github/license-eye.yml header fix)
+exit_code=$?
+
+invalid=${output#*invalid: }
+invalid=${invalid%%,*}
+fixed=${output#*fixed: }
+fixed=${fixed%%,*}
+
+echo -e "\n"$output"\n"
+if [[ $invalid -ne 0 ]] && [[ $invalid -eq $fixed ]]; then
+    echo "License headers have been fixed or added for all staged files."
+    echo "Please stage and commit your files again using the --amend flag."
+    exit 1
+elif [[ $invalid -ne 0 ]] && [[ $invalid -ne $fixed ]]; then
+
+    echo "Failed to automatically fix license headers."
+    echo -e "Please fix the license headers manually and commit again using the --amend flag. \n"
+    exit 2
+fi
+
+echo "All license headers are valid."
+
 pushd ./StudyPlannerUI > /dev/null
 
 echo "Linting staged files... (UI)"
@@ -9,10 +33,3 @@ FORCE_COLOR=1 npx lint-staged
 
 echo "Building React app... (UI)"
 pnpm run build
-
-popd > /dev/null
-echo "Checking License headers..."
-license-eye -c .github/license-eye.yml header fix
-exit_code=$?
-
-echo "The exit code of license-eye is $exit_code"
