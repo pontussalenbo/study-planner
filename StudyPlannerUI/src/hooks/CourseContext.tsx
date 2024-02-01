@@ -9,9 +9,10 @@
  */
 
 import React, { useContext, useEffect, useReducer } from 'react';
-import { StudyPlan, savePlan as savePlanAPI } from 'api/studyplan';
+import { savePlan as savePlanAPI, StudyPlan } from 'api/studyplan';
 import { Filters } from 'interfaces/Types';
-import { LoadedPlan, SelectedCourses, State, URLS, reducer } from '../reducers/courseContext';
+
+import { LoadedPlan, reducer, SelectedCourses, State, URLS } from '../reducers/courseContext';
 
 interface ExisitingPlan extends StudyPlan {
   studyPlanId: string;
@@ -233,7 +234,6 @@ export function StudyplanProvider({ children, initState }: ProviderProps) {
     }
 
     course.studyYear = year;
-    console.log('custom', course);
 
     if (custom) {
       const updatedCustomCourses = {

@@ -9,11 +9,12 @@
  */
 
 import { useState } from 'react';
+
 import IconButton from 'components/Button/Button';
 import QMark from 'components/Icons/Qmark';
 import AddCourseModal from 'components/Modal/AddCourseModal';
 
-function AddCourse() {
+function AddMissingCourse() {
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
 
   return (
@@ -31,4 +32,4 @@ function AddCourse() {
   );
 }
 
-export default AddCourse;
+export default AddMissingCourse;

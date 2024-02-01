@@ -26,7 +26,8 @@ module.exports = {
     plugins: [
         'react',
         '@typescript-eslint',
-        'eslint-plugin-no-inline-styles'
+        'eslint-plugin-no-inline-styles',
+        'simple-import-sort'
     ],
     extends: [
         'eslint:recommended',
@@ -35,6 +36,8 @@ module.exports = {
         'prettier'
     ],
     'rules': {
+        'simple-import-sort/imports': 'error',
+        'simple-import-sort/exports': 'error',
         'no-console': 'warn',
         'no-inline-styles/no-inline-styles': 1,
         'react/require-default-props': 'off',
@@ -100,6 +103,30 @@ module.exports = {
                 'testing-library/prefer-explicit-assert': 'error',
                 'testing-library/prefer-user-event': 'error',
                 'testing-library/prefer-wait-for': 'error'
+            }
+        },
+        {
+            'files': ['*.js', '*.jsx', '*.ts', '*.tsx'],
+            'rules': {
+                'simple-import-sort/imports': [
+                    'error',
+                    {
+                        'groups': [
+                            // Packages `react` related packages come first.
+                            ['^react', '^@?\\w'],
+                            // Internal packages.
+                            ['^(@|components)(/.*|$)'],
+                            // Side effect imports.
+                            ['^\\u0000'],
+                            // Parent imports. Put `..` last.
+                            ['^\\.\\.(?!/?$)', '^\\.\\./?$'],
+                            // Other relative imports. Put same-folder imports and `.` last.
+                            ['^\\./(?=.*/)(?!/?$)', '^\\.(?!/?$)', '^\\./?$'],
+                            // Style imports.
+                            ['^.+\\.?(css)$']
+                        ]
+                    }
+                ]
             }
         }
     ]

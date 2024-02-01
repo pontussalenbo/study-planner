@@ -8,12 +8,14 @@
  * the full text of the GNU General Public License.
  */
 
-import { Container, Wrapper } from './style';
-import Courses from './components/Courses';
+import { Filters } from 'interfaces/Types';
+
+import HorizontalBarChart from 'components/Barchart';
 import Col from 'components/Flex/Col.style';
 import Row from 'components/Flex/Row.style';
-import { Filters } from 'interfaces/Types';
-import HorizontalBarChart from 'components/Barchart';
+
+import Courses from './containers/Courses';
+import { Container, Wrapper } from './style';
 
 interface MainPageProps {
   filters?: Filters;
@@ -25,10 +27,10 @@ const MainPage: React.FC<MainPageProps> = ({ filters }) => {
       <Wrapper>
         <Courses initFilters={filters} />
         <Row id='graphs'>
-          <Col md={6}>
+          <Col width='100%' md={6}>
             <HorizontalBarChart year={4} />
           </Col>
-          <Col md={6}>
+          <Col width='100%' md={6}>
             <HorizontalBarChart year={5} />
           </Col>
         </Row>

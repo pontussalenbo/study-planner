@@ -24,20 +24,13 @@ export async function POST<T = unknown>(
         },
         signal: abort?.signal
     };
-    try {
-        const response = await fetch(BASE_URL + endpoint, config);
+    const response = await fetch(BASE_URL + endpoint, config);
 
-        if (response.status !== 200) {
-            throw new APIError({ message: 'Error', code: response.status, rest: {} });
-        }
-
-        const json = await response.json();
-        return json;
-    } catch (error) {
-        console.error(error);
-
-        throw error as APIError;
+    if (response.status !== 200) {
+        throw new APIError({ message: 'Error', code: response.status, rest: {} });
     }
+
+    return response.json();
 }
 
 /**
@@ -46,6 +39,7 @@ export async function POST<T = unknown>(
  * @template T The expected return type of the API response.
  * @param {string} endpoint The endpoint to send the request to.
  * @param {URLSearchParams} [params] Optional search parameters to include in the request.
+ * @param {AbortController} [abort] Optional AbortController to abort the request.
  *
  * @returns {Promise<T>} A promise that resolves to the JSON parsed response.
  *
@@ -57,24 +51,16 @@ export async function GET<T = unknown>(
     params?: URLSearchParams,
     abort?: AbortController
 ): Promise<T> {
-    try {
-        const url = new URL(BASE_URL + endpoint);
+    const url = new URL(BASE_URL + endpoint);
 
-        if (params) {
-            url.search = params.toString();
-        }
+    url.search = params?.toString() ?? url.search;
+    const response = await fetch(url.toString(), { signal: abort?.signal });
 
-        const response = await fetch(url.toString(), { signal: abort?.signal });
-
-        if (response.status !== 200) {
-            throw new APIError({ message: 'Error', code: response.status, rest: {} });
-        }
-
-        const json = await response.json();
-        return json;
-    } catch (error) {
-        throw error as APIError;
+    if (response.status !== 200) {
+        throw new APIError({ message: 'Error', code: response.status });
     }
+
+    return response.json();
 }
 
 /**
@@ -97,7 +83,7 @@ export async function GET<T = unknown>(
 interface IAPIError {
     message: string;
     code: number;
-    rest: Record<string, unknown>;
+    rest?: Record<string, unknown>;
 }
 class APIError extends Error implements IAPIError {
     public readonly code;

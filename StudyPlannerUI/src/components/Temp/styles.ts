@@ -23,8 +23,4 @@ export const FilterContainer = styled.div`
 
 export const GetStatsBar = styled.div`
     display: flex;
-    height: 100%;
-    gap: 1rem;
-    justify-content: space-between;
-    align-items: flex-end;
 `;

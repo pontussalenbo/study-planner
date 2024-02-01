@@ -90,7 +90,7 @@ export const SelectContainer = styled.div<{ isOpen: boolean; disabled: boolean }
   background-color: ${({ theme }) => theme.surfaceVariant};
   color: ${({ theme }) => theme.onSurfaceVariant};
   border-radius: 4px;
-  min-width: 200px;
+  min-width: 150px;
   position: relative;
   font-family: 'Roboto', sans-serif;
   padding: 0;

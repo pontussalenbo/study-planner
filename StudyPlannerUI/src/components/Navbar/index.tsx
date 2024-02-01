@@ -9,9 +9,14 @@
  */
 
 import { useState } from 'react';
-import { Nav, Logo, NavLink, NavLinks, NavItem, SocialsNavLink, Icon } from './styles';
-import Hamburger from './Hamburger';
+
 import BMC from 'components/Icons/BMC';
+
+import Hamburger from './Hamburger';
+import { Icon, Logo, Nav, NavItem, NavLink, NavLinks, SocialsNavLink } from './styles';
+
+const GITHUB_URL = 'https://github.com/pontussalenbo/study-planner';
+const BMAC_URL = 'https://www.buymeacoffee.com/studyplannerlth';
 
 function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
@@ -55,10 +60,10 @@ function Navbar() {
           <NavLink onClick={() => scrollTo('graphs')}>Graphs</NavLink>
         </NavItem>
         <NavItem isOpen={isOpen} idx={5}>
-          <SocialsNavLink href='#'>
+          <SocialsNavLink href={GITHUB_URL}>
             <Icon invert src='/github-mark.png' alt='GH' width={24} height={24} />
           </SocialsNavLink>
-          <SocialsNavLink href='#'>
+          <SocialsNavLink href={BMAC_URL}>
             <BMC size={24} />
           </SocialsNavLink>
         </NavItem>

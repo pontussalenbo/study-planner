@@ -9,17 +9,19 @@
  */
 
 import { useMemo } from 'react';
-import styled from 'styled-components';
-import { ListContainer } from '../views/MainPage/components/Courses/InfiniteScroll.style';
 import { CREDITS_TOTAL_KEY, MASTERS_SUMMARY_NAME } from 'api/constants';
+import styled from 'styled-components';
+
 import {
-  TableRow,
+  BoldCell,
+  BoldNameCell,
+  FilledTableRow,
   NameCell,
   TableCell,
-  FilledTableRow,
-  BoldNameCell,
-  BoldCell
+  TableRow
 } from 'components/Table/style';
+
+import { ListContainer } from '../views/MainPage/components/Courses/style';
 
 const Header: React.FC = () => {
   return (

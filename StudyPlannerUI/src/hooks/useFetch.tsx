@@ -60,7 +60,9 @@ function useFetch<T = unknown>(url?: string, options?: RequestInit): State<T> {
 
   useEffect(() => {
     // Do nothing if the url is not given
-    if (!url) return undefined;
+    if (!url) {
+      return;
+    }
 
     cancelRequest.current = false;
     const controller = new AbortController();
@@ -81,10 +83,10 @@ function useFetch<T = unknown>(url?: string, options?: RequestInit): State<T> {
         if (!response.ok) {
           throw new Error(response.statusText);
         }
-
         const data: T = await response.json();
-        // eslint-disable-next-line require-atomic-updates
+
         cache.current[url] = data;
+
         if (cancelRequest.current) {
           dispatch({ type: ActionType.ERROR, payload: new Error('Request cancelled') });
           return;
@@ -95,7 +97,6 @@ function useFetch<T = unknown>(url?: string, options?: RequestInit): State<T> {
         if (cancelRequest.current) {
           dispatch({ type: ActionType.ERROR, payload: new Error('Request cancelled') });
         }
-
         dispatch({ type: ActionType.ERROR, payload: error as Error });
       }
     };
