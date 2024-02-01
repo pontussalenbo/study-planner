@@ -9,12 +9,14 @@
  */
 
 import React from 'react';
-import ReadOnlyView from './components/ReadOnlyView';
+import { Filters } from 'interfaces/Types';
+import { Container, Wrapper } from 'views/MainPage/style';
+
+import HorizontalBarChart from 'components/Barchart';
 import Col from 'components/Flex/Col.style';
 import Row from 'components/Flex/Row.style';
-import HorizontalBarChart from 'components/Barchart';
-import { Container, Wrapper } from 'views/MainPage/style';
-import { Filters } from 'interfaces/Types';
+
+import ReadOnlyView from './components/ReadOnlyView';
 
 interface ReadOnlyProps {
   filters: Filters;

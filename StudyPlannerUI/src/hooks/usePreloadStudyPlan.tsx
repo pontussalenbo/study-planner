@@ -8,12 +8,13 @@
  * the full text of the GNU General Public License.
  */
 
-import { useReducer, useCallback, useEffect } from 'react';
+import { useCallback, useEffect, useReducer } from 'react';
 import { useParams } from 'react-router-dom';
-import { StudyPlanCourse, getPlan } from 'api/studyplan';
-import { StudyPlanCoursesResponse, getCourseInfoByCode } from 'api/courses';
-import { SelectedCourses } from '../reducers/courseContext';
+import { getCourseInfoByCode, StudyPlanCoursesResponse } from 'api/courses';
+import { getPlan, StudyPlanCourse } from 'api/studyplan';
 import { Filters } from 'interfaces/Types';
+
+import { SelectedCourses } from '../reducers/courseContext';
 
 const parseCourse = (selectedCourse: StudyPlanCourse, courses: StudyPlanCoursesResponse) => {
   const courseData = courses[selectedCourse.courseCode];

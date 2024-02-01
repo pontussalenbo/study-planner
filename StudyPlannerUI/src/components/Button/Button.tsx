@@ -9,7 +9,8 @@
  */
 
 import { ButtonHTMLAttributes } from 'react';
-import { StyledButton, IconWrapper, Text, ButtonVariant } from './style';
+
+import { ButtonVariant, IconWrapper, StyledButton, Text } from './style';
 
 export interface IButtonWithIconProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   children: React.ReactNode;

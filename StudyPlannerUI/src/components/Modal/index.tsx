@@ -8,9 +8,10 @@
  * the full text of the GNU General Public License.
  */
 
-import React, { useRef, useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { ReactComponent as CloseIcon } from 'assets/close-round-icon.svg';
-import { ModalDialog, CloseButton } from './style';
+
+import { CloseButton, ModalDialog } from './style';
 
 interface ModalProps {
   isOpen: boolean;

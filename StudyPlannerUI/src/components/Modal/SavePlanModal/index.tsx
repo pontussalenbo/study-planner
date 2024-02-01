@@ -8,17 +8,19 @@
  * the full text of the GNU General Public License.
  */
 
-import { useState, useEffect, useRef, ChangeEvent, FC } from 'react';
+import { ChangeEvent, FC, useEffect, useRef, useState } from 'react';
+import { Endpoints } from 'api/constants';
+import { useStudyplanContext } from 'hooks/CourseContext';
+import { Filters } from 'interfaces/Types';
+
+import { StyledButton } from 'components/Button/style';
+import { FormInput } from 'components/Form';
+import { FormContainer, FormRow } from 'components/Form/styles';
 import Modal from 'components/Modal';
 import { Heading2 } from 'components/Typography/Heading2';
 import { Paragraph } from 'components/Typography/Paragraph';
-import { Filters } from 'interfaces/Types';
-import { useStudyplanContext } from 'hooks/CourseContext';
+
 import CopyButton from './CopyButton';
-import { FormContainer, FormRow } from 'components/Form/styles';
-import { FormInput } from 'components/Form';
-import { StyledButton } from 'components/Button/style';
-import { Endpoints } from 'api/constants';
 
 interface SavePlanModalProps {
   isOpen: boolean;

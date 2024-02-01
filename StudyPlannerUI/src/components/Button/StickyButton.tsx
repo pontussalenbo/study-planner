@@ -9,9 +9,10 @@
  */
 
 import React, { useEffect, useRef, useState } from 'react';
+import styled from 'styled-components';
+
 import IconButton, { IButtonWithIconProps } from 'components/Button/Button';
 import SaveIcon from 'components/Icons/Save';
-import styled from 'styled-components';
 const OFFSET = 10;
 
 const StyledButton = styled(IconButton)<{ sticky: boolean; navHeight: number }>`
