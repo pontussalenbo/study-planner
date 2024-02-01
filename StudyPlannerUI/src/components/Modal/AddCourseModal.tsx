@@ -9,26 +9,18 @@
  */
 
 import { FormEvent, useEffect, useState } from 'react';
+import { useStudyplanContext } from 'hooks/CourseContext';
+
+import { OutlinedButton, StyledButton } from 'components/Button/style';
 import { FormInput } from 'components/Form';
 import { FormContainer, FormRow } from 'components/Form/styles';
+import { Option, Select } from 'components/Select';
 import { Heading2 } from 'components/Typography/Heading2';
 import { Paragraph } from 'components/Typography/Paragraph';
-import { useStudyplanContext } from 'hooks/CourseContext';
-import Modal from './index';
-import styled from 'styled-components';
-import { OutlinedButton, StyledButton } from 'components/Button/style';
-import { courseSchema } from './CourseSchema';
-import { Option, Select } from 'components/Select';
 
-const ToastContainer = styled.div`
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 5px 20px;
-  border-radius: 4px;
-  border: 1px solid #000;
-  background-color ${({ theme }) => theme.primaryContainer};
-`;
+import { courseSchema } from './CourseSchema';
+import Modal from './index';
+import { ToastContainer } from './style';
 
 interface ToastProps {
   onClick: () => void;

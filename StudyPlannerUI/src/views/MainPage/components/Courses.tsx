@@ -10,7 +10,7 @@
 
 import React from 'react';
 
-import FlexContainer from 'components/Layout';
+import { FlexContainer } from 'components/Layout';
 
 import AddMissingCourse from './Courses/AddCourseModal';
 import CourseList from './Courses/CourseList';
@@ -22,6 +22,7 @@ interface CoursesProps {
   handleFilteredCourses: React.Dispatch<React.SetStateAction<CourseData.DataWithLocale[]>>;
 }
 
+// TODO: Fix inline styles
 const Courses: React.FC<CoursesProps> = ({ courses, filteredCourses, handleFilteredCourses }) => {
   return (
     <FlexContainer width='100%' direction='column' style={{ flexBasis: '55%', gridRow: '3/4' }}>

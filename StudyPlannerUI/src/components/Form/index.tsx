@@ -8,16 +8,18 @@
  * the full text of the GNU General Public License.
  */
 
+import { ChangeEvent, useState } from 'react';
+
+import { FlexContainer } from 'components/Layout';
 import {
+  LegendContent,
   SelectContainer,
   SelectLabel,
   StyledFieldset,
-  StyledLegend,
-  LegendContent
+  StyledLegend
 } from 'components/Select/style';
-import { ChangeEvent, useState } from 'react';
+
 import { SearchInput } from './styles';
-import FlexContainer from 'components/Layout';
 
 interface CommonProps extends React.InputHTMLAttributes<HTMLInputElement> {
   label: string;

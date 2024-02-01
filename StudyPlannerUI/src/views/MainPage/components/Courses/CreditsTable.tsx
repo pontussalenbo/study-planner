@@ -15,7 +15,7 @@ import { Filters } from 'interfaces/Types';
 import { generateColors } from 'utils/colors';
 
 import { CourseContainer } from 'components/CoursesWithMaster';
-import { TwoColumnGrid } from 'components/Layout/Grid';
+import { TwoColumnGrid } from 'components/Layout/style';
 import MasterCheck from 'components/MasterCheck';
 
 interface CreditsTableProps {

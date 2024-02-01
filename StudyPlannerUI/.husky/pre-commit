@@ -15,12 +15,12 @@ fixed=${fixed%%,*}
 echo -e "\n"$output"\n"
 if [[ $invalid -ne 0 ]] && [[ $invalid -eq $fixed ]]; then
     echo "License headers have been fixed or added for all staged files."
-    echo "Please stage and commit your files again using the --amend flag."
+    echo "Please commit your files again."
     exit 1
 elif [[ $invalid -ne 0 ]] && [[ $invalid -ne $fixed ]]; then
 
     echo "Failed to automatically fix license headers."
-    echo -e "Please fix the license headers manually and commit again using the --amend flag. \n"
+    echo -e "Please fix the license headers manually and commit again. \n"
     exit 2
 fi
 

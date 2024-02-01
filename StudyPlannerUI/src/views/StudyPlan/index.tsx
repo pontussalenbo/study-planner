@@ -9,12 +9,15 @@
  */
 
 import SelectedCoursesProvider from 'hooks/CourseContext';
-import MainPage from 'views/MainPage';
-import ReadOnly from './ReadOnly';
 import useFetchStudyPlan from 'hooks/usePreloadStudyPlan';
 import { LoadedPlan, State } from 'reducers/courseContext';
+import MainPage from 'views/MainPage';
 
-function StudyPlan() {
+import Pencil from 'components/Icons/Spinner';
+
+import ReadOnly from './ReadOnly';
+
+const StudyPlan = () => {
   const { loading, error, data } = useFetchStudyPlan();
 
   if (error) {
@@ -22,7 +25,7 @@ function StudyPlan() {
   }
 
   if (loading || !data) {
-    return <div>loading...</div>;
+    return <Pencil />;
   }
 
   const { isReadOnly, name, url, selectedCourses, customCourses, filters, id } = data;
@@ -50,6 +53,6 @@ function StudyPlan() {
       {isReadOnly ? <ReadOnly filters={filters} /> : <MainPage filters={filters} />}
     </SelectedCoursesProvider>
   );
-}
+};
 
 export default StudyPlan;
