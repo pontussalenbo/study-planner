@@ -22,16 +22,19 @@ cd $BUILD_TOP
 PROD_COMPOSE_FILE="docker-compose.yml"
 DEV_COMPOSE_FILE="docker-compose-dev.yml"
 NPM_SCRIPTS_DIR="$BUILD_TOP/common"
+symlink_path="$BUILD_TOP/internal"
 
 # Load environment variables from .env file
 source .env
 
 # Create symbolic link to internal repo if running on Windows
 # Needed for VS Code to show the internal repo in the file explorer
-if command -v powershell.exe >/dev/null 2>&1; then
-    powershell.exe -Command "Start-Process PowerShell -ArgumentList '-NoProfile -ExecutionPolicy Bypass -Command \"cd $(wslpath -w $(pwd)); New-Item -ItemType SymbolicLink -Path internal -Target ../study-planner-internal\"' -Verb RunAs"
-else
-    ln -s  $BUILD_TOP/../study-planner-internal $BUILD_TOP/internal
+if [ ! -L "$symlink_path" ]; then
+    if command -v powershell.exe >/dev/null 2>&1; then
+        powershell.exe -Command "Start-Process PowerShell -ArgumentList '-NoProfile -ExecutionPolicy Bypass -Command \"cd $(wslpath -w $(pwd)); New-Item -ItemType SymbolicLink -Path internal -Target ../study-planner-internal\"' -Verb RunAs"
+    else
+        ln -s  $BUILD_TOP/../study-planner-internal $BUILD_TOP/internal
+    fi
 fi
 
 # Display help regarding the functions in this script
@@ -155,4 +158,9 @@ function fetch_courses() {
     pushd $NPM_SCRIPTS_DIR
     npm run courses
     popd
+}
+
+function seed_db() {
+    script_dir=$(dirname "$BASH_SOURCE")
+    bash $script_dir/seed_db.sh
 }
