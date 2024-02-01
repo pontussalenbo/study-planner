@@ -8,28 +8,13 @@
  * the full text of the GNU General Public License.
  */
 
-import React, { useState, useCallback } from 'react';
-import styled from 'styled-components';
-import { ReactComponent as CopyIcon } from 'assets/copy-icon.svg';
+import React, { useCallback, useState } from 'react';
 import { ReactComponent as CheckmarkIcon } from 'assets/check-mark-icon.svg';
+import { ReactComponent as CopyIcon } from 'assets/copy-icon.svg';
+
 import { StyledButton } from 'components/Button/style';
 
-const Tooltip = styled.div`
-  position: absolute;
-  top: 100%;
-  left: 50%;
-  transform: translateX(-50%);
-  background-color: #333;
-  color: white;
-  padding: 5px;
-  border-radius: 5px;
-  margin-top: 5px;
-  opacity: 0;
-  transition: opacity 0.3s ease-in-out;
-  &.visible {
-    opacity: 1;
-  }
-`;
+import { Tooltip } from './style';
 
 interface CopyButtonProps {
   onClick: () => void;

@@ -9,10 +9,12 @@
  */
 
 import React from 'react';
-import './spinner.css';
+
 import { Heading2 } from 'components/Typography/Heading2';
 
-const PencilComponent: React.FC = () => (
+import './spinner.css';
+
+const Pencil: React.FC = () => (
   <div className='pencil-container'>
     <svg
       className='pencil'
@@ -96,4 +98,4 @@ const PencilComponent: React.FC = () => (
   </div>
 );
 
-export default PencilComponent;
+export default Pencil;

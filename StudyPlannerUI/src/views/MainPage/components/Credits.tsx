@@ -15,7 +15,7 @@ import { Filters } from 'interfaces/Types';
 
 import StickyButton from 'components/Button/StickyButton';
 import ReloadIcon from 'components/Icons/Reload';
-import FlexContainer from 'components/Layout';
+import { FlexContainer } from 'components/Layout';
 import SavePlanModal from 'components/Modal/SavePlanModal';
 import { FilterContainer } from 'components/Temp/styles';
 
@@ -26,7 +26,7 @@ interface CreditsProps {
   masters: API.Master[];
   enoughCourses: boolean;
 }
-
+// TODO: Fix inline styles
 const Credits: React.FC<CreditsProps> = ({ filters, masters, enoughCourses }) => {
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
 

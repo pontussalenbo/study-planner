@@ -8,18 +8,21 @@
  * the full text of the GNU General Public License.
  */
 
-import React from 'react';
+import styled from 'styled-components';
 
-import { Container, ContainerProps } from './style';
-
-interface LayoutProps extends ContainerProps {
-  children: React.ReactNode;
-}
-
-export function Grid({ children, columns, gap, breakpoint }: LayoutProps) {
-  return (
-    <Container columns={columns} gap={gap} breakpoint={breakpoint}>
-      {children}
-    </Container>
-  );
-}
+export const Tooltip = styled.div`
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: #333;
+  color: white;
+  padding: 5px;
+  border-radius: 5px;
+  margin-top: 5px;
+  opacity: 0;
+  transition: opacity 0.3s ease-in-out;
+  &.visible {
+    opacity: 1;
+  }
+`;

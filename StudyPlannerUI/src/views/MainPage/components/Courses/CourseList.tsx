@@ -19,19 +19,6 @@ import { ButtonCell, NameCell, TableCell, TableRow } from 'components/Table/styl
 
 import { ListContainer } from './style';
 
-const Header: React.FC = () => {
-  return (
-    <TableRow header>
-      <TableCell>Course Code</TableCell>
-      <NameCell>Course Name</NameCell>
-      <TableCell>Credits</TableCell>
-      <TableCell>Level</TableCell>
-      <TableCell>Period</TableCell>
-      <ButtonCell>Action</ButtonCell>
-    </TableRow>
-  );
-};
-
 interface RowProps {
   index: number;
   data: {
@@ -109,14 +96,21 @@ const Row = ({ index, data }: RowProps) => {
   );
 };
 
-interface VirtualizedTableProps {
+interface CourseListProps {
   courses: CourseData.DataWithLocale[];
 }
 
-const CourseList: React.FC<VirtualizedTableProps> = ({ courses }) => {
+const CourseList: React.FC<CourseListProps> = ({ courses }) => {
   return (
     <ListContainer>
-      <Header />
+      <TableRow header>
+        <TableCell>Course Code</TableCell>
+        <NameCell>Course Name</NameCell>
+        <TableCell>Credits</TableCell>
+        <TableCell>Level</TableCell>
+        <TableCell>Period</TableCell>
+        <ButtonCell>Action</ButtonCell>
+      </TableRow>
       {courses.map((course, index) => (
         <Row key={course.courseCode} index={index} data={{ courses }} />
       ))}

@@ -8,11 +8,11 @@
  * the full text of the GNU General Public License.
  */
 
-import React, { ChangeEvent, useState } from 'react';
-import { useMemo } from 'react';
+import React, { ChangeEvent, useMemo, useState } from 'react';
 import { TransformFn } from 'interfaces/Types';
 
-import { InputWithLabel, SearchError } from './style';
+import { InputWithLabel } from './Input';
+import { SearchError } from './style';
 
 interface SearchBarProps {
   courses: CourseData.DataWithLocale[];

@@ -20,7 +20,8 @@ import { dataParser } from 'utils/sortCourses';
 
 import { Col, Row } from 'components/Flex';
 import Pencil from 'components/Icons/Spinner';
-import { Grid, GridItem } from 'components/Layout/Grid';
+import { Grid } from 'components/Layout/Grid';
+import { GridItem } from 'components/Layout/style';
 import SelectedCoursesTable from 'components/SelectedCourses/SelectedCourses';
 import { Heading2 } from 'components/Typography/Heading2';
 

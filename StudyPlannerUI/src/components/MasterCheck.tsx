@@ -22,20 +22,7 @@ import {
 } from 'components/Table/style';
 
 import { ListContainer } from '../views/MainPage/components/Courses/style';
-
-const Header: React.FC = () => {
-  return (
-    <TableRow header>
-      <NameCell>Specialisation</NameCell>
-      <TableCell>Code</TableCell>
-      <TableCell>G1</TableCell>
-      <TableCell>G2</TableCell>
-      <TableCell>A</TableCell>
-      <TableCell>Total</TableCell>
-    </TableRow>
-  );
-};
-
+// TODO: remove?
 const Pill = styled.div<{ color?: string }>`
   background-color: ${({ theme, color }) => color || theme.tertiary};
   color: ${({ theme }) => theme.onTertiary}};
@@ -98,7 +85,14 @@ const MasterCheck: React.FC<MasterCheckProps> = ({ masters, stats, colorMap }) =
   return (
     <>
       <ListContainer>
-        <Header />
+        <TableRow header>
+          <NameCell>Specialisation</NameCell>
+          <TableCell>Code</TableCell>
+          <TableCell>G1</TableCell>
+          <TableCell>G2</TableCell>
+          <TableCell>A</TableCell>
+          <TableCell>Total</TableCell>
+        </TableRow>
         {sortedMasters.map(master => {
           const masterStat = stats.find(stat => stat.master === master.masterCode);
 

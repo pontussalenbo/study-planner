@@ -8,13 +8,8 @@
  * the full text of the GNU General Public License.
  */
 
+// TODO: Check if this is needs refactoring
 import React, { useEffect, useState } from 'react';
-import Tooltip from 'components/Tooltip';
-import { Filters } from 'interfaces/Types';
-import IconButton from 'components/Button/Button';
-import { dataParser } from 'utils/sortCourses';
-import { Option, Select } from 'components/Select';
-import ReloadIcon from 'components/Icons/Reload';
 import {
   ClassYearFilter,
   FILTERS,
@@ -22,6 +17,13 @@ import {
   getCoursesByProgramme,
   getFilterByValues
 } from 'api/courses';
+import { Filters } from 'interfaces/Types';
+import { dataParser } from 'utils/sortCourses';
+
+import IconButton from 'components/Button/Button';
+import ReloadIcon from 'components/Icons/Reload';
+import { Option, Select } from 'components/Select';
+import Tooltip from 'components/Tooltip';
 
 interface CoursesFilterProps {
   masters: API.Master[];
