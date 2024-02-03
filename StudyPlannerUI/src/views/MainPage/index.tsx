@@ -8,13 +8,16 @@
  * the full text of the GNU General Public License.
  */
 
+import React from 'react';
 import { Filters } from 'interfaces/Types';
 
 import HorizontalBarChart from 'components/Barchart';
 import Col from 'components/Flex/Col.style';
 import Row from 'components/Flex/Row.style';
+import SelectedCoursesTable from 'components/SelectedCourses/SelectedCourses';
+import { Heading2 } from 'components/Typography/Heading2';
 
-import Courses from './containers/Courses';
+import CourseContainer from './containers/CourseContainer';
 import { Container, Wrapper } from './style';
 
 interface MainPageProps {
@@ -25,7 +28,21 @@ const MainPage: React.FC<MainPageProps> = ({ filters }) => {
   return (
     <Container>
       <Wrapper>
-        <Courses initFilters={filters} />
+        <Row>
+          <CourseContainer initFilters={filters} />
+        </Row>
+
+        <Row id='my-plan'>
+          <Col xs={12} lg={6}>
+            <Heading2>Fourth Year</Heading2>
+            <SelectedCoursesTable year={4} />
+          </Col>
+
+          <Col xs={12} lg={6}>
+            <Heading2>Fifth Year</Heading2>
+            <SelectedCoursesTable year={5} />
+          </Col>
+        </Row>
         <Row id='graphs'>
           <Col width='100%' md={6}>
             <HorizontalBarChart year={4} />

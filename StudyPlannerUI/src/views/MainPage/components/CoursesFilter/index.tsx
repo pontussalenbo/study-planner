@@ -17,6 +17,7 @@ import {
   getCoursesByProgramme,
   getFilterByValues
 } from 'api/courses';
+import { DEFAULT_LANG } from 'interfaces/constants';
 import { Filters } from 'interfaces/Types';
 import { dataParser } from 'utils/sortCourses';
 
@@ -29,16 +30,14 @@ interface CoursesFilterProps {
   masters: API.Master[];
   filters: Filters;
   onFilterChange: (value: string, name: keyof Filters) => void;
-  onGetCourses: (filters: string, masters?: string[]) => void;
-  update: (courses: CourseData.DataWithLocale[]) => void;
+  updateCourses: (courses: CourseData.DataWithLocale[]) => void;
 }
 
 const ALL_MASTERS = '';
 
 export const CoursesFilter: React.FC<CoursesFilterProps> = ({
   masters,
-  onGetCourses,
-  update,
+  updateCourses,
   filters
 }) => {
   /* Filter by Class or Year (selected type) */
@@ -63,12 +62,25 @@ export const CoursesFilter: React.FC<CoursesFilterProps> = ({
     setFilterValues(data.reverse());
   };
 
+  const fetchCourses = (filterYear: string, masters?: string[]) => {
+    const filter = {
+      programme: filters.programme,
+      year: filterYear,
+      masterCodes: masters
+    };
+
+    getCoursesByProgramme(filter).then(resp => {
+      const parsedData = dataParser(resp, DEFAULT_LANG);
+      updateCourses(parsedData);
+    });
+  };
+
   const handleMasterFilter = (masters: string[]) => {
     const body = { ...filters, masterCodes: masters };
 
     getCoursesByProgramme(body)
       .then(data => dataParser(data))
-      .then(data => update(data));
+      .then(data => updateCourses(data));
   };
 
   const handleChangeMasters = (value: string[]) => {
@@ -158,7 +170,7 @@ export const CoursesFilter: React.FC<CoursesFilterProps> = ({
 
       <IconButton
         disabled={disableGetCourses}
-        onClick={() => onGetCourses(classYearFilter, multiSelectValue)}
+        onClick={() => fetchCourses(classYearFilter, multiSelectValue)}
         text
         icon={<ReloadIcon width='0.7rem' />}
       >

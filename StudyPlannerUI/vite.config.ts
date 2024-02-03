@@ -12,12 +12,13 @@
 /* eslint-disable @typescript-eslint/indent */
 /// <reference types="vitest" />
 import eslintPlugin from '@nabla/vite-plugin-eslint';
+import { sentryVitePlugin } from '@sentry/vite-plugin';
 import react from '@vitejs/plugin-react';
+// import { visualizer } from 'rollup-plugin-visualizer';
 import { defineConfig } from 'vite';
 import { VitePWA } from 'vite-plugin-pwa';
-import tsconfigPaths from 'vite-tsconfig-paths';
-import { visualizer } from 'rollup-plugin-visualizer';
 import svgr from 'vite-plugin-svgr';
+import tsconfigPaths from 'vite-tsconfig-paths';
 
 // eslint-disable-next-line @typescript-eslint/prefer-ts-expect-error, @typescript-eslint/ban-ts-comment
 /* @ts-ignore */
@@ -43,7 +44,8 @@ export default defineConfig(({ mode }) => ({
                     ...renderChunks(dependencies)
                 }
             }
-        }
+        },
+        sourcemap: true
     },
     test: {
         css: false,
@@ -94,7 +96,12 @@ export default defineConfig(({ mode }) => ({
                           ]
                       }
                   })
-              ])
+              ]),
+        sentryVitePlugin({
+            org: 'pontus-salenbo',
+            project: 'study-planner',
+            authToken: process.env.SENTRY_AUTH_TOKEN
+        })
     ]
 }));
 
