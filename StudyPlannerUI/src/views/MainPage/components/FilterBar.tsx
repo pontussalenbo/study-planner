@@ -8,6 +8,8 @@
  * the full text of the GNU General Public License.
  */
 
+import { useQuery } from '@tanstack/react-query';
+import { BASE_URL, Endpoints } from 'api/constants';
 import { Filters } from 'interfaces/Types';
 
 import { FilterContainer } from 'components/Temp/styles';
@@ -19,29 +21,31 @@ import ProgrammeFilter from './ProgrammeFilter';
 interface FilterBarProps {
   filters: Filters;
   masters: API.Master[];
-  programmes: string[];
-  years: string[];
   onFilterChange: (value: string, name: keyof Filters) => void;
-  onGetCourses: (filters: string, masters?: string[]) => void;
   onUpdateCourses: (courses: CourseData.DataWithLocale[]) => void;
+  setLoading?: (loading: boolean) => void;
 }
 
-const FilterBar = ({
-  filters,
-  masters,
-  programmes,
-  years,
-  onFilterChange,
-  onGetCourses,
-  onUpdateCourses
-}: FilterBarProps) => {
+const FilterBar = ({ filters, masters, onFilterChange, onUpdateCourses }: FilterBarProps) => {
+  const programmesQuery = useQuery({
+    queryKey: ['programmes'],
+    queryFn: () => fetch(BASE_URL + Endpoints.programmes).then(res => res.json()),
+    staleTime: Infinity
+  });
+
+  const yearsQuery = useQuery({
+    queryKey: ['years'],
+    queryFn: () => fetch(BASE_URL + Endpoints.classYears).then(res => res.json()),
+    staleTime: Infinity
+  });
+
   return (
     <>
       <Heading2>Select Programme</Heading2>
       <FilterContainer>
         <ProgrammeFilter
-          years={years}
-          programmes={programmes}
+          years={yearsQuery.data}
+          programmes={programmesQuery.data}
           filters={filters}
           onFilterChange={onFilterChange}
         />
@@ -52,8 +56,7 @@ const FilterBar = ({
           filters={filters}
           masters={masters}
           onFilterChange={onFilterChange}
-          onGetCourses={onGetCourses}
-          update={onUpdateCourses}
+          updateCourses={onUpdateCourses}
         />
       </FilterContainer>
     </>

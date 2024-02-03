@@ -43,6 +43,8 @@ function CreditsTable({ masters, filters }: CreditsTableProps) {
         ...filters
       };
       getMasterStats(body, signal).then(setStats);
+    } else {
+      setStats([]);
     }
   }, [selectedCourses]);
 
