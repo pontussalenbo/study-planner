@@ -14,9 +14,8 @@ import { useToastContext } from 'hooks/useToast';
 import { Filters } from 'interfaces/Types';
 
 import StickyButton from 'components/Button/StickyButton';
-import ReloadIcon from 'components/Icons/Reload';
+import { FlexContainer } from 'components/Layout';
 import SavePlanModal from 'components/Modal/SavePlanModal';
-import { GetStatsBar } from 'components/Temp/styles';
 
 interface ActionBarProps {
   filters: Filters;
@@ -24,7 +23,7 @@ interface ActionBarProps {
   selectedCourses: CourseData.SelectedCourse[];
 }
 
-function ActionBar({ filters, updateMasterStats, selectedCourses }: ActionBarProps) {
+function ActionBar({ filters, selectedCourses }: ActionBarProps) {
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const { urls, savePlan, loaded } = useStudyplanContext();
   const toastDispatch = useToastContext();
@@ -42,17 +41,12 @@ function ActionBar({ filters, updateMasterStats, selectedCourses }: ActionBarPro
   const enoughCourses = selectedCourses.length >= 4;
 
   return (
-    <GetStatsBar>
-      <StickyButton
-        disabled={!enoughCourses}
-        variant='primary'
-        onClick={handleModal}
-        icon={<ReloadIcon fill='white' width='0.8rem' />}
-      >
+    <FlexContainer>
+      <StickyButton disabled={!enoughCourses} variant='primary' onClick={handleModal}>
         Save Plan
       </StickyButton>
       <SavePlanModal data={filters} isOpen={isModalOpen} onClose={handleModal} />
-    </GetStatsBar>
+    </FlexContainer>
   );
 }
 

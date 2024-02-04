@@ -11,14 +11,15 @@
 import React from 'react';
 import { Filters } from 'interfaces/Types';
 
-import HorizontalBarChart from 'components/Barchart';
 import Col from 'components/Flex/Col.style';
 import Row from 'components/Flex/Row.style';
-import SelectedCoursesTable from 'components/SelectedCourses/SelectedCourses';
+import SelectedCourses from 'components/SelectedCourses/SelectedCourses';
 import { Heading2 } from 'components/Typography/Heading2';
 
 import CourseContainer from './containers/CourseContainer';
 import { Container, Wrapper } from './style';
+
+const BarChart = React.lazy(() => import('components/Barchart'));
 
 interface MainPageProps {
   filters?: Filters;
@@ -35,20 +36,20 @@ const MainPage: React.FC<MainPageProps> = ({ filters }) => {
         <Row id='my-plan'>
           <Col xs={12} lg={6}>
             <Heading2>Fourth Year</Heading2>
-            <SelectedCoursesTable year={4} />
+            <SelectedCourses year={4} />
           </Col>
 
           <Col xs={12} lg={6}>
             <Heading2>Fifth Year</Heading2>
-            <SelectedCoursesTable year={5} />
+            <SelectedCourses year={5} />
           </Col>
         </Row>
         <Row id='graphs'>
           <Col width='100%' md={6}>
-            <HorizontalBarChart year={4} />
+            <BarChart year={4} />
           </Col>
           <Col width='100%' md={6}>
-            <HorizontalBarChart year={5} />
+            <BarChart year={5} />
           </Col>
         </Row>
       </Wrapper>

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 /*
  * Copyright Andreas Bartilson & Pontus Salenbo 2023-2024
  *

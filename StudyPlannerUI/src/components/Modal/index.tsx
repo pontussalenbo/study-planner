@@ -9,7 +9,7 @@
  */
 
 import React, { useEffect, useRef, useState } from 'react';
-import { ReactComponent as CloseIcon } from 'assets/close-round-icon.svg';
+import CloseIcon from 'assets/close-round-icon.svg?react';
 
 import { CloseButton, ModalDialog } from './style';
 

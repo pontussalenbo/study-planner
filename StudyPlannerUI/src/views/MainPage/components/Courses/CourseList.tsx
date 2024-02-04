@@ -9,12 +9,10 @@
  */
 
 import { useState } from 'react';
-import { ReactComponent as RemoveIcon } from 'assets/remove-outline.svg';
 import { useStudyplanContext } from 'hooks/CourseContext';
 import { getDisplayPeriod } from 'utils/sortCourses';
 
 import IconButton from 'components/Button/Button';
-import AddIcon from 'components/Icons/Add';
 import { ButtonCell, NameCell, TableCell, TableRow } from 'components/Table/style';
 
 import { ListContainer } from './style';
@@ -77,14 +75,13 @@ const Row = ({ index, data }: RowProps) => {
       </TableCell>
       <ButtonCell>
         {isSelected ? (
-          <IconButton text variant='error' icon={<RemoveIcon />} onClick={handleRemoveClick}>
+          <IconButton text variant='error' onClick={handleRemoveClick}>
             Remove
           </IconButton>
         ) : (
           <IconButton
             text
             variant='primary'
-            icon={<AddIcon />}
             onClick={handleButtonClick}
             disabled={!selectedPeriod && course.periods.length > 1}
           >

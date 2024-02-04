@@ -45,7 +45,7 @@ export default defineConfig(({ mode }) => ({
                 }
             }
         },
-        sourcemap: true
+        sourcemap: process.env.SENTRY_DISABLE !== 'true'
     },
     test: {
         css: false,
@@ -69,35 +69,36 @@ export default defineConfig(({ mode }) => ({
         ...(mode === 'test'
             ? []
             : [
-                  eslintPlugin(),
-                  VitePWA({
-                      registerType: 'autoUpdate',
-                      includeAssets: [
-                          'favicon.png',
-                          'robots.txt',
-                          'apple-touch-icon.png',
-                          'icons/*.svg',
-                          'fonts/*.woff2'
-                      ],
-                      manifest: {
-                          theme_color: '#BD34FE',
-                          icons: [
-                              {
-                                  src: '/android-chrome-192x192.png',
-                                  sizes: '192x192',
-                                  type: 'image/png',
-                                  purpose: 'any maskable'
-                              },
-                              {
-                                  src: '/android-chrome-512x512.png',
-                                  sizes: '512x512',
-                                  type: 'image/png'
-                              }
-                          ]
-                      }
-                  })
-              ]),
+                eslintPlugin(),
+                VitePWA({
+                    registerType: 'autoUpdate',
+                    includeAssets: [
+                        'favicon.png',
+                        'robots.txt',
+                        'apple-touch-icon.png',
+                        'icons/*.svg',
+                        'fonts/*.woff2'
+                    ],
+                    manifest: {
+                        theme_color: '#BD34FE',
+                        icons: [
+                            {
+                                src: '/android-chrome-192x192.png',
+                                sizes: '192x192',
+                                type: 'image/png',
+                                purpose: 'any maskable'
+                            },
+                            {
+                                src: '/android-chrome-512x512.png',
+                                sizes: '512x512',
+                                type: 'image/png'
+                            }
+                        ]
+                    }
+                })
+            ]),
         sentryVitePlugin({
+            disable: true,
             org: 'pontus-salenbo',
             project: 'study-planner',
             authToken: process.env.SENTRY_AUTH_TOKEN

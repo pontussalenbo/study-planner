@@ -9,7 +9,6 @@
  */
 
 import { useMemo } from 'react';
-import { ReactComponent as RemoveIcon } from 'assets/remove-outline.svg';
 import { useStudyplanContext } from 'hooks/CourseContext';
 import { getDisplayPeriod, sortCourses } from 'utils/sortCourses';
 import { ListContainer } from 'views/MainPage/components/Courses/style';
@@ -52,7 +51,6 @@ function SelectedCoursesTable({ year }: CreditsTableProps): JSX.Element {
             <IconButton
               variant='error'
               type='button'
-              icon={<RemoveIcon />}
               onClick={() => removeCourse(course.courseCode, year)}
             >
               Remove

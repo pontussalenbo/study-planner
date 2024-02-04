@@ -19,12 +19,12 @@ import StickyButton from 'components/Button/StickyButton';
 import { CourseContainer } from 'components/CoursesWithMaster';
 import Col from 'components/Flex/Col.style';
 import Row from 'components/Flex/Row.style';
-import ReloadIcon from 'components/Icons/Reload';
+import { FlexContainer } from 'components/Layout';
 import MasterCheck from 'components/MasterCheck';
 import SavePlanModal from 'components/Modal/SavePlanModal';
 import { ReadonlyField } from 'components/ReadonlyField';
 import SelectedCoursesTable from 'components/SelectedCourses/SelectedCourses';
-import { FilterContainer, GetStatsBar } from 'components/Temp/styles';
+import { FilterContainer } from 'components/style';
 import Tooltip from 'components/Tooltip';
 import { Heading2 } from 'components/Typography/Heading2';
 
@@ -115,25 +115,17 @@ const ReadOnlyView: React.FC<CoursesProps> = ({ filters }) => {
       <Row gap={10}>
         <Col xs={12}>
           {/** TODO: Refactor to separate component */}
-          <GetStatsBar>
+          <FlexContainer>
             <Tooltip enabled={!enoughCourses} text='Needs atleast 4 courses'>
-              <IconButton
-                disabled={!enoughCourses}
-                onClick={handleUpdate}
-                icon={<ReloadIcon fill='white' width='0.8rem' />}
-              >
+              <IconButton disabled={!enoughCourses} onClick={handleUpdate}>
                 Check Masters
               </IconButton>
             </Tooltip>
-            <StickyButton
-              variant='secondary'
-              onClick={handleModal}
-              icon={<ReloadIcon fill='white' width='0.8rem' />}
-            >
+            <StickyButton variant='secondary' onClick={handleModal}>
               Copy Plan
             </StickyButton>
             <SavePlanModal data={filters} isOpen={isModalOpen} onClose={handleModal} />
-          </GetStatsBar>
+          </FlexContainer>
         </Col>
         <Col xs={12} lg={6} id='master-check'>
           <MasterCheck masters={masters} stats={stats} colorMap={colorMap} />

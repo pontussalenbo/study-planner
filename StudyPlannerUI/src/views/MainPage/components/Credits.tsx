@@ -14,10 +14,9 @@ import { useToastContext } from 'hooks/useToast';
 import { Filters } from 'interfaces/Types';
 
 import StickyButton from 'components/Button/StickyButton';
-import ReloadIcon from 'components/Icons/Reload';
 import { FlexContainer } from 'components/Layout';
 import SavePlanModal from 'components/Modal/SavePlanModal';
-import { FilterContainer } from 'components/Temp/styles';
+import { FilterContainer } from 'components/style';
 
 import CreditsTable from './Courses/CreditsTable';
 
@@ -50,12 +49,7 @@ const Credits: React.FC<CreditsProps> = ({ filters, masters, enoughCourses }) =>
       style={{ flexBasis: '45%', gridRow: '3/4', marginTop: '0.85rem' }}
     >
       <FilterContainer>
-        <StickyButton
-          disabled={!enoughCourses}
-          variant='primary'
-          onClick={handleModal}
-          icon={<ReloadIcon fill='white' width='0.8rem' />}
-        >
+        <StickyButton disabled={!enoughCourses} variant='primary' onClick={handleModal}>
           Save Plan
         </StickyButton>
         <SavePlanModal data={filters} isOpen={isModalOpen} onClose={handleModal} />

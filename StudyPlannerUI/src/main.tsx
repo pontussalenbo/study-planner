@@ -17,13 +17,10 @@ import {
   useNavigationType
 } from 'react-router-dom';
 import * as Sentry from '@sentry/react';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
 import App from './App';
 
 import './index.css';
-
-const queryClient = new QueryClient();
 
 Sentry.init({
   dsn: 'https://cf13be415fb5e099be06b3bad8a57c24@o389741.ingest.sentry.io/4506649314525184',
@@ -57,8 +54,6 @@ Sentry.init({
 
 ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
   <React.StrictMode>
-    <QueryClientProvider client={queryClient}>
-      <App />
-    </QueryClientProvider>
+    <App />
   </React.StrictMode>
 );

@@ -12,7 +12,7 @@ import { useQuery } from '@tanstack/react-query';
 import { BASE_URL, Endpoints } from 'api/constants';
 import { Filters } from 'interfaces/Types';
 
-import { FilterContainer } from 'components/Temp/styles';
+import { FilterContainer } from 'components/style';
 import { Heading2 } from 'components/Typography/Heading2';
 
 import { CoursesFilter } from './CoursesFilter';
