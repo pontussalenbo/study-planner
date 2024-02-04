@@ -11,7 +11,6 @@
 import { useState } from 'react';
 
 import IconButton from 'components/Button/Button';
-import QMark from 'components/Icons/Qmark';
 import AddCourseModal from 'components/Modal/AddCourseModal';
 
 function AddMissingCourse() {
@@ -19,12 +18,7 @@ function AddMissingCourse() {
 
   return (
     <>
-      <IconButton
-        onClick={() => setIsModalOpen(true)}
-        variant='tertiary'
-        text
-        icon={<QMark size='0.8rem' />}
-      >
+      <IconButton onClick={() => setIsModalOpen(true)} variant='tertiary' text>
         Missing course
       </IconButton>
       <AddCourseModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />

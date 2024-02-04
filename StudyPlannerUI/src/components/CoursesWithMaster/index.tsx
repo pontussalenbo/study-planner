@@ -12,8 +12,9 @@ import { CREDITS_TOTAL_KEY, MASTERS_SUMMARY_NAME } from 'api/constants';
 
 import { FlexContainer } from 'components/Layout';
 
-import { Pill, PillContainer, TextContainer } from './style';
+import { Pill } from '../style';
 
+import { PillContainer, TextContainer } from './style';
 interface CourseProps {
   name: string;
   code: string;

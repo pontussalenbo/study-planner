@@ -8,6 +8,8 @@
  * the full text of the GNU General Public License.
  */
 
+/* eslint-disable @typescript-eslint/no-explicit-any */
+
 export type SelectedCourses = Record<CourseData.YEAR, CourseData.SelectedCourse[]>;
 
 /**

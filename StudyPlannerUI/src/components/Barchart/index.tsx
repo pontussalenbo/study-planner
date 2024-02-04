@@ -14,8 +14,6 @@ import { Bar, BarChart, CartesianGrid, ResponsiveContainer, XAxis, YAxis } from 
 import { Tokens } from 'style/tokens';
 import { sortCourses } from 'utils/sortCourses';
 
-import { Wrapper } from './styles';
-
 interface HorizontalBarChartProps {
   year: CourseData.YEAR;
 }

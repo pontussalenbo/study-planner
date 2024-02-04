@@ -12,10 +12,10 @@ import React, { useEffect, useRef, useState } from 'react';
 import styled from 'styled-components';
 
 import IconButton, { IButtonWithIconProps } from 'components/Button/Button';
-import SaveIcon from 'components/Icons/Save';
+
 const OFFSET = 10;
 
-const StyledButton = styled(IconButton)<{ sticky: boolean; navHeight: number }>`
+const StyledButton = styled(IconButton)<{ sticky: boolean; navHeight?: number }>`
   z-index: 2;
   position: ${({ sticky }) => (sticky ? 'fixed' : 'relative')};
   top: ${({ sticky, navHeight }) => (sticky ? `${navHeight}px` : '0')};
@@ -88,7 +88,6 @@ const StickyButton: React.FC<IButtonWithIconProps> = ({ children, onClick, ...re
       navHeight={navHeight + OFFSET}
       onClick={onClick}
       style={stickyStylesRef.current}
-      icon={<SaveIcon size={'0.8rem'} />}
     >
       {children}
     </StyledButton>

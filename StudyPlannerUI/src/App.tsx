@@ -7,36 +7,50 @@
  * (at your option) any later version. See the included LICENSE file for
  * the full text of the GNU General Public License.
  */
-
-import { BrowserRouter, Route, Routes } from 'react-router-dom';
+import React from 'react';
+import { BrowserRouter, Outlet, Route, Routes } from 'react-router-dom';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import StudyplanProvider from 'hooks/CourseContext';
 import ToastProvider from 'hooks/useToast';
 import GlobalStyles from 'style/GlobalStyles';
 import { customDarkTheme } from 'style/Theme';
 import { ThemeProvider } from 'styled-components';
-import MainPage from 'views/MainPage';
-import StudyPlan from 'views/StudyPlan';
 
+// import MainPage from 'views/MainPage';
+// import StudyPlan from 'views/StudyPlan';
 import Navbar from 'components/Navbar';
-import ScrollArrow from 'components/ScrollArrow';
+
+const MainPage = React.lazy(() => import('views/MainPage'));
+const StudyPlan = React.lazy(() => import('views/StudyPlan'));
+
+const SuspenseLayout = () => (
+  <React.Suspense fallback={<div>LOADING...</div>}>
+    <Outlet />
+  </React.Suspense>
+);
+
+const queryClient = new QueryClient();
 
 function App(): JSX.Element {
   return (
     <ThemeProvider theme={customDarkTheme}>
       <GlobalStyles />
       <Navbar />
-      <StudyplanProvider>
-        <ToastProvider>
-          <BrowserRouter>
-            <Routes>
-              <Route path='/studyplan/:id' element={<StudyPlan />} />
-              <Route path='/' element={<MainPage />} />
-              <Route path='*' element={<MainPage />} />
-            </Routes>
-          </BrowserRouter>
-        </ToastProvider>
-      </StudyplanProvider>
-      <ScrollArrow />
+      <QueryClientProvider client={queryClient}>
+        <StudyplanProvider>
+          <ToastProvider>
+            <BrowserRouter>
+              <Routes>
+                <Route element={<SuspenseLayout />}>
+                  <Route path='/studyplan/:id' element={<StudyPlan />} />
+                  <Route path='/' element={<MainPage />} />
+                  <Route path='*' element={<MainPage />} />
+                </Route>
+              </Routes>
+            </BrowserRouter>
+          </ToastProvider>
+        </StudyplanProvider>
+      </QueryClientProvider>
     </ThemeProvider>
   );
 }

@@ -22,7 +22,6 @@ import { Filters } from 'interfaces/Types';
 import { dataParser } from 'utils/sortCourses';
 
 import IconButton from 'components/Button/Button';
-import ReloadIcon from 'components/Icons/Reload';
 import { Option, Select } from 'components/Select';
 import Tooltip from 'components/Tooltip';
 
@@ -172,7 +171,6 @@ export const CoursesFilter: React.FC<CoursesFilterProps> = ({
         disabled={disableGetCourses}
         onClick={() => fetchCourses(classYearFilter, multiSelectValue)}
         text
-        icon={<ReloadIcon width='0.7rem' />}
       >
         Get Courses
       </IconButton>

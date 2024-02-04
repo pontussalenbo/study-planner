@@ -10,7 +10,6 @@
 
 import { useMemo } from 'react';
 import { CREDITS_TOTAL_KEY, MASTERS_SUMMARY_NAME } from 'api/constants';
-import styled from 'styled-components';
 
 import {
   BoldCell,
@@ -22,22 +21,8 @@ import {
 } from 'components/Table/style';
 
 import { ListContainer } from '../views/MainPage/components/Courses/style';
-// TODO: remove?
-const Pill = styled.div<{ color?: string }>`
-  background-color: ${({ theme, color }) => color || theme.tertiary};
-  color: ${({ theme }) => theme.onTertiary}};
-  height: 24px;
-  max-width: 60px;
-  border-radius: 8px 8px 8px 8px;
-  padding: 5px 12px;
-  border-radius: 15px;
-  text-align: center;
-  font-size: 0.85em;
-  font-weight: 500;
-   overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-`;
+
+import { Pill } from './style';
 
 interface MasterCheckProps {
   masters: API.Master[];

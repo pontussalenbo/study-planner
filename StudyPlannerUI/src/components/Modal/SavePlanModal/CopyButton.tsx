@@ -9,8 +9,8 @@
  */
 
 import React, { useCallback, useState } from 'react';
-import { ReactComponent as CheckmarkIcon } from 'assets/check-mark-icon.svg';
-import { ReactComponent as CopyIcon } from 'assets/copy-icon.svg';
+import CheckmarkIcon from 'assets/check-mark-icon.svg?react';
+import CopyIcon from 'assets/copy-icon.svg?react';
 
 import { StyledButton } from 'components/Button/style';
 

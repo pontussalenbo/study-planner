@@ -45,7 +45,7 @@ export const GridItem = styled.div<GridItemProps>`
 
 export const TwoColumnGrid = styled.div`
   width: 100%;
-  background-color: ${({ theme }) => theme.tertiary + floatToHex(0.2)}};
+  background-color: ${({ theme }) => theme.tertiary + floatToHex(0.2)};
   border-radius: 10px;
   padding: 10px 20px;
   display: grid;

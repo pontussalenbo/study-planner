@@ -15,8 +15,6 @@ interface PillProps {
 }
 
 export const Pill = styled.div<PillProps>`
-  background-color: ${({ theme, color }) => color || theme.tertiary};
-  color: ${({ theme }) => theme.onTertiary}};
   height: 24px;
   max-width: 60px;
   border-radius: 8px 8px 8px 8px;
@@ -25,23 +23,18 @@ export const Pill = styled.div<PillProps>`
   text-align: center;
   font-size: 0.85em;
   font-weight: 500;
-   overflow: hidden;
+  overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+  background-color: ${({ theme, color }) => color || theme.tertiary};
+  color: ${({ theme }) => theme.onTertiary}};
 `;
-
-export const TextContainer = styled.div`
+export const FilterContainer = styled.div`
+  margin-top: 10px;
   display: flex;
-  flex-direction: column;
-  font-size: 0.85em;
-  flex: 1 0 70%;
-  align-self: center;
-`;
-
-export const PillContainer = styled.div`
-  display: flex;
-  gap: 4px;
+  align-items: stretch;
   flex-wrap: wrap;
-  align-items: center;
-  flex: 1 0 30%; // This makes the pills take up at most 50% width
+  gap: 1rem;
+  width: 100%;
+  margin-bottom: 1rem;
 `;
