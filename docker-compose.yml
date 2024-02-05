@@ -38,6 +38,20 @@ services:
       - app-network
     ports:
       - "5432:5432"
+  frontend:
+    build:
+      context: .
+      dockerfile: StudyPlannerUI/Dockerfile
+      args:
+      - API_URL=${API_URL}
+    volumes:
+      - ./StudyPlannerUI:/frontend  # Mount the app directory
+    ports:
+      - "5173:5173"
+    networks:
+      - app-network
+    depends_on:
+      - db
 
 volumes:
   postgres-data:
