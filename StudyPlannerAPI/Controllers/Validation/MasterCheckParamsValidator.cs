@@ -35,9 +35,9 @@ internal class MasterCheckParamsValidator : AbstractValidator<MasterCheckParams>
             .WithErrorCode(ErrorCodes.PARAM_NULL)
             .WithMessage(ErrorUtil.ParamNull(nameof(MasterCheckParams.Programme)));
 
-        RuleFor(mcp => mcp.SelectedCourses)
+        /* RuleFor(mcp => mcp.SelectedCourses)
             .Must(courses => courses.Count > 0)
             .WithErrorCode(ErrorCodes.COUNT_LEQ_ZERO)
-            .WithMessage(ErrorUtil.CountLeqZero(nameof(MasterCheckParams.SelectedCourses)));
+            .WithMessage(ErrorUtil.CountLeqZero(nameof(MasterCheckParams.SelectedCourses))); */
     }
 }

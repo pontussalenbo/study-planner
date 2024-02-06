@@ -35,9 +35,9 @@ internal class LinkShareParamsValidator : AbstractValidator<LinkShareParams>
             .WithErrorCode(ErrorCodes.INVALID_FORMAT)
             .WithMessage(ErrorUtil.InvalidFormat(nameof(LinkShareParams.Year)));
 
-        RuleFor(lsp => lsp.SelectedCourses)
+        /*RuleFor(lsp => lsp.SelectedCourses)
             .Must(courses => courses.Count > 0)
             .WithErrorCode(ErrorCodes.COUNT_LEQ_ZERO)
-            .WithMessage(ErrorUtil.CountLeqZero(nameof(LinkShareParams.SelectedCourses)));
+            .WithMessage(ErrorUtil.CountLeqZero(nameof(LinkShareParams.SelectedCourses)));*/
     }
 }
