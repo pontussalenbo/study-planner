@@ -31,7 +31,7 @@ interface SelectContextType<T = any> {
   multiple: boolean;
 }
 
-const SelectContext = React.createContext<SelectContextType | undefined>(undefined);
+export const SelectContext = React.createContext<SelectContextType | undefined>(undefined);
 
 interface SelectedItemProps {
   label: string;

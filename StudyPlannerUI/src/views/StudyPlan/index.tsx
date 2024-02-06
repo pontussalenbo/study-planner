@@ -9,13 +9,38 @@
  */
 
 import SelectedCoursesProvider from 'hooks/CourseContext';
-import useFetchStudyPlan from 'hooks/usePreloadStudyPlan';
+import useFetchStudyPlan, { Data } from 'hooks/usePreloadStudyPlan';
 import { LoadedPlan, State } from 'reducers/courseContext';
 import MainPage from 'views/MainPage';
 
 import Pencil from 'components/Icons/Spinner';
 
 import ReadOnly from './ReadOnly';
+
+const parseResponse = (response: Data) => {
+  const { isReadOnly, name, url, selectedCourses, customCourses, filters, id } = response;
+
+  const loadedPlan: LoadedPlan = {
+    readOnly: isReadOnly,
+    name,
+    url
+  };
+
+  const sId = !isReadOnly ? id : '';
+  const sIdReadOnly = isReadOnly ? id : '';
+
+  const initState: State = {
+    filters,
+    selectedCourses,
+    customCourses,
+    loaded: true,
+    unsavedChanges: false,
+    loadedPlan,
+    urls: { sId, sIdReadOnly: sIdReadOnly }
+  };
+
+  return initState;
+};
 
 const StudyPlan = () => {
   const { loading, error, data } = useFetchStudyPlan();
@@ -28,30 +53,11 @@ const StudyPlan = () => {
     return <Pencil />;
   }
 
-  const { isReadOnly, name, url, selectedCourses, customCourses, filters, id } = data;
-
-  const loadedPlan: LoadedPlan = {
-    readOnly: isReadOnly,
-    name,
-    url
-  };
-
-  const sId = !isReadOnly ? id : '';
-  const sIdReadOnly = isReadOnly ? id : '';
-
-  const initState: State = {
-    filters: filters,
-    selectedCourses,
-    customCourses,
-    loaded: true,
-    unsavedChanges: false,
-    loadedPlan,
-    urls: { sId, sIdReadOnly: sIdReadOnly }
-  };
+  const initState = parseResponse(data);
 
   return (
     <SelectedCoursesProvider initState={initState}>
-      {isReadOnly ? <ReadOnly filters={filters} /> : <MainPage />}
+      {data.isReadOnly ? <ReadOnly filters={initState.filters} /> : <MainPage />}
     </SelectedCoursesProvider>
   );
 };

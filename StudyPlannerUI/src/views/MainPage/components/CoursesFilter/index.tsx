@@ -122,6 +122,15 @@ export const CoursesFilter: React.FC<CoursesFilterProps> = ({
 
   const masterTooltip = !hasProgramme ? 'Please select a Programme' : 'Please select a Year';
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const fv = filterValues.map(f => {
+    const filter = f.replace('_', '/');
+    return {
+      label: filter,
+      value: filter
+    };
+  });
+
   return (
     <>
       <Select value={filterType} label='Filter by' onChange={handleChangeFilterType}>

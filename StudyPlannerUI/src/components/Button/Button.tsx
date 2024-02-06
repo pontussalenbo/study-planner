@@ -10,7 +10,7 @@
 
 import { ButtonHTMLAttributes } from 'react';
 
-import { ButtonVariant, IconWrapper, StyledButton, Text } from './style';
+import { ButtonVariant, IconWrapper, StyledButton } from './style';
 
 export interface IButtonWithIconProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   children: React.ReactNode;
@@ -23,14 +23,13 @@ export interface IButtonWithIconProps extends ButtonHTMLAttributes<HTMLButtonEle
 const IconButton = ({
   children,
   icon,
-  text = true,
   rref,
   variant = 'primary',
   ...rest
 }: IButtonWithIconProps) => (
   <StyledButton ref={rref} variant={variant} {...rest}>
     {icon && <IconWrapper>{icon}</IconWrapper>}
-    {text ? <Text>{children}</Text> : children}
+    {children}
   </StyledButton>
 );
 

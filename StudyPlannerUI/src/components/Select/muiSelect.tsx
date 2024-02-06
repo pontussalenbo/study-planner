@@ -28,7 +28,8 @@ export const StyledLabel = styled.label<Openable>`
   font-size: 1rem;
   transform-origin: top left;
   transform: translate(14px, 20px) scale(1);
-  transition: transform 200ms cubic-bezier(0, 0, 0.2, 1) 0ms,
+  transition:
+    transform 200ms cubic-bezier(0, 0, 0.2, 1) 0ms,
     color 200ms cubic-bezier(0, 0, 0.2, 1) 0ms;
   pointer-events: none;
   ${props => props.isOpen && 'display: none;'}
@@ -98,6 +99,7 @@ export const StyledLegend = styled.legend<{ hasValue: boolean }>`
   padding: 0;
   font-size: 0.75em;
   visibility: hidden;
+  ${({ hasValue }) => hasValue && 'visibility: visible;'}
   max-width: 0.01px;
   transition: max-width 50ms cubic-bezier(0, 0, 0.2, 1) 0ms;
   max-width: ${({ hasValue }) => (hasValue ? '100%' : '0.01px')};
@@ -136,13 +138,15 @@ export const LegendContent = styled.span`
   padding-right: 5px;
   display: inline-flex;
   color: white;
-  visibility: visible;
-  opacity: 0;
+  visibility: inherit;
+  opacity: 1;
 `;
 
 // Select.tsx
 import React, { useState } from 'react';
 import { Tokens } from 'style/tokens';
+
+import { Option, SelectContext } from '.';
 interface SelectProps {
   options: { value: string; label: string }[];
   label: string;
@@ -160,6 +164,8 @@ const MuiSelect: React.FC<SelectProps> = ({ options, label, enabled = true }) =>
     setIsOpen(false);
   };
 
+  console.log(options);
+
   return (
     <StyledFormControl>
       <StyledSelect
@@ -169,16 +175,19 @@ const MuiSelect: React.FC<SelectProps> = ({ options, label, enabled = true }) =>
         onFocus={toggleOpen}
         onBlur={() => setIsOpen(false)}
       >
-        <option value='' disabled>
-          Select
-        </option>
-        {options.map(option => (
-          <option key={option.value} value={option.value}>
-            {option.label}
+        <SelectContext.Provider
+          value={{ selectValue: selectedValue, setSelectValue: setSelectedValue, multiple: false }}
+        >
+          <option value='' disabled>
+            Select
           </option>
-        ))}
+          {options.map(option => (
+            <option key={option.value} value={option.value}>
+              {option.label}
+            </option>
+          ))}
+        </SelectContext.Provider>
       </StyledSelect>
-      <StyledLabel>{selectedValue ? '' : label}</StyledLabel>
       <StyledFieldset isOpen={isOpen}>
         <StyledLegend hasValue={selectedValue !== '' || isOpen}>
           <LegendContent>{label}</LegendContent>

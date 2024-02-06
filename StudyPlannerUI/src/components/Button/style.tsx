@@ -120,6 +120,7 @@ export const boxShadowActive = `
 
 export const StyledButton = styled.button<StyledButtonProps>`
   display: inline-flex;
+  min-width: 64px;
   align-items: center;
   justify-content: center;
   gap: 4px;
@@ -127,6 +128,15 @@ export const StyledButton = styled.button<StyledButtonProps>`
   font-size: 1em;
   padding: 8px 12px;
   border-radius: 4px;
+  font-weight: 500;
+  font-size: 0.875rem;
+  line-height: 1.75;
+  letter-spacing: 0.02857em;
+  min-width: 64px;
+  padding: 6px 16px;
+  appearance: none;
+  -webkit-appearance: none;
+  -webkit-text-decoration: none;
 
   & > svg {
     fill: ${({ theme }) => theme.onPrimaryContainer};
@@ -174,6 +184,7 @@ export const StyledButton = styled.button<StyledButtonProps>`
 
 export const OutlinedButton = styled.button<StyledButtonProps>`
   display: inline-flex;
+  min-width: 64px;
   align-items: center;
   justify-content: center;
   gap: 4px;
