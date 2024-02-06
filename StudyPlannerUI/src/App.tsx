@@ -17,6 +17,7 @@ import GlobalStyles from 'style/GlobalStyles';
 import { customDarkTheme } from 'style/Theme';
 import { ThemeProvider } from 'styled-components';
 
+import BetaBanner from 'components/BetaBanner';
 import { OutlinedButton, StyledButton } from 'components/Button/style';
 import Pencil from 'components/Icons/Spinner';
 import { FlexContainer } from 'components/Layout';
@@ -66,7 +67,7 @@ function App(): JSX.Element {
     }
   };
 
-  if (showDialog) {
+  if (showDialog && location.pathname === '/') {
     return (
       <ThemeProvider theme={customDarkTheme}>
         <GlobalStyles />
@@ -91,6 +92,7 @@ function App(): JSX.Element {
       <StudyplanProvider initState={initState}>
         <ToastProvider>
           <Navbar />
+          <BetaBanner />
           <BrowserRouter>
             <Routes>
               <Route element={<SuspenseLayout />}>
