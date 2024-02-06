@@ -21,12 +21,10 @@ elif [[ $invalid -ne 0 ]] && [[ $invalid -ne $fixed ]]; then
 
     echo "Failed to automatically fix license headers."
     echo -e "Please fix the license headers manually and commit again. \n"
-    exit 2
 fi
 
 echo "All license headers are valid."
-
-pushd ./StudyPlannerUI > /dev/null
+pushd StudyPlannerUI > /dev/null
 
 echo "Linting staged files... (UI)"
 FORCE_COLOR=1 npx lint-staged

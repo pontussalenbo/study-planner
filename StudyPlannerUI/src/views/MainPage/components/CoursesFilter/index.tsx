@@ -39,22 +39,18 @@ export const CoursesFilter: React.FC<CoursesFilterProps> = ({
   updateCourses,
   filters
 }) => {
+  useEffect(() => {
+    setClassYearFilter(filters.year);
+  }, [filters.year]);
+
   /* Filter by Class or Year (selected type) */
   const [filterType, setFilterType] = React.useState<FILTERS>(FILTERS.None);
   /* Selected Class/Year */
   const [classYearFilter, setClassYearFilter] = React.useState<string>(filters.year);
   /* All masters that is selected in the filter */
   const [multiSelectValue, setMultiSelectValue] = useState<string[]>([]);
-
   /* Class/Year filter values */
   const [filterValues, setFilterValues] = React.useState<string[]>([]);
-
-  useEffect(() => {
-    // Check if filters.Year has value and classYearFilter does not have a value
-    if (filters.year && !classYearFilter) {
-      setClassYearFilter(filters.year);
-    }
-  }, [filters.year]);
 
   const fetchFilterValues = async (filter: ClassYearFilter) => {
     const data = await getFilterByValues(filter);
@@ -74,7 +70,7 @@ export const CoursesFilter: React.FC<CoursesFilterProps> = ({
     });
   };
 
-  const handleMasterFilter = (masters: string[]) => {
+  const applyMasterFilter = (masters: string[]) => {
     const body = { ...filters, masterCodes: masters };
 
     getCoursesByProgramme(body)
@@ -88,31 +84,32 @@ export const CoursesFilter: React.FC<CoursesFilterProps> = ({
       const allMasters = masters.map(master => master.masterCode);
       // Add all masters along with the "select all" option
       setMultiSelectValue([...allMasters, ALL_MASTERS]);
-      handleMasterFilter(allMasters);
+      applyMasterFilter(allMasters);
     }
     // If the user deselected the "select all" option
     else if (!value.includes(ALL_MASTERS) && multiSelectValue.includes(ALL_MASTERS)) {
       setMultiSelectValue([]);
-      handleMasterFilter([]);
+      applyMasterFilter([]);
     }
     // Any other selection or deselection
     else {
       setMultiSelectValue(value);
-      handleMasterFilter(value);
+      applyMasterFilter(value);
     }
   };
 
-  const handleChangeFilterType = (value: FilterValue) => {
-    if (value === FILTERS.None) {
-      return;
-    }
-    setFilterType(value);
-    fetchFilterValues(value);
-
-    // Reset class year filter when filter type is changed to year
-    // as they are two separate entities
-    if (value === FILTERS.Year) {
+  const handleChangeFilterType = (filterType: FilterValue) => {
+    // If the Filter by is set to Class, set the filter to selected programme class.
+    if (filterType === FILTERS.Class) {
+      setClassYearFilter(filters.year);
+      // If the Filter by is set to Academic Year, reset the filter.
+    } else {
       setClassYearFilter(FILTERS.None);
+    }
+
+    if (filterType !== FILTERS.None) {
+      setFilterType(filterType);
+      fetchFilterValues(filterType);
     }
   };
 
@@ -128,8 +125,8 @@ export const CoursesFilter: React.FC<CoursesFilterProps> = ({
   return (
     <>
       <Select value={filterType} label='Filter by' onChange={handleChangeFilterType}>
-        <Option value='Class'>Class</Option>
-        <Option value='Academic Year'>Academic Year</Option>
+        <Option value={FILTERS.Class}>{FILTERS.Class}</Option>
+        <Option value={FILTERS.Year}>{FILTERS.Year}</Option>
       </Select>
 
       <Tooltip text='Please select a filter' enabled={!hasFilterBy}>

@@ -179,11 +179,14 @@ export const OutlinedButton = styled.button<StyledButtonProps>`
   gap: 4px;
   background-color: transparent;
   border: 1px solid; // Adjust the border width as needed
-  border-color: ${({ theme }) => theme.onPrimaryContainer};
+  border-color: ${({ theme }) => theme.outline};
   font-size: 1em;
   padding: 6px 10px; // Adjusted padding to account for the border width
   border-radius: 4px;
-  transition: background-color 0.3s, border-color 0.3s, color 0.3s; // Smooth transitions
+  transition:
+    background-color 0.3s,
+    border-color 0.3s,
+    color 0.3s; // Smooth transitions
 
   ${({ theme, variant }) => {
     const { color } = variantTokens[variant]; // Assuming variantTokens has color for outlined variant
@@ -228,11 +231,3 @@ export const Text = styled.span`
     display: none;
   }
 `;
-
-/*
-export const StyledStickyButton = styled(IconButton)<{ sticky: boolean; navHeight: number }>`
-  z-index: 2;
-  position: ${({ sticky }) => (sticky ? 'fixed' : 'relative')};
-  top: ${({ sticky, navHeight }) => (sticky ? `${navHeight}px` : '0')};
-`;
-*/

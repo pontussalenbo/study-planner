@@ -40,6 +40,7 @@ const StudyPlan = () => {
   const sIdReadOnly = isReadOnly ? id : '';
 
   const initState: State = {
+    filters: filters,
     selectedCourses,
     customCourses,
     loaded: true,
@@ -50,7 +51,7 @@ const StudyPlan = () => {
 
   return (
     <SelectedCoursesProvider initState={initState}>
-      {isReadOnly ? <ReadOnly filters={filters} /> : <MainPage filters={filters} />}
+      {isReadOnly ? <ReadOnly filters={filters} /> : <MainPage />}
     </SelectedCoursesProvider>
   );
 };

@@ -9,7 +9,6 @@
  */
 
 import React from 'react';
-import { Filters } from 'interfaces/Types';
 
 import Col from 'components/Flex/Col.style';
 import Row from 'components/Flex/Row.style';
@@ -21,16 +20,12 @@ import { Container, Wrapper } from './style';
 
 const BarChart = React.lazy(() => import('components/Barchart'));
 
-interface MainPageProps {
-  filters?: Filters;
-}
-
-const MainPage: React.FC<MainPageProps> = ({ filters }) => {
+const MainPage: React.FC = () => {
   return (
     <Container>
       <Wrapper>
         <Row>
-          <CourseContainer initFilters={filters} />
+          <CourseContainer />
         </Row>
 
         <Row id='my-plan'>

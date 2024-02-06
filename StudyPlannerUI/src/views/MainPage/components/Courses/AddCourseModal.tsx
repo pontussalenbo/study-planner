@@ -19,7 +19,7 @@ function AddMissingCourse() {
   return (
     <>
       <IconButton onClick={() => setIsModalOpen(true)} variant='tertiary' text>
-        Missing course
+        Missing course?
       </IconButton>
       <AddCourseModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />
     </>

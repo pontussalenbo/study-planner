@@ -21,21 +21,11 @@ import CourseList from '../components/Courses';
 import Credits from '../components/Credits';
 import FilterBar from '../components/FilterBar';
 
-interface RecactoredProps {
-  initFilters?: Filters;
-}
-
-const defaultFilters: Filters = {
-  programme: '',
-  year: ''
-};
-
-const Refactored = ({ initFilters }: RecactoredProps) => {
-  const [filters, setFilters] = useState<Filters>(initFilters ?? defaultFilters);
+const Refactored = () => {
   const [courses, setCourses] = useState<CourseData.DataWithLocale[]>([]);
   const [filteredCourses, setFilteredCourses] = useState<CourseData.DataWithLocale[]>([]);
 
-  const { courses: selectedCourses } = useStudyplanContext();
+  const { courses: selectedCourses, filters, setFilters } = useStudyplanContext();
 
   const masterQuery = useQuery({
     queryKey: ['masters', filters.programme, filters.year],
@@ -54,10 +44,7 @@ const Refactored = ({ initFilters }: RecactoredProps) => {
   };
 
   const handleFilterChange = (value: string, name: keyof Filters) => {
-    setFilters(prev => ({
-      ...prev,
-      [name]: value
-    }));
+    setFilters({ ...filters, [name]: value });
   };
   return (
     <>
