@@ -63,7 +63,7 @@ const Modal: React.FC<ModalProps> = ({ isOpen, hasCloseBtn = true, onClose, chil
     <ModalDialog ref={modalRef} onKeyDown={handleKeyDown}>
       {hasCloseBtn && (
         <CloseButton onClick={handleCloseModal}>
-          <CloseIcon width={24} height={24} fill='gray' />
+          <CloseIcon width={24} height={24} />
         </CloseButton>
       )}
       {children}

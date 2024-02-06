@@ -17,10 +17,11 @@ import {
   useNavigationType
 } from 'react-router-dom';
 import * as Sentry from '@sentry/react';
+import GlobalStyles from 'style/GlobalStyles';
+import { customDarkTheme } from 'style/Theme';
+import { ThemeProvider } from 'styled-components';
 
 import App from './App';
-
-import './index.css';
 
 Sentry.init({
   dsn: 'https://cf13be415fb5e099be06b3bad8a57c24@o389741.ingest.sentry.io/4506649314525184',
@@ -54,6 +55,9 @@ Sentry.init({
 
 ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
   <React.StrictMode>
-    <App />
+    <ThemeProvider theme={customDarkTheme}>
+      <GlobalStyles />
+      <App />
+    </ThemeProvider>
   </React.StrictMode>
 );
