@@ -44,3 +44,4 @@ dist-ssr
 **/bin/*
 # Sentry Config File
 .env.sentry-build-plugin
+serve.json

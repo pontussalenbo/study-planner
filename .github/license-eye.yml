@@ -22,4 +22,5 @@ header:
         - '**/*.tsbuildinfo'
         - '**/.funcignore'
         - '**/pnpm-lock.yaml'
+        - '**/assets/*.svg' # Seems to break svg loading?
         # Add more file patterns as needed
