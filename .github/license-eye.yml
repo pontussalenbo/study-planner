@@ -23,4 +23,5 @@ header:
         - '**/.funcignore'
         - '**/pnpm-lock.yaml'
         - '**/ISSUE_TEMPLATE/**'
+        - '**/assets/*.svg' # Seems to break svg loading?
         # Add more file patterns as needed

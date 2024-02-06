@@ -33,6 +33,34 @@ function renderChunks(deps: Record<string, string>): Record<string, string[]> {
     return chunks;
 }
 
+const usePWA = () => VitePWA({
+    registerType: 'autoUpdate',
+    includeAssets: [
+        'favicon.png',
+        // 'robots.txt',
+        'apple-touch-icon.png',
+        'icons/*.svg',
+        'fonts/*.woff2'
+    ],
+    manifest: {
+        theme_color: '#BD34FE',
+        icons: [
+            {
+                src: '/android-chrome-192x192.png',
+                sizes: '192x192',
+                type: 'image/png',
+                purpose: 'any maskable'
+            },
+            {
+                src: '/android-chrome-512x512.png',
+                sizes: '512x512',
+                type: 'image/png'
+            }
+        ]
+    }
+})
+
+
 export default defineConfig(({ mode }) => ({
     build: {
         outDir: 'build',
@@ -70,32 +98,8 @@ export default defineConfig(({ mode }) => ({
             ? []
             : [
                 eslintPlugin(),
-                VitePWA({
-                    registerType: 'autoUpdate',
-                    includeAssets: [
-                        'favicon.png',
-                        'robots.txt',
-                        'apple-touch-icon.png',
-                        'icons/*.svg',
-                        'fonts/*.woff2'
-                    ],
-                    manifest: {
-                        theme_color: '#BD34FE',
-                        icons: [
-                            {
-                                src: '/android-chrome-192x192.png',
-                                sizes: '192x192',
-                                type: 'image/png',
-                                purpose: 'any maskable'
-                            },
-                            {
-                                src: '/android-chrome-512x512.png',
-                                sizes: '512x512',
-                                type: 'image/png'
-                            }
-                        ]
-                    }
-                })
+                usePWA()
+
             ]),
         sentryVitePlugin({
             disable: true,
