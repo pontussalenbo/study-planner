@@ -12,7 +12,7 @@ import React, { useCallback, useState } from 'react';
 import CheckmarkIcon from 'assets/check-mark-icon.svg?react';
 import CopyIcon from 'assets/copy-icon.svg?react';
 
-import { StyledButton } from 'components/Button/style';
+import { IconButton } from 'components/Button/Buttons';
 
 import { Tooltip } from './style';
 
@@ -39,9 +39,9 @@ const CopyButton: React.FC<CopyButtonProps> = ({ onClick }) => {
 
   return (
     <div style={{ position: 'relative' }}>
-      <StyledButton variant='primary' onClick={handleCopyClick}>
+      <IconButton onClick={handleCopyClick}>
         {isCopied ? <CheckmarkIcon width={24} height={24} /> : <CopyIcon width={24} height={24} />}
-      </StyledButton>
+      </IconButton>
       {showTooltip && <Tooltip className='visible'>Copied!</Tooltip>}
     </div>
   );

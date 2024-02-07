@@ -13,7 +13,7 @@ import { Endpoints } from 'api/constants';
 import { useStudyplanContext } from 'hooks/CourseContext';
 import { Filters } from 'interfaces/Types';
 
-import { StyledButton } from 'components/Button/style';
+import { ContainedButton } from 'components/Button/Buttons';
 import { FormInput } from 'components/Form';
 import { FormContainer, FormRow } from 'components/Form/styles';
 import Modal from 'components/Modal';
@@ -125,9 +125,9 @@ const SavePlanModal: FC<SavePlanModalProps> = ({ data, isOpen, onClose }) => {
                 onChange={handleInputChange}
                 required
               />
-              <StyledButton variant='primary' type='submit'>
+              <ContainedButton variant='primary' type='submit'>
                 Save plan
-              </StyledButton>
+              </ContainedButton>
             </FormRow>
           </FormContainer>
         </>

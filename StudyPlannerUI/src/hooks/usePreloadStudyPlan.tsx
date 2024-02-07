@@ -57,7 +57,7 @@ const initialState: State = {
   data: undefined
 };
 
-interface Data {
+export interface Data {
   isReadOnly: boolean;
   name: string;
   url: string;

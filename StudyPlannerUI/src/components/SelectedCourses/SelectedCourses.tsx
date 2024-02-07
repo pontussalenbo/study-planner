@@ -13,7 +13,7 @@ import { useStudyplanContext } from 'hooks/CourseContext';
 import { getDisplayPeriod, sortCourses } from 'utils/sortCourses';
 import { ListContainer } from 'views/MainPage/components/Courses/style';
 
-import IconButton from 'components/Button/Button';
+import { ContainedButton } from 'components/Button/Buttons';
 import { ButtonCell, NameCell, TableCell, TableRow } from 'components/Table/style';
 
 import { ArrowButton } from './styles';
@@ -48,13 +48,13 @@ function SelectedCoursesTable({ year }: CreditsTableProps): JSX.Element {
             </ArrowButton>
           </TableCell>
           <ButtonCell>
-            <IconButton
+            <ContainedButton
               variant='error'
               type='button'
               onClick={() => removeCourse(course.courseCode, year)}
             >
               Remove
-            </IconButton>
+            </ContainedButton>
           </ButtonCell>
         </TableRow>
       ))}

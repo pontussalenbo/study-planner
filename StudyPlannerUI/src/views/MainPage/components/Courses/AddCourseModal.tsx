@@ -10,7 +10,7 @@
 
 import { useState } from 'react';
 
-import IconButton from 'components/Button/Button';
+import { ContainedButton } from 'components/Button/Buttons';
 import AddCourseModal from 'components/Modal/AddCourseModal';
 
 function AddMissingCourse() {
@@ -18,9 +18,9 @@ function AddMissingCourse() {
 
   return (
     <>
-      <IconButton onClick={() => setIsModalOpen(true)} variant='tertiary' text>
+      <ContainedButton onClick={() => setIsModalOpen(true)} variant='tertiary'>
         Missing course?
-      </IconButton>
+      </ContainedButton>
       <AddCourseModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />
     </>
   );

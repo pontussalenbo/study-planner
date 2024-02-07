@@ -8,13 +8,13 @@
  * the full text of the GNU General Public License.
  */
 
-import { useEffect, useMemo, useState } from 'react';
+import { useMemo, useState } from 'react';
+import { useQuery } from '@tanstack/react-query';
 import { getMasters, getMasterStats } from 'api/master';
 import { useStudyplanContext } from 'hooks/CourseContext';
 import type { Filters } from 'interfaces/Types';
 import { generateColors } from 'utils/colors';
 
-import IconButton from 'components/Button/Button';
 import StickyButton from 'components/Button/StickyButton';
 import { CourseContainer } from 'components/CoursesWithMaster';
 import Col from 'components/Flex/Col.style';
@@ -25,7 +25,6 @@ import SavePlanModal from 'components/Modal/SavePlanModal';
 import { ReadonlyField } from 'components/ReadonlyField';
 import SelectedCoursesTable from 'components/SelectedCourses/SelectedCourses';
 import { FilterContainer } from 'components/style';
-import Tooltip from 'components/Tooltip';
 import { Heading2 } from 'components/Typography/Heading2';
 
 import { TwoColumnWrapper } from './style';
@@ -35,62 +34,31 @@ interface CoursesProps {
 }
 
 const ReadOnlyView: React.FC<CoursesProps> = ({ filters }) => {
-  const [masters, setMasters] = useState<API.Master[]>([]);
-  const [stats, setStats] = useState<API.MasterStatus[]>([]);
+  const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
 
   const { loaded, courses, customCourses } = useStudyplanContext();
 
   const selectedCourses = [...courses[4], ...courses[5], ...customCourses[4], ...customCourses[5]];
-
-  const updateMasterStats = async (signal?: AbortController) => {
-    const courseCodes = selectedCourses.map(course => course.courseCode);
-    const body = {
-      ...filters,
-      selectedCourses: courseCodes
-    };
-    return getMasterStats(body, signal);
+  const courseCodes = selectedCourses.map(course => course.courseCode);
+  const body = {
+    ...filters,
+    selectedCourses: courseCodes
   };
 
-  useEffect(() => {
-    const signal = new AbortController();
+  const masterStats = useQuery({
+    queryKey: ['masterStats', filters, selectedCourses],
+    queryFn: () => getMasterStats(body),
+    enabled: loaded
+  });
 
-    if (!loaded) {
-      return;
-    }
+  const mastersQuery = useQuery({
+    queryKey: ['masters', filters],
+    queryFn: () => getMasters(filters),
+    enabled: loaded
+  });
 
-    updateMasterStats(signal).then(data => {
-      setStats(data);
-    });
-  }, [loaded]);
-
-  useEffect(() => {
-    const signal = new AbortController();
-
-    const params = {
-      programme: filters.programme,
-      year: filters.year
-    };
-
-    getMasters(params, signal).then(data => {
-      setMasters(data);
-    });
-
-    return () => {
-      signal.abort();
-    };
-  }, [filters]);
-
-  const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
-
-  const handleModal = () => {
-    setIsModalOpen(prev => !prev);
-  };
-
-  const handleUpdate = () => {
-    updateMasterStats().then(stats => setStats(stats));
-  };
-
-  const enoughCourses = selectedCourses.length >= 4;
+  const masters = mastersQuery.data ?? [];
+  const stats = masterStats.data ?? [];
 
   const colorMap = useMemo(() => {
     const colors = generateColors(masters.length);
@@ -99,7 +67,11 @@ const ReadOnlyView: React.FC<CoursesProps> = ({ filters }) => {
       colors[idx]
     ]);
     return new Map(colorMap);
-  }, [masters]);
+  }, [mastersQuery.data]);
+
+  const handleModal = () => {
+    setIsModalOpen(prev => !prev);
+  };
 
   return (
     <>
@@ -114,13 +86,7 @@ const ReadOnlyView: React.FC<CoursesProps> = ({ filters }) => {
       </Row>
       <Row gap={10}>
         <Col xs={12}>
-          {/** TODO: Refactor to separate component */}
           <FlexContainer>
-            <Tooltip enabled={!enoughCourses} text='Needs atleast 4 courses'>
-              <IconButton disabled={!enoughCourses} onClick={handleUpdate}>
-                Check Masters
-              </IconButton>
-            </Tooltip>
             <StickyButton variant='secondary' onClick={handleModal}>
               Copy Plan
             </StickyButton>

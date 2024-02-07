@@ -21,7 +21,7 @@ import { DEFAULT_LANG } from 'interfaces/constants';
 import { Filters } from 'interfaces/Types';
 import { dataParser } from 'utils/sortCourses';
 
-import IconButton from 'components/Button/Button';
+import { ContainedButton } from 'components/Button/Buttons';
 import { Option, Select } from 'components/Select';
 import Tooltip from 'components/Tooltip';
 
@@ -122,6 +122,15 @@ export const CoursesFilter: React.FC<CoursesFilterProps> = ({
 
   const masterTooltip = !hasProgramme ? 'Please select a Programme' : 'Please select a Year';
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const fv = filterValues.map(f => {
+    const filter = f.replace('_', '/');
+    return {
+      label: filter,
+      value: filter
+    };
+  });
+
   return (
     <>
       <Select value={filterType} label='Filter by' onChange={handleChangeFilterType}>
@@ -164,13 +173,13 @@ export const CoursesFilter: React.FC<CoursesFilterProps> = ({
         </Select>
       </Tooltip>
 
-      <IconButton
+      <ContainedButton
+        variant='primary'
         disabled={disableGetCourses}
         onClick={() => fetchCourses(classYearFilter, multiSelectValue)}
-        text
       >
         Get Courses
-      </IconButton>
+      </ContainedButton>
     </>
   );
 };

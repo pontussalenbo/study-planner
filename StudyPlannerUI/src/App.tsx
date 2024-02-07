@@ -18,7 +18,7 @@ import { customDarkTheme } from 'style/Theme';
 import { ThemeProvider } from 'styled-components';
 
 import BetaBanner from 'components/BetaBanner';
-import { OutlinedButton, StyledButton } from 'components/Button/style';
+import { ContainedButton, OutlinedButton } from 'components/Button/Buttons';
 import Pencil from 'components/Icons/Spinner';
 import { FlexContainer } from 'components/Layout';
 import Modal from 'components/Modal';
@@ -75,10 +75,14 @@ function App(): JSX.Element {
           <Heading2>It seems like you didn&apos;t save your previous Study Plan.</Heading2>
           <Paragraph>Would you like to restore it and continue where you left?</Paragraph>
           <FlexContainer gap='10px'>
-            <StyledButton variant='primary' onClick={() => handleDialog(true)}>
+            <ContainedButton variant='primary' onClick={() => handleDialog(true)}>
               Yes
-            </StyledButton>
-            <OutlinedButton variant='secondary' onClick={() => handleDialog(false)}>
+            </ContainedButton>
+            <OutlinedButton
+              disableElevation
+              variant='secondary'
+              onClick={() => handleDialog(false)}
+            >
               No
             </OutlinedButton>
           </FlexContainer>

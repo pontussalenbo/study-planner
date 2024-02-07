@@ -12,7 +12,7 @@ import { useState } from 'react';
 import { useStudyplanContext } from 'hooks/CourseContext';
 import { getDisplayPeriod } from 'utils/sortCourses';
 
-import IconButton from 'components/Button/Button';
+import { ContainedButton } from 'components/Button/Buttons';
 import { ButtonCell, NameCell, TableCell, TableRow } from 'components/Table/style';
 
 import { ListContainer } from './style';
@@ -75,18 +75,17 @@ const Row = ({ index, data }: RowProps) => {
       </TableCell>
       <ButtonCell>
         {isSelected ? (
-          <IconButton text variant='error' onClick={handleRemoveClick}>
+          <ContainedButton variant='error' onClick={handleRemoveClick}>
             Remove
-          </IconButton>
+          </ContainedButton>
         ) : (
-          <IconButton
-            text
+          <ContainedButton
             variant='primary'
             onClick={handleButtonClick}
             disabled={!selectedPeriod && course.periods.length > 1}
           >
             Select
-          </IconButton>
+          </ContainedButton>
         )}
       </ButtonCell>
     </TableRow>

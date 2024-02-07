@@ -12,7 +12,7 @@
 import { FormEvent, useEffect, useState } from 'react';
 import { useStudyplanContext } from 'hooks/CourseContext';
 
-import { OutlinedButton, StyledButton } from 'components/Button/style';
+import { ContainedButton, OutlinedButton } from 'components/Button/Buttons';
 import { FormInput } from 'components/Form';
 import { FormContainer, FormRow } from 'components/Form/styles';
 import { Option, Select } from 'components/Select';
@@ -247,9 +247,9 @@ const AddCourseModal: React.FC<AddCourseModalProps> = ({ isOpen, onClose }) => {
             required
           />
         </FormRow>
-        <StyledButton variant='primary' type='submit'>
+        <ContainedButton variant='primary' type='submit'>
           Add Course
-        </StyledButton>
+        </ContainedButton>
       </FormContainer>
     </Modal>
   );
