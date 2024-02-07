@@ -87,10 +87,10 @@ const ReadOnlyView: React.FC<CoursesProps> = ({ filters }) => {
       <Row gap={10}>
         <Col xs={12}>
           <FlexContainer>
-            <StickyButton variant='secondary' onClick={handleModal}>
+            <StickyButton variant='primary' onClick={handleModal}>
               Copy Plan
             </StickyButton>
-            <SavePlanModal data={filters} isOpen={isModalOpen} onClose={handleModal} />
+            <SavePlanModal shouldCopy data={filters} isOpen={isModalOpen} onClose={handleModal} />
           </FlexContainer>
         </Col>
         <Col xs={12} lg={6} id='master-check'>

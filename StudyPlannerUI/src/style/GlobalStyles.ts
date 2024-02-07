@@ -34,6 +34,7 @@ body {
   text-rendering: optimizeSpeed;
   background-color: ${({ theme }) => theme.background};
   color: ${({ theme }) => theme.onBackground};
+  font-family: "Roboto", sans-serif;
 }
 h1,
 h2,

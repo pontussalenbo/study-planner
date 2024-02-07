@@ -31,7 +31,7 @@ export interface CtxType extends State {
   /**
    * Saves the study plan to the database.
    */
-  savePlan: (filters: Filters) => Promise<SavePlanResp>;
+  savePlan: (filters: Filters, copy?: boolean) => Promise<SavePlanResp>;
 
   /**
    * Sets the urls (editable and readonly) for the study plan.
@@ -243,8 +243,8 @@ export function StudyplanProvider({ children, initState }: ProviderProps) {
     }));
   };
 
-  const savePlan = async (filters: Filters) => {
-    if (!state.unsavedChanges) {
+  const savePlan = async (filters: Filters, copy?: boolean) => {
+    if (!state.unsavedChanges && !copy) {
       return {
         success: true,
         urls: {

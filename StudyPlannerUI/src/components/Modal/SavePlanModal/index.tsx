@@ -24,6 +24,7 @@ import CopyButton from './CopyButton';
 
 interface SavePlanModalProps {
   isOpen: boolean;
+  shouldCopy?: boolean;
   data: Filters;
   onClose: () => void;
 }
@@ -32,7 +33,7 @@ interface URLS {
   sId: string;
   sIdReadOnly: string;
 }
-const SavePlanModal: FC<SavePlanModalProps> = ({ data, isOpen, onClose }) => {
+const SavePlanModal: FC<SavePlanModalProps> = ({ data, isOpen, shouldCopy, onClose }) => {
   const [planName, setPlanName] = useState<string>('');
   const [submitSuccess, setSubmitSuccess] = useState(false);
   const [urls, setUrls] = useState<URLS | null>(null);
@@ -66,8 +67,7 @@ const SavePlanModal: FC<SavePlanModalProps> = ({ data, isOpen, onClose }) => {
 
   const submitData = async () => {
     try {
-      // const response = await savePlan(body);
-      const { urls: planUrls } = await savePlan(data);
+      const { urls: planUrls } = await savePlan(data, shouldCopy);
       const BASE_URL = window.location.origin + Endpoints.studyPlan;
 
       const urls = {
