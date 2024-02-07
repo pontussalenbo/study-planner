@@ -6,17 +6,16 @@
 # (at your option) any later version. See the included LICENSE file for
 # the full text of the GNU General Public License.
 
-#!/bin/bash
-
-if [ "$1" == "-h" ]; then
-    echo "Usage: ./env.sh --dev or ./env.sh --prod"
-fi
-
 BUILD_TOP=$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)
+if [ -n "$ZSH_VERSION" ]; then
+    BUILD_TOP=$(cd "${0:a:h}/../.." && pwd)
+fi
 export BUILD_TOP
 
+echo "Setting BUILD_TOP to $BUILD_TOP"
+
 # Make sure we are in the root directory no matter where we are running the script from
-cd $BUILD_TOP
+# cd $BUILD_TOP
 
 # Constants
 PROD_COMPOSE_FILE="docker-compose.yml"
@@ -25,7 +24,8 @@ NPM_SCRIPTS_DIR="$BUILD_TOP/common"
 symlink_path="$BUILD_TOP/internal"
 
 # Load environment variables from .env file
-source .env
+# source file if it exists
+[ -f .env ] && source .env
 
 # Create symbolic link to internal repo if running on Windows
 # Needed for VS Code to show the internal repo in the file explorer
@@ -69,7 +69,7 @@ function _execute_in_build_top() {
 
 # Download secrets from Doppler and save them to .env file
 function doppler_secrets() {
-    _execute_in_build_top doppler secrets download --no-file --format env > .env
+    doppler secrets download --no-file --format env > $BUILD_TOP/.env
 }
 
 # Generate .NET Core HTTPS development certificate
@@ -163,4 +163,10 @@ function fetch_courses() {
 function seed_db() {
     script_dir=$(dirname "$BASH_SOURCE")
     bash $script_dir/seed_db.sh
+}
+
+function check_license_headers() {
+    pushd $BUILD_TOP
+    license-eye -c .github/license-eye.yml header fix
+    popd
 }
