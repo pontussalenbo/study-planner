@@ -212,6 +212,7 @@ const AddCourseModal: React.FC<AddCourseModalProps> = ({ isOpen, onClose }) => {
             id='credits'
             name='credits'
             type='number'
+            step='0.5'
             value={course.credits}
             onChange={handleNumberChange}
             errorMsg={errors.credits}

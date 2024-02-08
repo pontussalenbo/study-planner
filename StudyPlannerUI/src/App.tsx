@@ -13,9 +13,6 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import StudyplanProvider from 'hooks/CourseContext';
 import ToastProvider from 'hooks/useToast';
 import { State, STUDYPLAN_STORAGE_KEY } from 'reducers/courseContext';
-import GlobalStyles from 'style/GlobalStyles';
-import { customDarkTheme } from 'style/Theme';
-import { ThemeProvider } from 'styled-components';
 
 import BetaBanner from 'components/BetaBanner';
 import { ContainedButton, OutlinedButton } from 'components/Button/Buttons';
@@ -23,7 +20,6 @@ import Pencil from 'components/Icons/Spinner';
 import { FlexContainer } from 'components/Layout';
 import Modal from 'components/Modal';
 import Navbar from 'components/Navbar';
-import { Heading2 } from 'components/Typography/Heading2';
 import { Paragraph } from 'components/Typography/Paragraph';
 
 const MainPage = React.lazy(() => import('views/MainPage'));
@@ -69,25 +65,20 @@ function App(): JSX.Element {
 
   if (showDialog && location.pathname === '/') {
     return (
-      <ThemeProvider theme={customDarkTheme}>
-        <GlobalStyles />
-        <Modal hasCloseBtn={false} isOpen={showDialog}>
-          <Heading2>It seems like you didn&apos;t save your previous Study Plan.</Heading2>
-          <Paragraph>Would you like to restore it and continue where you left?</Paragraph>
-          <FlexContainer gap='10px'>
-            <ContainedButton variant='primary' onClick={() => handleDialog(true)}>
-              Yes
-            </ContainedButton>
-            <OutlinedButton
-              disableElevation
-              variant='secondary'
-              onClick={() => handleDialog(false)}
-            >
-              No
-            </OutlinedButton>
-          </FlexContainer>
-        </Modal>
-      </ThemeProvider>
+      <Modal hasCloseBtn={false} isOpen={showDialog}>
+        <Paragraph size='22px' weight={600}>
+          It seems like you didn&apos;t save your previous Study Plan.
+        </Paragraph>
+        <Paragraph>Would you like to restore it and continue where you left?</Paragraph>
+        <FlexContainer gap='10px'>
+          <ContainedButton variant='primary' onClick={() => handleDialog(true)}>
+            Yes
+          </ContainedButton>
+          <OutlinedButton disableElevation variant='secondary' onClick={() => handleDialog(false)}>
+            No
+          </OutlinedButton>
+        </FlexContainer>
+      </Modal>
     );
   }
 

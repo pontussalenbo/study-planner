@@ -189,7 +189,7 @@ export const ContainedButton = styled(ButtonBase)`
 
 export const OutlinedButton = styled(ButtonBase)`
   background-color: transparent;
-  border: 1px solid ${({ theme }) => theme.outlineVariant};
+  border: 1px solid ${({ theme }) => theme.outline};
 `;
 
 export const IconButton = styled.button<{

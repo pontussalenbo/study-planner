@@ -13,7 +13,7 @@ import React from 'react';
 import { FlexContainer } from 'components/Layout';
 
 import AddMissingCourse from './Courses/AddCourseModal';
-import CourseList from './Courses/CourseList';
+import CourseTable from './Courses/CourseTable';
 import SearchBar from './CoursesFilter/SearchBar';
 
 interface CoursesProps {
@@ -35,7 +35,7 @@ const Courses: React.FC<CoursesProps> = ({ courses, filteredCourses, handleFilte
         <SearchBar courses={courses} setFilteredCourses={handleFilteredCourses} />
         <AddMissingCourse />
       </FlexContainer>
-      <CourseList courses={filteredCourses} />
+      <CourseTable courses={filteredCourses} />
     </FlexContainer>
   );
 };
