@@ -65,13 +65,11 @@ export const FormInput: React.FC<FormInputProps> = ({
   };
 
   return (
-    <FlexContainer direction='column' gap='5px' id='1'>
-      <SelectContainer isOpen={isFocused} disabled={false} id='2'>
-        <SelectLabel isOpen={isFocused || hasValue} id='3'>
-          {placeholder || label}
-        </SelectLabel>
-        <StyledFieldset error={!!errorMsg} isOpen={isFocused} id='4'>
-          <StyledLegend hasValue={hasValue || isFocused} id='5'>
+    <FlexContainer direction='column' gap='5px' id='1' width='100%'>
+      <SelectContainer style={{ width: '100%' }} isOpen={isFocused} disabled={false}>
+        <SelectLabel isOpen={isFocused || hasValue}>{placeholder || label}</SelectLabel>
+        <StyledFieldset error={!!errorMsg} isOpen={isFocused}>
+          <StyledLegend hasValue={hasValue || isFocused}>
             <LegendContent>{label}</LegendContent>
           </StyledLegend>
           <SearchInput

@@ -22,7 +22,7 @@ import { Filters } from 'interfaces/Types';
 import { dataParser } from 'utils/sortCourses';
 
 import { ContainedButton } from 'components/Button/Buttons';
-import { Option, Select } from 'components/Select';
+import { Select } from 'components/Select';
 import Tooltip from 'components/Tooltip';
 
 interface CoursesFilterProps {
@@ -133,44 +133,48 @@ export const CoursesFilter: React.FC<CoursesFilterProps> = ({
 
   return (
     <>
-      <Select value={filterType} label='Filter by' onChange={handleChangeFilterType}>
-        <Option value={FILTERS.Class}>{FILTERS.Class}</Option>
-        <Option value={FILTERS.Year}>{FILTERS.Year}</Option>
-      </Select>
+      <Select
+        options={[
+          { label: FILTERS.Class, value: FILTERS.Class },
+          { label: FILTERS.Year, value: FILTERS.Year }
+        ]}
+        value={filterType}
+        label='Filter by'
+        onChange={handleChangeFilterType}
+      ></Select>
 
       <Tooltip text='Please select a filter' enabled={!hasFilterBy}>
         <Select
+          options={filterValues.map(f => {
+            const filter = f.replace('_', '/');
+            return {
+              label: filter,
+              value: filter
+            };
+          })}
           enabled={hasFilterBy}
           placeholder={`Select ${filterType}`}
           label={filterType}
           value={classYearFilter}
           onChange={setClassYearFilter}
-        >
-          <Option value=''>Select</Option>
-          {filterValues.map(filter => (
-            <Option key={filter} value={filter}>
-              {filter.replace('_', '/')}
-            </Option>
-          ))}
-        </Select>
+        />
       </Tooltip>
 
       <Tooltip text={masterTooltip} enabled={disableMasterSelection}>
         <Select
+          options={masters.map(master => {
+            return {
+              label: master.masterName_en,
+              value: master.masterCode
+            };
+          })}
           enabled={!disableMasterSelection}
           placeholder='Select Masters'
           label='masters'
           multiple
           value={multiSelectValue}
           onChange={handleChangeMasters}
-        >
-          <Option value=''>All (Default)</Option>
-          {masters.map(master => (
-            <Option key={master.masterCode} value={master.masterCode}>
-              {master.masterName_en}
-            </Option>
-          ))}
-        </Select>
+        />
       </Tooltip>
 
       <ContainedButton

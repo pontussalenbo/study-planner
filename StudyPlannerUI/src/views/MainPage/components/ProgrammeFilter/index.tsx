@@ -11,7 +11,7 @@
 import React from 'react';
 import { Filters } from 'interfaces/Types';
 
-import { Option, Select } from 'components/Select';
+import { Select } from 'components/Select';
 
 interface ProgrammeFilterProps {
   filters: Filters;
@@ -59,28 +59,26 @@ const ProgrammeFilter: React.FC<ProgrammeFilterProps> = ({
         value={filters.programme}
         placeholder='Select Programme'
         label='Programme'
+        options={
+          programmes?.map(programme => ({
+            value: programme,
+            label: programme
+          })) ?? []
+        }
         onChange={handleProgrammeChange}
-      >
-        <Option value=''>Select</Option>
-        {programmes?.map(programme => (
-          <Option key={programme} value={programme}>
-            {programme}
-          </Option>
-        ))}
-      </Select>
+      />
       <Select
         value={filters.year}
         placeholder='Select Class'
         label='Class'
         onChange={handleYearChange}
-      >
-        <Option value=''>Select</Option>
-        {reverse(years)?.map(year => (
-          <Option key={year} value={year}>
-            {year}
-          </Option>
-        ))}
-      </Select>
+        options={
+          reverse(years)?.map(year => ({
+            value: year,
+            label: year
+          })) ?? []
+        }
+      />
     </>
   );
 };

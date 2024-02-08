@@ -125,6 +125,12 @@ const buttonSizes = {
   large: '0.9375rem'
 };
 
+const paddings = {
+  small: '4px 10px',
+  medium: '6px 16px',
+  large: '8px 22px'
+};
+
 const ButtonBase = styled.button<BaseButtonProps>`
   display: inline-flex;
   flex-shrink: 0;
@@ -133,7 +139,7 @@ const ButtonBase = styled.button<BaseButtonProps>`
   gap: 4px;
   border: none;
   font-size: ${({ size }) => buttonSizes[size || 'medium']};
-  padding: 6px 16px;
+  padding: ${({ size }) => paddings[size || 'medium']};
   border-radius: 4px;
   font-weight: 500;
   line-height: 1.75;

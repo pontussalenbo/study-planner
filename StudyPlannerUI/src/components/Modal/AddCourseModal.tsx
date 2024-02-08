@@ -15,7 +15,7 @@ import { useStudyplanContext } from 'hooks/CourseContext';
 import { ContainedButton, OutlinedButton } from 'components/Button/Buttons';
 import { FormInput } from 'components/Form';
 import { FormContainer, FormRow } from 'components/Form/styles';
-import { Option, Select } from 'components/Select';
+import { Select } from 'components/Select';
 import { Heading2 } from 'components/Typography/Heading2';
 import { Paragraph } from 'components/Typography/Paragraph';
 
@@ -27,7 +27,7 @@ interface ToastProps {
   onClick: () => void;
   show?: boolean;
 }
-
+// TODO: Refactor to reusable component
 const Toast: React.FC<ToastProps> = ({ onClick }) => {
   return (
     <ToastContainer>
@@ -118,6 +118,7 @@ const AddCourseModal: React.FC<AddCourseModalProps> = ({ isOpen, onClose }) => {
     }));
   };
 
+  //TODO: Refactor error handling to hook?
   function convertErrorsToNestedObject(errorsArray: ErrorObject[]): Record<string, any> {
     const errors: Record<string, any> = {};
 
@@ -165,8 +166,13 @@ const AddCourseModal: React.FC<AddCourseModalProps> = ({ isOpen, onClose }) => {
     setSubmitSuccess(false);
   };
 
+  const handleClose = () => {
+    setSubmitSuccess(false);
+    onClose();
+  };
+
   return (
-    <Modal hasCloseBtn isOpen={isOpen} onClose={onClose}>
+    <Modal hasCloseBtn isOpen={isOpen} onClose={handleClose}>
       <Heading2>Did you not find your course?</Heading2>
       <Paragraph>
         Some courses are external or just not provided correctly, thus needed to be added manually.
@@ -212,18 +218,12 @@ const AddCourseModal: React.FC<AddCourseModalProps> = ({ isOpen, onClose }) => {
             required
           />
           <Select
+            options={LEVELS.map(level => ({ value: level, label: level }))}
             placeholder='Select Level'
             label='Level'
             value={course.level}
             onChange={handleLevelChange}
-          >
-            <Option value=''>Select</Option>
-            {LEVELS.map(level => (
-              <Option key={level} value={level}>
-                {level}
-              </Option>
-            ))}
-          </Select>
+          />
         </FormRow>
         <FormRow>
           <FormInput
