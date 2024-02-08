@@ -145,7 +145,7 @@ const SavePlanModal: FC<SavePlanModalProps> = ({ data, isOpen, shouldCopy, onClo
             Share your study plan with others by sharing the read only link below.
           </Paragraph>
           <FormRow>
-            <FormInput readOnly type='text' label='Read only Link' value={urls?.sIdReadOnly} />
+            <FormInput readOnly type='text' label='Readonly Link' value={urls?.sIdReadOnly} />
             <CopyButton onClick={() => copyToClipboard(urls?.sIdReadOnly)} />
           </FormRow>
         </>

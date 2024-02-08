@@ -68,10 +68,20 @@ function Navbar() {
           </NavLink>
         </NavItem>
         <NavItem isOpen={isOpen} idx={5}>
-          <SocialsNavLink aria-label='Link to GitHub code repository' href={GITHUB_URL}>
+          <SocialsNavLink
+            target='_blank'
+            rel='noopener noreferrer'
+            aria-label='Link to GitHub code repository'
+            href={GITHUB_URL}
+          >
             <Icon invert src='/github-mark.png' alt='GH' width={24} height={24} />
           </SocialsNavLink>
-          <SocialsNavLink aria-label='Link to By Me a Coffee' href={BMAC_URL}>
+          <SocialsNavLink
+            target='_blank'
+            rel='noopener noreferrer'
+            aria-label='Link to By Me a Coffee'
+            href={BMAC_URL}
+          >
             <BMC size={24} />
           </SocialsNavLink>
         </NavItem>

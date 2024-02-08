@@ -30,7 +30,11 @@ function BetaBanner() {
     <Banner>
       StudyPlanner is now live and in beta mode! 🎉 Existing features should be somewhat stable,
       with the exception of minor bugs (visual and functional). Please report any bugs or feature
-      requests <BannerLink href={REPORT_URL}>here</BannerLink>.
+      requests{' '}
+      <BannerLink rel='noopener noreferrer' target='_blank' href={REPORT_URL}>
+        here
+      </BannerLink>
+      .
     </Banner>
   );
 }
