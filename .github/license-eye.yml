@@ -24,4 +24,5 @@ header:
         - '**/pnpm-lock.yaml'
         - '**/ISSUE_TEMPLATE/**'
         - '**/assets/*.svg' # Seems to break svg loading?
+        - '**/robots.txt'
         # Add more file patterns as needed

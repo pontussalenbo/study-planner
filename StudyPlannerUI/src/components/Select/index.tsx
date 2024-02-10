@@ -196,9 +196,13 @@ export const Select = <T extends boolean, S extends Value>({
       onFocus={() => setFocused(true)}
       onBlur={() => setFocused(false)}
       role='combobox'
+      aria-expanded={isOpen}
+      aria-labelledby={label}
       tabIndex={0}
     >
-      <SelectLabel isOpen={isOpen}>{selectedValues || placeholder || label}</SelectLabel>
+      <SelectLabel id={label} isOpen={isOpen}>
+        {selectedValues || placeholder || label}
+      </SelectLabel>
       <Arrow isOpen={isOpen}>&#x25BC;</Arrow>
       <DropdownList
         role='listbox'
