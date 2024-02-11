@@ -11,15 +11,9 @@
 import { ChangeEvent, useState } from 'react';
 
 import { FlexContainer } from 'components/Layout';
-import {
-  LegendContent,
-  SelectContainer,
-  SelectLabel,
-  StyledFieldset,
-  StyledLegend
-} from 'components/Select/style';
+import { LegendContent, SelectLabel, StyledFieldset, StyledLegend } from 'components/Select/style';
 
-import { SearchInput } from './styles';
+import { InputContainer, SearchInput } from './styles';
 
 interface CommonProps extends React.InputHTMLAttributes<HTMLInputElement> {
   label: string;
@@ -65,8 +59,8 @@ export const FormInput: React.FC<FormInputProps> = ({
   };
 
   return (
-    <FlexContainer direction='column' gap='5px' id='1' width='100%'>
-      <SelectContainer style={{ width: '100%' }} isOpen={isFocused} disabled={false}>
+    <FlexContainer direction='column' gap='5px' width='100%'>
+      <InputContainer isOpen={isFocused} disabled={false}>
         <SelectLabel isOpen={isFocused || hasValue}>{placeholder || label}</SelectLabel>
         <StyledFieldset error={!!errorMsg} isOpen={isFocused}>
           <StyledLegend hasValue={hasValue || isFocused}>
@@ -80,7 +74,7 @@ export const FormInput: React.FC<FormInputProps> = ({
             onChange={handleChange}
           />
         </StyledFieldset>
-      </SelectContainer>
+      </InputContainer>
       <span>{errorMsg}</span>
     </FlexContainer>
   );

@@ -22,16 +22,10 @@ interface CoursesProps {
   handleFilteredCourses: React.Dispatch<React.SetStateAction<CourseData.DataWithLocale[]>>;
 }
 
-// TODO: Fix inline styles
 const Courses: React.FC<CoursesProps> = ({ courses, filteredCourses, handleFilteredCourses }) => {
   return (
-    <FlexContainer width='100%' direction='column' style={{ flexBasis: '55%', gridRow: '3/4' }}>
-      <FlexContainer
-        width='100%'
-        justify='space-between'
-        align='flex-end'
-        style={{ marginBottom: '15px' }}
-      >
+    <FlexContainer gap='15px' width='100%' direction='column'>
+      <FlexContainer width='100%' justify='space-between' align='flex-end'>
         <SearchBar courses={courses} setFilteredCourses={handleFilteredCourses} />
         <AddMissingCourse />
       </FlexContainer>

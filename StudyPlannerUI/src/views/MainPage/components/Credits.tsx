@@ -25,7 +25,7 @@ interface CreditsProps {
   masters: API.Master[];
   enoughCourses: boolean;
 }
-// TODO: Fix inline styles
+
 const Credits: React.FC<CreditsProps> = ({ filters, masters, enoughCourses }) => {
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
 
@@ -43,11 +43,7 @@ const Credits: React.FC<CreditsProps> = ({ filters, masters, enoughCourses }) =>
   };
 
   return (
-    <FlexContainer
-      width='100%'
-      direction='column'
-      style={{ flexBasis: '45%', gridRow: '3/4', marginTop: '0.85rem' }}
-    >
+    <FlexContainer width='100%' direction='column' margin='0.85em'>
       <FilterContainer>
         <StickyButton disabled={!enoughCourses} variant='primary' onClick={handleModal}>
           Save Plan

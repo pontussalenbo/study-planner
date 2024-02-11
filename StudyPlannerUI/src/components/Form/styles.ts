@@ -10,6 +10,8 @@
 
 import styled from 'styled-components';
 
+import { SelectContainer } from 'components/Select/style';
+
 export const FormContainer = styled.form`
     display: flex;
     flex-direction: column;
@@ -40,4 +42,8 @@ export const SearchInput = styled.input<SearchInputProps>`
     background-color: transparent;
     color: ${({ theme }) => theme.onSurfaceVariant};
     caret-color: ${({ theme }) => theme.surfaceTint};
+`;
+
+export const InputContainer = styled(SelectContainer)`
+    width: 100%;
 `;

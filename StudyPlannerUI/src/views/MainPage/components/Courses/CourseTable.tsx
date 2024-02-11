@@ -61,7 +61,7 @@ const Row: React.FC<{ course: Course }> = ({ course }) => {
       <TableCell>{course.level}</TableCell>
       <TableCell>
         {hasMultiplePeriods ? (
-          <select style={{ width: '100%' }} defaultValue='' onChange={handlePeriodChange}>
+          <select defaultValue='' onChange={handlePeriodChange}>
             <option value='' disabled></option>
             {course.periods.map((period, index) => (
               <option key={`${period.start}_${period.end}`} value={index}>
