@@ -24,7 +24,7 @@ PGPASSWORD=$DOTNET_CERT_PASSWORD psql -h localhost -U postgres -d studyplanner -
 
 for element in "${myArray[@]}"; do
     echo "Seeding $element..."
-    PGPASSWORD=$DOTNET_CERT_PASSWORD psql -h localhost -U postgres -d studyplanner -f data/$element.sql
+    PGPASSWORD=$DOTNET_CERT_PASSWORD psql -h localhost -U postgres -d studyplanner -f $BUILD_TOP/internal/common/db/data/$element.sql
 done
 
 popd > /dev/null
