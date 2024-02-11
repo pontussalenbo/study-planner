@@ -120,7 +120,11 @@ export const SocialsNavLink = styled(NavLink)`
   margin: 0 0.5rem;
 `;
 
-export const Icon = styled.img<{ invert?: boolean }>`
+interface IconProps {
+  invert?: boolean;
+}
+
+export const Icon = styled.img<IconProps>`
   display: inline-block;
   filter: ${({ invert }) => (invert ? 'invert(1)' : 'none')};
 `;

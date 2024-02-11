@@ -19,6 +19,7 @@ export interface ColProps {
   lg?: number;
   xl?: number;
   gap?: number;
+  width?: string;
 }
 
 const Col = styled.div<ColProps>`
@@ -56,6 +57,7 @@ const Col = styled.div<ColProps>`
                 flex: 0 0 ${calcColWidth(lg)};
                 max-width: ${calcColWidth(lg)};
             }`}
+    ${({ width }) => width && `width: ${width};`}
 `;
 
 export default Col;

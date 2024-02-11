@@ -8,42 +8,13 @@
  * the full text of the GNU General Public License.
  */
 
-import FlexContainer from 'components/Layout';
 import { CREDITS_TOTAL_KEY, MASTERS_SUMMARY_NAME } from 'api/constants';
-import styled from 'styled-components';
 
-const Pill = styled.div<{ color?: string }>`
-  background-color: ${({ theme, color }) => color || theme.tertiary};
-  color: ${({ theme }) => theme.onTertiary}};
-  height: 24px;
-  max-width: 60px;
-  border-radius: 8px 8px 8px 8px;
-  padding: 5px 12px;
-  border-radius: 15px;
-  text-align: center;
-  font-size: 0.85em;
-  font-weight: 500;
-   overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-`;
+import { FlexContainer } from 'components/Layout';
 
-const TextContainer = styled.div`
-  display: flex;
-  flex-direction: column;
-  font-size: 0.85em;
-  flex: 1 0 70%;
-  align-self: center;
-`;
+import { Pill } from '../style';
 
-const PillContainer = styled.div`
-  display: flex;
-  gap: 4px;
-  flex-wrap: wrap;
-  align-items: center;
-  flex: 1 0 30%; // This makes the pills take up at most 50% width
-`;
-
+import { PillContainer, TextContainer } from './style';
 interface CourseProps {
   name: string;
   code: string;

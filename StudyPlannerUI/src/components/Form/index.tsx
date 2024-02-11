@@ -8,16 +8,12 @@
  * the full text of the GNU General Public License.
  */
 
-import {
-  SelectContainer,
-  SelectLabel,
-  StyledFieldset,
-  StyledLegend,
-  LegendContent
-} from 'components/Select/style';
 import { ChangeEvent, useState } from 'react';
-import { SearchInput } from './styles';
-import FlexContainer from 'components/Layout';
+
+import { FlexContainer } from 'components/Layout';
+import { LegendContent, SelectLabel, StyledFieldset, StyledLegend } from 'components/Select/style';
+
+import { InputContainer, SearchInput } from './styles';
 
 interface CommonProps extends React.InputHTMLAttributes<HTMLInputElement> {
   label: string;
@@ -63,13 +59,11 @@ export const FormInput: React.FC<FormInputProps> = ({
   };
 
   return (
-    <FlexContainer direction='column' gap='5px' id='1'>
-      <SelectContainer isOpen={isFocused} disabled={false} id='2'>
-        <SelectLabel isOpen={isFocused || hasValue} id='3'>
-          {placeholder || label}
-        </SelectLabel>
-        <StyledFieldset error={!!errorMsg} isOpen={isFocused} id='4'>
-          <StyledLegend hasValue={hasValue || isFocused} id='5'>
+    <FlexContainer direction='column' gap='5px' width='100%'>
+      <InputContainer isOpen={isFocused} disabled={false}>
+        <SelectLabel isOpen={isFocused || hasValue}>{placeholder || label}</SelectLabel>
+        <StyledFieldset error={!!errorMsg} isOpen={isFocused}>
+          <StyledLegend hasValue={hasValue || isFocused}>
             <LegendContent>{label}</LegendContent>
           </StyledLegend>
           <SearchInput
@@ -80,7 +74,7 @@ export const FormInput: React.FC<FormInputProps> = ({
             onChange={handleChange}
           />
         </StyledFieldset>
-      </SelectContainer>
+      </InputContainer>
       <span>{errorMsg}</span>
     </FlexContainer>
   );

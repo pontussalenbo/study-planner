@@ -44,13 +44,8 @@ export const NameCell = styled(TableCell)`
 `;
 
 export const ButtonCell = styled(TableCell)`
-    padding: 0;
-    min-width: 100px;
     flex: 0 0 auto;
-    // child button
-    & > button {
-      min-width: 90px;
-  `;
+`;
 
 export const FilledTableRow = styled(TableRow)<{ fulfilled: boolean }>`
     background-color: ${({ theme, fulfilled }) => (fulfilled ? theme.fulfilled : 'transparent')};

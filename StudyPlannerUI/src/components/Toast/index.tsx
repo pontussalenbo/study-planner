@@ -8,7 +8,9 @@
  * the full text of the GNU General Public License.
  */
 
+import { FC } from 'react';
 import { Toast, ToastType } from 'hooks/useToast';
+
 import {
   ErrorToast,
   NeutralToast,
@@ -16,7 +18,6 @@ import {
   SuccessToast,
   ToastsContainer
 } from './style';
-import { FC } from 'react';
 interface ToastProps {
   toasts: Toast[];
 }

@@ -8,28 +8,14 @@
  * the full text of the GNU General Public License.
  */
 
-// TODO: Rename file to a more appropriate name
 import { useState } from 'react';
-import IconButton from 'components/Button/Button';
-import { ReactComponent as RemoveIcon } from 'assets/remove-outline.svg';
-import AddIcon from 'components/Icons/Add';
-import { getDisplayPeriod } from 'utils/sortCourses';
-import { TableRow, TableCell, NameCell, ButtonCell } from 'components/Table/style';
-import { ListContainer } from './InfiniteScroll.style';
 import { useStudyplanContext } from 'hooks/CourseContext';
+import { getDisplayPeriod } from 'utils/sortCourses';
 
-const Header: React.FC = () => {
-  return (
-    <TableRow header>
-      <TableCell>Course Code</TableCell>
-      <NameCell>Course Name</NameCell>
-      <TableCell>Credits</TableCell>
-      <TableCell>Level</TableCell>
-      <TableCell>Period</TableCell>
-      <ButtonCell>Action</ButtonCell>
-    </TableRow>
-  );
-};
+import { ContainedButton } from 'components/Button/Buttons';
+import { ButtonCell, NameCell, TableCell, TableRow } from 'components/Table/style';
+
+import { ListContainer } from './style';
 
 interface RowProps {
   index: number;
@@ -73,7 +59,7 @@ const Row = ({ index, data }: RowProps) => {
       <TableCell>{course.level}</TableCell>
       <TableCell>
         {hasMultiplePeriods ? (
-          <select style={{ minWidth: 'max-content' }} defaultValue='' onChange={handlePeriodChange}>
+          <select defaultValue='' onChange={handlePeriodChange}>
             <option value='' disabled>
               Select
             </option>
@@ -89,33 +75,38 @@ const Row = ({ index, data }: RowProps) => {
       </TableCell>
       <ButtonCell>
         {isSelected ? (
-          <IconButton text variant='error' icon={<RemoveIcon />} onClick={handleRemoveClick}>
+          <ContainedButton variant='error' onClick={handleRemoveClick}>
             Remove
-          </IconButton>
+          </ContainedButton>
         ) : (
-          <IconButton
-            text
+          <ContainedButton
             variant='primary'
-            icon={<AddIcon />}
             onClick={handleButtonClick}
             disabled={!selectedPeriod && course.periods.length > 1}
           >
             Select
-          </IconButton>
+          </ContainedButton>
         )}
       </ButtonCell>
     </TableRow>
   );
 };
 
-interface VirtualizedTableProps {
+interface CourseListProps {
   courses: CourseData.DataWithLocale[];
 }
 
-const VirtualizedTable: React.FC<VirtualizedTableProps> = ({ courses }) => {
+const CourseList: React.FC<CourseListProps> = ({ courses }) => {
   return (
     <ListContainer>
-      <Header />
+      <TableRow header>
+        <TableCell>Course Code</TableCell>
+        <NameCell>Course Name</NameCell>
+        <TableCell>Credits</TableCell>
+        <TableCell>Level</TableCell>
+        <TableCell>Period</TableCell>
+        <ButtonCell>Action</ButtonCell>
+      </TableRow>
       {courses.map((course, index) => (
         <Row key={course.courseCode} index={index} data={{ courses }} />
       ))}
@@ -123,4 +114,4 @@ const VirtualizedTable: React.FC<VirtualizedTableProps> = ({ courses }) => {
   );
 };
 
-export default VirtualizedTable;
+export default CourseList;

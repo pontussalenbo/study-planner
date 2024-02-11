@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 /*
  * Copyright Andreas Bartilson & Pontus Salenbo 2023-2024
  *
@@ -9,32 +10,24 @@
  */
 
 import { FormEvent, useEffect, useState } from 'react';
+import { useStudyplanContext } from 'hooks/CourseContext';
+
+import { ContainedButton, OutlinedButton } from 'components/Button/Buttons';
 import { FormInput } from 'components/Form';
 import { FormContainer, FormRow } from 'components/Form/styles';
+import { Select } from 'components/Select';
 import { Heading2 } from 'components/Typography/Heading2';
 import { Paragraph } from 'components/Typography/Paragraph';
-import { useStudyplanContext } from 'hooks/CourseContext';
-import Modal from './index';
-import styled from 'styled-components';
-import { OutlinedButton, StyledButton } from 'components/Button/style';
-import { courseSchema } from './CourseSchema';
-import { Option, Select } from 'components/Select';
 
-const ToastContainer = styled.div`
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 5px 20px;
-  border-radius: 4px;
-  border: 1px solid #000;
-  background-color ${({ theme }) => theme.primaryContainer};
-`;
+import { courseSchema } from './CourseSchema';
+import Modal from './index';
+import { ToastContainer } from './style';
 
 interface ToastProps {
   onClick: () => void;
   show?: boolean;
 }
-
+// TODO: Refactor to reusable component
 const Toast: React.FC<ToastProps> = ({ onClick }) => {
   return (
     <ToastContainer>
@@ -125,6 +118,7 @@ const AddCourseModal: React.FC<AddCourseModalProps> = ({ isOpen, onClose }) => {
     }));
   };
 
+  //TODO: Refactor error handling to hook?
   function convertErrorsToNestedObject(errorsArray: ErrorObject[]): Record<string, any> {
     const errors: Record<string, any> = {};
 
@@ -172,8 +166,13 @@ const AddCourseModal: React.FC<AddCourseModalProps> = ({ isOpen, onClose }) => {
     setSubmitSuccess(false);
   };
 
+  const handleClose = () => {
+    setSubmitSuccess(false);
+    onClose();
+  };
+
   return (
-    <Modal hasCloseBtn isOpen={isOpen} onClose={onClose}>
+    <Modal hasCloseBtn isOpen={isOpen} onClose={handleClose}>
       <Heading2>Did you not find your course?</Heading2>
       <Paragraph>
         Some courses are external or just not provided correctly, thus needed to be added manually.
@@ -213,24 +212,19 @@ const AddCourseModal: React.FC<AddCourseModalProps> = ({ isOpen, onClose }) => {
             id='credits'
             name='credits'
             type='number'
+            step='0.5'
             value={course.credits}
             onChange={handleNumberChange}
             errorMsg={errors.credits}
             required
           />
           <Select
+            options={LEVELS.map(level => ({ value: level, label: level }))}
             placeholder='Select Level'
             label='Level'
             value={course.level}
             onChange={handleLevelChange}
-          >
-            <Option value=''>Select</Option>
-            {LEVELS.map(level => (
-              <Option key={level} value={level}>
-                {level}
-              </Option>
-            ))}
-          </Select>
+          />
         </FormRow>
         <FormRow>
           <FormInput
@@ -254,9 +248,9 @@ const AddCourseModal: React.FC<AddCourseModalProps> = ({ isOpen, onClose }) => {
             required
           />
         </FormRow>
-        <StyledButton variant='primary' type='submit'>
+        <ContainedButton variant='primary' type='submit'>
           Add Course
-        </StyledButton>
+        </ContainedButton>
       </FormContainer>
     </Modal>
   );

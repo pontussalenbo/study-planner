@@ -9,6 +9,7 @@
  */
 
 import { Endpoints } from 'api/constants';
+
 import { GET } from './fetch';
 
 export function saveMaster() {

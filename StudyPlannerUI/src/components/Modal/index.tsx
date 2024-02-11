@@ -8,9 +8,10 @@
  * the full text of the GNU General Public License.
  */
 
-import React, { useRef, useEffect, useState } from 'react';
-import { ReactComponent as CloseIcon } from 'assets/close-round-icon.svg';
-import { ModalDialog, CloseButton } from './style';
+import React, { useEffect, useRef, useState } from 'react';
+import CloseIcon from 'assets/close-round-icon.svg?react';
+
+import { CloseButton, ModalDialog } from './style';
 
 interface ModalProps {
   isOpen: boolean;
@@ -62,7 +63,7 @@ const Modal: React.FC<ModalProps> = ({ isOpen, hasCloseBtn = true, onClose, chil
     <ModalDialog ref={modalRef} onKeyDown={handleKeyDown}>
       {hasCloseBtn && (
         <CloseButton onClick={handleCloseModal}>
-          <CloseIcon width={24} height={24} fill='gray' />
+          <CloseIcon width={24} height={24} />
         </CloseButton>
       )}
       {children}

@@ -8,28 +8,13 @@
  * the full text of the GNU General Public License.
  */
 
-import React, { useState, useCallback } from 'react';
-import styled from 'styled-components';
-import { ReactComponent as CopyIcon } from 'assets/copy-icon.svg';
-import { ReactComponent as CheckmarkIcon } from 'assets/check-mark-icon.svg';
-import { StyledButton } from 'components/Button/style';
+import React, { useCallback, useState } from 'react';
+import CheckmarkIcon from 'assets/check-mark-icon.svg?react';
+import CopyIcon from 'assets/copy-icon.svg?react';
+import { useTheme } from 'styled-components';
 
-const Tooltip = styled.div`
-  position: absolute;
-  top: 100%;
-  left: 50%;
-  transform: translateX(-50%);
-  background-color: #333;
-  color: white;
-  padding: 5px;
-  border-radius: 5px;
-  margin-top: 5px;
-  opacity: 0;
-  transition: opacity 0.3s ease-in-out;
-  &.visible {
-    opacity: 1;
-  }
-`;
+import { IconButton } from 'components/Button/Buttons';
+import Tooltip from 'components/Tooltip';
 
 interface CopyButtonProps {
   onClick: () => void;
@@ -39,6 +24,8 @@ const CopyButton: React.FC<CopyButtonProps> = ({ onClick }) => {
   const [isCopied, setIsCopied] = useState(false);
   const [showTooltip, setShowTooltip] = useState(false);
 
+  const theme = useTheme();
+
   const handleCopyClick = useCallback(() => {
     setIsCopied(true);
     setShowTooltip(true);
@@ -46,19 +33,25 @@ const CopyButton: React.FC<CopyButtonProps> = ({ onClick }) => {
     onClick();
 
     // Hide the tooltip and reset the icon after 3 seconds
-    setTimeout(() => {
+    const to = setTimeout(() => {
       setShowTooltip(false);
       setIsCopied(false);
     }, 3000);
+    return () => clearTimeout(to);
   }, []);
 
   return (
-    <div style={{ position: 'relative' }}>
-      <StyledButton variant='primary' onClick={handleCopyClick}>
-        {isCopied ? <CheckmarkIcon width={24} height={24} /> : <CopyIcon width={24} height={24} />}
-      </StyledButton>
-      {showTooltip && <Tooltip className='visible'>Copied!</Tooltip>}
-    </div>
+    <>
+      <Tooltip enabled={showTooltip} text='Copied!'>
+        <IconButton onClick={handleCopyClick}>
+          {isCopied ? (
+            <CheckmarkIcon fill={theme.primary} width={24} height={24} />
+          ) : (
+            <CopyIcon fill={theme.primary} width={24} height={24} />
+          )}
+        </IconButton>
+      </Tooltip>
+    </>
   );
 };
 

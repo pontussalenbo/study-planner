@@ -9,46 +9,20 @@
  */
 
 import { useMemo } from 'react';
-import styled from 'styled-components';
-import { ListContainer } from '../views/MainPage/components/Courses/InfiniteScroll.style';
 import { CREDITS_TOTAL_KEY, MASTERS_SUMMARY_NAME } from 'api/constants';
+
 import {
-  TableRow,
+  BoldCell,
+  BoldNameCell,
+  FilledTableRow,
   NameCell,
   TableCell,
-  FilledTableRow,
-  BoldNameCell,
-  BoldCell
+  TableRow
 } from 'components/Table/style';
 
-const Header: React.FC = () => {
-  return (
-    <TableRow header>
-      <NameCell>Specialisation</NameCell>
-      <TableCell>Code</TableCell>
-      <TableCell>G1</TableCell>
-      <TableCell>G2</TableCell>
-      <TableCell>A</TableCell>
-      <TableCell>Total</TableCell>
-    </TableRow>
-  );
-};
+import { ListContainer } from '../views/MainPage/components/Courses/style';
 
-const Pill = styled.div<{ color?: string }>`
-  background-color: ${({ theme, color }) => color || theme.tertiary};
-  color: ${({ theme }) => theme.onTertiary}};
-  height: 24px;
-  max-width: 60px;
-  border-radius: 8px 8px 8px 8px;
-  padding: 5px 12px;
-  border-radius: 15px;
-  text-align: center;
-  font-size: 0.85em;
-  font-weight: 500;
-   overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-`;
+import { Pill } from './style';
 
 interface MasterCheckProps {
   masters: API.Master[];
@@ -96,7 +70,14 @@ const MasterCheck: React.FC<MasterCheckProps> = ({ masters, stats, colorMap }) =
   return (
     <>
       <ListContainer>
-        <Header />
+        <TableRow header>
+          <NameCell>Specialisation</NameCell>
+          <TableCell>Code</TableCell>
+          <TableCell>G1</TableCell>
+          <TableCell>G2</TableCell>
+          <TableCell>A</TableCell>
+          <TableCell>Total</TableCell>
+        </TableRow>
         {sortedMasters.map(master => {
           const masterStat = stats.find(stat => stat.master === master.masterCode);
 

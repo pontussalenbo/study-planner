@@ -9,11 +9,11 @@
  */
 
 import {
+  LegendContent,
   SelectContainer,
   SelectLabel,
   StyledFieldset,
-  StyledLegend,
-  LegendContent
+  StyledLegend
 } from './Select/style';
 
 interface ReadonlyFieldProps {

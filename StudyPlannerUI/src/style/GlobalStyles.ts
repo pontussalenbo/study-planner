@@ -10,6 +10,7 @@
 
 /* eslint-disable @typescript-eslint/explicit-function-return-type */
 import { createGlobalStyle } from 'styled-components';
+
 import { CustomTheme } from './Theme';
 
 const GlobalStyles = createGlobalStyle<{ theme: CustomTheme }>`
@@ -33,6 +34,7 @@ body {
   text-rendering: optimizeSpeed;
   background-color: ${({ theme }) => theme.background};
   color: ${({ theme }) => theme.onBackground};
+  font-family: "Roboto", sans-serif;
 }
 h1,
 h2,

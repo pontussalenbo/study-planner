@@ -14,9 +14,9 @@
 
 //TODO : Fix?
 
-import { describe, expect } from 'vitest';
-import { render, screen, waitForElementToBeRemoved, fireEvent } from '@testing-library/react';
+import { fireEvent, render, screen, waitForElementToBeRemoved } from '@testing-library/react';
 import MainPage from 'views/MainPage';
+import { describe, expect } from 'vitest';
 
 vi.mock('hooks/useFetchCourses', () => {
   return { useFetch: vi.fn() };

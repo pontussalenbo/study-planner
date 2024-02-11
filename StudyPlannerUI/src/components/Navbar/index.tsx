@@ -9,9 +9,14 @@
  */
 
 import { useState } from 'react';
-import { Nav, Logo, NavLink, NavLinks, NavItem, SocialsNavLink, Icon } from './styles';
-import Hamburger from './Hamburger';
+
 import BMC from 'components/Icons/BMC';
+
+import Hamburger from './Hamburger';
+import { Icon, Logo, Nav, NavItem, NavLink, NavLinks, SocialsNavLink } from './styles';
+
+const GITHUB_URL = 'https://github.com/pontussalenbo/study-planner';
+const BMAC_URL = 'https://www.buymeacoffee.com/studyplannerlth';
 
 function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
@@ -43,22 +48,40 @@ function Navbar() {
       </Logo>
       <NavLinks isOpen={isOpen}>
         <NavItem isOpen={isOpen} idx={1}>
-          <NavLink onClick={() => scrollTo('courses')}>Courses</NavLink>
+          <NavLink href='#' onClick={() => scrollTo('courses')}>
+            Courses
+          </NavLink>
         </NavItem>
         <NavItem isOpen={isOpen} idx={2}>
-          <NavLink onClick={() => scrollTo('master-check')}>Master Check</NavLink>
+          <NavLink href='#' onClick={() => scrollTo('master-check')}>
+            Master Check
+          </NavLink>
         </NavItem>
         <NavItem isOpen={isOpen} idx={3}>
-          <NavLink onClick={() => scrollTo('my-plan')}>My Plan</NavLink>
+          <NavLink href='#' onClick={() => scrollTo('my-plan')}>
+            My Plan
+          </NavLink>
         </NavItem>
         <NavItem isOpen={isOpen} idx={4}>
-          <NavLink onClick={() => scrollTo('graphs')}>Graphs</NavLink>
+          <NavLink href='#' onClick={() => scrollTo('graphs')}>
+            Graphs
+          </NavLink>
         </NavItem>
         <NavItem isOpen={isOpen} idx={5}>
-          <SocialsNavLink href='#'>
+          <SocialsNavLink
+            target='_blank'
+            rel='noopener noreferrer'
+            aria-label='Link to GitHub code repository'
+            href={GITHUB_URL}
+          >
             <Icon invert src='/github-mark.png' alt='GH' width={24} height={24} />
           </SocialsNavLink>
-          <SocialsNavLink href='#'>
+          <SocialsNavLink
+            target='_blank'
+            rel='noopener noreferrer'
+            aria-label='Link to By Me a Coffee'
+            href={BMAC_URL}
+          >
             <BMC size={24} />
           </SocialsNavLink>
         </NavItem>

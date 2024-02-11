@@ -9,7 +9,8 @@
  */
 
 import styled from 'styled-components';
-import { TypographyProps, GenericTypography } from './style';
+
+import { GenericTypography, TypographyProps } from './style';
 
 export const Paragraph = styled.p<TypographyProps>`
   font-size: ${({ size }) => size || '1rem'};

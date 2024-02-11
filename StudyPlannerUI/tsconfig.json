@@ -16,7 +16,7 @@
     "noEmit": true,
     "jsx": "react-jsx",
     "baseUrl": "src",
-    "types": ["vite/client", "vitest/globals", "vite-plugin-pwa/client"]
+    "types": ["vite/client", "vitest/globals", "vite-plugin-pwa/client", "vite-plugin-svgr/client"]
   },
   "include": ["src", "setupTests.ts", "tests"],
   "references": [{ "path": "./tsconfig.node.json" }]

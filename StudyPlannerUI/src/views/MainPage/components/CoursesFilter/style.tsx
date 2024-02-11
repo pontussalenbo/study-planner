@@ -8,8 +8,6 @@
  * the full text of the GNU General Public License.
  */
 
-import { Label } from 'components/Select/style';
-import { InputHTMLAttributes } from 'react';
 import styled from 'styled-components';
 
 export const SearchBarContainer = styled.div`
@@ -61,34 +59,3 @@ export const SearchError = styled.span`
   font-weight: 600;
   font-style: italic;
 `;
-
-interface InputWithLabelProps extends InputHTMLAttributes<HTMLInputElement> {
-  label?: string;
-  placeholder: string;
-  showError?: boolean;
-  children?: React.ReactNode;
-}
-
-export const InputWithLabel = ({
-  label,
-  placeholder,
-  showError,
-  children,
-  ...rest
-}: InputWithLabelProps) => {
-  return (
-    <SearchBarContainer>
-      <SearchInputWrapper>
-        <Label htmlFor='searchBar'>{label}</Label>
-        <SearchInput
-          {...rest}
-          id='searchBar'
-          error={showError}
-          type='text'
-          placeholder={placeholder}
-        />
-        {showError && children}
-      </SearchInputWrapper>
-    </SearchBarContainer>
-  );
-};

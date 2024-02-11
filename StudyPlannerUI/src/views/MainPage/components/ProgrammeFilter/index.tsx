@@ -9,8 +9,9 @@
  */
 
 import React from 'react';
-import { Select, Option } from 'components/Select';
 import { Filters } from 'interfaces/Types';
+
+import { Select } from 'components/Select';
 
 interface ProgrammeFilterProps {
   filters: Filters;
@@ -51,34 +52,33 @@ const ProgrammeFilter: React.FC<ProgrammeFilterProps> = ({
       return a.localeCompare(b);
     });
   }
+
   return (
     <>
       <Select
         value={filters.programme}
         placeholder='Select Programme'
         label='Programme'
+        options={
+          programmes?.map(programme => ({
+            value: programme,
+            label: programme
+          })) ?? []
+        }
         onChange={handleProgrammeChange}
-      >
-        <Option value=''>Select</Option>
-        {programmes?.map(programme => (
-          <Option key={programme} value={programme}>
-            {programme}
-          </Option>
-        ))}
-      </Select>
+      />
       <Select
         value={filters.year}
         placeholder='Select Class'
         label='Class'
         onChange={handleYearChange}
-      >
-        <Option value=''>Select</Option>
-        {reverse(years)?.map(year => (
-          <Option key={year} value={year}>
-            {year}
-          </Option>
-        ))}
-      </Select>
+        options={
+          reverse(years)?.map(year => ({
+            value: year,
+            label: year
+          })) ?? []
+        }
+      />
     </>
   );
 };
