@@ -8,8 +8,9 @@
  * the full text of the GNU General Public License.
  */
 
-import Toasts from 'components/Toast';
 import React, { useState } from 'react';
+
+import Toasts from 'components/Toast';
 
 export interface ToastContext {
   toasts: Toast[];

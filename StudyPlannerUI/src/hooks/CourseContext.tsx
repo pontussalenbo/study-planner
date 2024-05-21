@@ -8,10 +8,11 @@
  * the full text of the GNU General Public License.
  */
 
-import React, { useContext, useEffect, useReducer } from 'react';
-import { StudyPlan, savePlan as savePlanAPI } from 'api/studyplan';
+import React, { useContext, useReducer } from 'react';
+import { savePlan as savePlanAPI, StudyPlan } from 'api/studyplan';
 import { Filters } from 'interfaces/Types';
-import { LoadedPlan, SelectedCourses, State, URLS, reducer } from '../reducers/courseContext';
+
+import { LoadedPlan, reducer, SelectedCourses, State, URLS } from '../reducers/courseContext';
 
 interface ExisitingPlan extends StudyPlan {
   studyPlanId: string;
@@ -21,43 +22,16 @@ interface SavePlanResp {
   success: boolean;
   urls: URLS | null;
 }
-
-// TODO: extend State interface
-export interface CtxType {
+export interface CtxType extends State {
   /**
    * The courses that are currently selected in the study plan.
    */
   courses: SelectedCourses;
 
   /**
-   * Whether the study plan has been loaded or not from a saved plan.
-   */
-  loaded: boolean;
-
-  /**
-   * Information about the loaded plan.
-   */
-  loadedPlan: LoadedPlan;
-
-  /**
-   * Whether the study plan has unsaved changes or not.
-   */
-  unsavedChanges: boolean;
-
-  /**
-   * Custom courses that have been added to the study plan.
-   */
-  customCourses: SelectedCourses;
-
-  /**
-   * The urls (editable and readonly), used to access the study plan.
-   */
-  urls: URLS;
-
-  /**
    * Saves the study plan to the database.
    */
-  savePlan: (filters: Filters) => Promise<SavePlanResp>;
+  savePlan: (filters: Filters, copy?: boolean) => Promise<SavePlanResp>;
 
   /**
    * Sets the urls (editable and readonly) for the study plan.
@@ -98,6 +72,7 @@ export interface CtxType {
    * Sets the courses that are currently selected in the study plan.
    */
   setCourses: (selectedCourses: SelectedCourses) => void;
+  setFilters: (filters: Filters) => void;
 }
 
 // Create the context
@@ -111,15 +86,6 @@ export function useStudyplanContext() {
   return context;
 }
 
-const initialState: State = {
-  selectedCourses: { 4: [], 5: [] },
-  loaded: false,
-  loadedPlan: { readOnly: false, name: '', url: '' },
-  unsavedChanges: false,
-  urls: { sId: '', sIdReadOnly: '' },
-  customCourses: { 4: [], 5: [] }
-};
-
 /**
  * Props for the StudyplanProvider component.
  */
@@ -131,7 +97,7 @@ interface ProviderProps {
   /**
    * The initial state to set when the component is mounted. [Optional]
    */
-  initState?: State;
+  initState: State;
 }
 
 /**
@@ -143,13 +109,7 @@ interface ProviderProps {
  * with the study plan's state.
  */
 export function StudyplanProvider({ children, initState }: ProviderProps) {
-  const [state, dispatch] = useReducer(reducer, initialState);
-
-  useEffect(() => {
-    if (initState) {
-      dispatch({ type: 'SET_INIT_STATE', payload: initState });
-    }
-  }, [initState]);
+  const [state, dispatch] = useReducer(reducer, initState);
 
   const hasCourse = (courseCode: string) => {
     return (
@@ -187,6 +147,7 @@ export function StudyplanProvider({ children, initState }: ProviderProps) {
     } else {
       dispatch({ type: 'SET_SELECTED_COURSES', payload: updatedSelectedCourses });
     }
+    dispatch({ type: 'SET_UNSAVED_CHANGES', payload: true });
   };
 
   const removeCourse = (courseName: string, year?: CourseData.YEAR) => {
@@ -204,6 +165,7 @@ export function StudyplanProvider({ children, initState }: ProviderProps) {
       );
     }
     dispatch({ type: 'SET_SELECTED_COURSES', payload: updatedSelectedCourses });
+    dispatch({ type: 'SET_UNSAVED_CHANGES', payload: true });
   };
 
   const removeCustomCourse = (courseName: string, year?: CourseData.YEAR) => {
@@ -219,6 +181,7 @@ export function StudyplanProvider({ children, initState }: ProviderProps) {
       updatedCustomCourses[5] = updatedCustomCourses[5].filter(c => c.courseCode !== courseName);
       dispatch({ type: 'SET_CUSTOM_COURSES', payload: updatedCustomCourses });
     }
+    dispatch({ type: 'SET_UNSAVED_CHANGES', payload: true });
   };
 
   const changeYear = (courseName: string, year: CourseData.YEAR, custom?: boolean) => {
@@ -233,7 +196,6 @@ export function StudyplanProvider({ children, initState }: ProviderProps) {
     }
 
     course.studyYear = year;
-    console.log('custom', course);
 
     if (custom) {
       const updatedCustomCourses = {
@@ -243,6 +205,7 @@ export function StudyplanProvider({ children, initState }: ProviderProps) {
       };
 
       dispatch({ type: 'SET_CUSTOM_COURSES', payload: updatedCustomCourses });
+      dispatch({ type: 'SET_UNSAVED_CHANGES', payload: true });
       return;
     }
 
@@ -253,10 +216,12 @@ export function StudyplanProvider({ children, initState }: ProviderProps) {
     };
 
     dispatch({ type: 'SET_SELECTED_COURSES', payload: updatedSelectedCourses });
+    dispatch({ type: 'SET_UNSAVED_CHANGES', payload: true });
   };
 
   const setCourses = (selectedCourses: SelectedCourses) => {
     dispatch({ type: 'SET_SELECTED_COURSES', payload: selectedCourses });
+    dispatch({ type: 'SET_UNSAVED_CHANGES', payload: true });
   };
 
   const setUrls = (urls: URLS) => {
@@ -278,8 +243,8 @@ export function StudyplanProvider({ children, initState }: ProviderProps) {
     }));
   };
 
-  const savePlan = async (filters: Filters) => {
-    if (!state.unsavedChanges) {
+  const savePlan = async (filters: Filters, copy?: boolean) => {
+    if (!state.unsavedChanges && !copy) {
       return {
         success: true,
         urls: {
@@ -329,13 +294,19 @@ export function StudyplanProvider({ children, initState }: ProviderProps) {
     }
   };
 
+  const setFilters = (filters: Filters) => {
+    dispatch({ type: 'SET_FILTERS', payload: filters });
+  };
+
   const contextValue: CtxType = {
     courses: state.selectedCourses,
+    selectedCourses: state.selectedCourses,
     customCourses: state.customCourses,
     loaded: state.loaded,
     loadedPlan: state.loadedPlan,
     unsavedChanges: state.unsavedChanges,
     urls: state.urls,
+    filters: state.filters,
     hasCourse,
     addCourse,
     removeCourse,
@@ -344,7 +315,8 @@ export function StudyplanProvider({ children, initState }: ProviderProps) {
     setCourses,
     savePlan,
     setUrls,
-    setLoadedPlan
+    setLoadedPlan,
+    setFilters
   };
 
   return <StudyPlanContext.Provider value={contextValue}>{children}</StudyPlanContext.Provider>;

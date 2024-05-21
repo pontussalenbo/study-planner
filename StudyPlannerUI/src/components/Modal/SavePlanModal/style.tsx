@@ -8,23 +8,21 @@
  * the full text of the GNU General Public License.
  */
 
-// TODO : Remove this file and move components to a more appropriate location
 import styled from 'styled-components';
 
-export const FilterContainer = styled.div`
-    margin-top: 10px;
-    display: flex;
-    align-items: stretch;
-    flex-wrap: wrap;
-    gap: 1rem;
-    width: 100%;
-    margin-bottom: 1rem;
-`;
-
-export const GetStatsBar = styled.div`
-    display: flex;
-    height: 100%;
-    gap: 1rem;
-    justify-content: space-between;
-    align-items: flex-end;
+export const Tooltip = styled.div`
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: #333;
+  color: white;
+  padding: 5px;
+  border-radius: 5px;
+  margin-top: 5px;
+  opacity: 0;
+  transition: opacity 0.3s ease-in-out;
+  &.visible {
+    opacity: 1;
+  }
 `;

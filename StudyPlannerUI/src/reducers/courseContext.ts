@@ -8,7 +8,13 @@
  * the full text of the GNU General Public License.
  */
 
+import { Filters } from 'interfaces/Types';
+
+/* eslint-disable @typescript-eslint/no-explicit-any */
+
 export type SelectedCourses = Record<CourseData.YEAR, CourseData.SelectedCourse[]>;
+
+export const STUDYPLAN_STORAGE_KEY = 'studyplan';
 
 /**
  * Information about the loaded plan.
@@ -67,6 +73,7 @@ export interface State {
      * Custom courses that have been added to the study plan.
      */
     customCourses: SelectedCourses;
+    filters: Filters;
 }
 
 /**
@@ -128,9 +135,25 @@ const setLoadedPlanHandler = (state: State, action: Action<LoadedPlan>): State =
 /**
  * Sets whether the study plan has unsaved changes or not.
  */
-const setUnsavedChangesHandler = (state: State, action: Action<boolean>): State => ({
+const setUnsavedChangesHandler = (state: State, action: Action<boolean>): State => {
+    const unsavedChanges = action.payload;
+
+    if (unsavedChanges) {
+        localStorage.setItem(STUDYPLAN_STORAGE_KEY, JSON.stringify(state));
+    } else {
+        localStorage.removeItem(STUDYPLAN_STORAGE_KEY);
+    }
+
+    return {
+        ...state,
+        unsavedChanges: action.payload
+    }
+
+};
+
+const setFiltersHandler = (state: State, action: Action<Filters>): State => ({
     ...state,
-    unsavedChanges: action.payload
+    filters: action.payload
 });
 
 // All actions that can be dispatched to update the state.
@@ -140,7 +163,8 @@ const actionHandlers = {
     SET_CUSTOM_COURSES: setCustomCoursesHandler,
     SET_URLS: setUrlsHandler,
     SET_LOADED_PLAN: setLoadedPlanHandler,
-    SET_UNSAVED_CHANGES: setUnsavedChangesHandler
+    SET_UNSAVED_CHANGES: setUnsavedChangesHandler,
+    SET_FILTERS: setFiltersHandler
 };
 
 export const reducer = (state: State, action: Action): State => {

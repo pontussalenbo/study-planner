@@ -8,28 +8,43 @@
  * the full text of the GNU General Public License.
  */
 
-import { Container, Wrapper } from './style';
-import Courses from './components/Courses';
+import React from 'react';
+
 import Col from 'components/Flex/Col.style';
 import Row from 'components/Flex/Row.style';
-import { Filters } from 'interfaces/Types';
-import HorizontalBarChart from 'components/Barchart';
+import SelectedCourses from 'components/SelectedCourses/SelectedCourses';
+import { Heading2 } from 'components/Typography/Heading2';
 
-interface MainPageProps {
-  filters?: Filters;
-}
+import CourseContainer from './containers/CourseContainer';
+import { Container, Wrapper } from './style';
 
-const MainPage: React.FC<MainPageProps> = ({ filters }) => {
+const BarChart = React.lazy(() => import('components/Barchart'));
+
+const MainPage: React.FC = () => {
   return (
     <Container>
       <Wrapper>
-        <Courses initFilters={filters} />
-        <Row id='graphs'>
-          <Col md={6}>
-            <HorizontalBarChart year={4} />
+        <Row>
+          <CourseContainer />
+        </Row>
+
+        <Row id='my-plan'>
+          <Col xs={12} lg={6}>
+            <Heading2>Fourth Year</Heading2>
+            <SelectedCourses year={4} />
           </Col>
-          <Col md={6}>
-            <HorizontalBarChart year={5} />
+
+          <Col xs={12} lg={6}>
+            <Heading2>Fifth Year</Heading2>
+            <SelectedCourses year={5} />
+          </Col>
+        </Row>
+        <Row id='graphs'>
+          <Col width='100%' md={6}>
+            <BarChart year={4} />
+          </Col>
+          <Col width='100%' md={6}>
+            <BarChart year={5} />
           </Col>
         </Row>
       </Wrapper>

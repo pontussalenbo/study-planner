@@ -21,7 +21,7 @@ interface Openable {
   isOpen: boolean;
 }
 
-export const StyledFieldset = styled.fieldset<Openable & { error?: boolean }>`
+export const StyledFieldset = styled.fieldset<Openable & { focused?: boolean; error?: boolean }>`
   text-align: left;
   position: absolute;
   bottom: 0;
@@ -41,8 +41,8 @@ export const StyledFieldset = styled.fieldset<Openable & { error?: boolean }>`
   &:hover {
     ${({ isOpen, theme }) => !isOpen && `border-color: ${theme.outline}`};
   }
-  ${({ isOpen, theme }) =>
-    isOpen &&
+  ${({ isOpen, focused, theme }) =>
+    (isOpen || focused) &&
     `
     border-color: ${theme.primary};
     `}
@@ -82,7 +82,11 @@ export const SelectLabel = styled.label<Openable>`
   visibility: ${props => (props.isOpen ? 'hidden' : 'visible')};
 `;
 
-export const SelectContainer = styled.div<{ isOpen: boolean; disabled: boolean }>`
+interface SelectContainerProps extends Openable, React.HTMLProps<HTMLDivElement> {
+  disabled: boolean;
+}
+
+export const SelectContainer = styled.div<SelectContainerProps>`
   display: flex;
   min-height: 38px;
   align-items: center;
@@ -90,7 +94,7 @@ export const SelectContainer = styled.div<{ isOpen: boolean; disabled: boolean }
   background-color: ${({ theme }) => theme.surfaceVariant};
   color: ${({ theme }) => theme.onSurfaceVariant};
   border-radius: 4px;
-  min-width: 200px;
+  min-width: 150px;
   position: relative;
   font-family: 'Roboto', sans-serif;
   padding: 0;
@@ -101,6 +105,9 @@ export const SelectContainer = styled.div<{ isOpen: boolean; disabled: boolean }
     opacity: 0.7;
     pointer-events: none;
   `}
+  :focus-visible {
+    outline: none;
+  }
 `;
 
 export const Arrow = styled.span<Openable>`
@@ -136,13 +143,14 @@ export const DropdownList = styled.ul`
   }
 `;
 
-export const OptionItem = styled.li`
+export const OptionItem = styled.li<{ focused?: boolean }>`
   display: flex;
   gap: 8px;
   align-items: center;
   padding: 10px 12px;
   cursor: pointer;
   transition: background-color 0.2s ease;
+  ${({ focused }) => focused && 'background-color: rgba(0, 0, 0, 0.15);'}
   &:hover {
     background-color: rgba(0, 0, 0, 0.15);
   }

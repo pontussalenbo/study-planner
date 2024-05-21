@@ -8,21 +8,45 @@
  * the full text of the GNU General Public License.
  */
 
-import { useMemo } from 'react';
-import { generateColors } from 'utils/colors';
-import MasterCheck from 'components/MasterCheck';
-import { CourseContainer } from 'components/CoursesWithMaster';
+import { useEffect, useMemo, useState } from 'react';
+import { getMasterStats, MasterStatsBody } from 'api/master';
 import { useStudyplanContext } from 'hooks/CourseContext';
-import { TwoColumnGrid } from 'components/Layout/Grid';
+import { Filters } from 'interfaces/Types';
+import { generateColors } from 'utils/colors';
+
+import { CourseContainer } from 'components/CoursesWithMaster';
+import { TwoColumnGrid } from 'components/Layout/style';
+import MasterCheck from 'components/MasterCheck';
 
 interface CreditsTableProps {
   masters: API.Master[];
-  stats: API.MasterStatus[];
+  filters: Filters;
 }
 
-function CreditsTable({ masters, stats }: CreditsTableProps) {
+function CreditsTable({ masters, filters }: CreditsTableProps) {
   const { courses, customCourses } = useStudyplanContext();
-  const selectedCourses = [...courses[4], ...courses[5], ...customCourses[4], ...customCourses[5]];
+
+  const [stats, setStats] = useState<API.MasterStatus[]>([]);
+
+  const selectedCourses = useMemo(
+    () => [...courses[4], ...courses[5], ...customCourses[4], ...customCourses[5]],
+    [courses, customCourses]
+  );
+
+  useEffect(() => {
+    const signal = new AbortController();
+
+    if (selectedCourses.length > 0) {
+      const courseCodes = selectedCourses.map(course => course.courseCode);
+      const body: MasterStatsBody = {
+        selectedCourses: courseCodes,
+        ...filters
+      };
+      getMasterStats(body, signal).then(setStats);
+    } else {
+      setStats([]);
+    }
+  }, [selectedCourses]);
 
   /**
    * Generate a color for each master and memoize it

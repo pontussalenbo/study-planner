@@ -9,26 +9,21 @@
  */
 
 import { useState } from 'react';
-import IconButton from 'components/Button/Button';
-import QMark from 'components/Icons/Qmark';
+
+import { ContainedButton } from 'components/Button/Buttons';
 import AddCourseModal from 'components/Modal/AddCourseModal';
 
-function AddCourse() {
+function AddMissingCourse() {
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
 
   return (
     <>
-      <IconButton
-        onClick={() => setIsModalOpen(true)}
-        variant='tertiary'
-        text
-        icon={<QMark size='0.8rem' />}
-      >
-        Missing course
-      </IconButton>
+      <ContainedButton onClick={() => setIsModalOpen(true)} variant='tertiary'>
+        Missing course?
+      </ContainedButton>
       <AddCourseModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />
     </>
   );
 }
 
-export default AddCourse;
+export default AddMissingCourse;

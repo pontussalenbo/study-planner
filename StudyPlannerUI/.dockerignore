@@ -7,6 +7,7 @@
 # the full text of the GNU General Public License.
 
 # Ignore node modules in any directory
+**/node_modules/
 **/node_modules
 
 # Ignore Git and version control files

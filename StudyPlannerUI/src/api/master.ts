@@ -20,8 +20,9 @@ export function getMasterStats(body: MasterStatsBody, signal?: AbortController) 
     return POST<API.MasterStatus[]>(Endpoints.masterCheck, body, signal);
 }
 
-type Params = string | string[][] | Record<string, string> | URLSearchParams | undefined;
-
-export function getMasters(params: Params, signal?: AbortController) {
-    return GET<API.Master[]>(Endpoints.masters, new URLSearchParams(params), signal);
+export async function getMasters(params: Filters, signal?: AbortController) {
+    if (!params.programme || !params.year) {
+        return [];
+    }
+    return GET<API.Master[]>(Endpoints.masters, new URLSearchParams({ ...params }), signal);
 }

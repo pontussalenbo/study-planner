@@ -9,19 +9,26 @@
  */
 
 import React, { useEffect, useRef, useState } from 'react';
-import IconButton, { IButtonWithIconProps } from 'components/Button/Button';
-import SaveIcon from 'components/Icons/Save';
 import styled from 'styled-components';
+
+import { ContainedButton } from './Buttons';
+
 const OFFSET = 10;
 
-const StyledButton = styled(IconButton)<{ sticky: boolean; navHeight: number }>`
+interface IButtonWithIconProps {
+  children: React.ReactNode;
+  variant: 'primary' | 'secondary' | 'tertiary' | 'error';
+  disabled?: boolean;
+  onClick: () => void;
+}
+
+const StyledButton = styled(ContainedButton)<{ sticky: boolean; navHeight?: number }>`
   z-index: 2;
   position: ${({ sticky }) => (sticky ? 'fixed' : 'relative')};
   top: ${({ sticky, navHeight }) => (sticky ? `${navHeight}px` : '0')};
-  cursor: pointer;
 `;
 
-const StickyButton: React.FC<IButtonWithIconProps> = ({ children, onClick, ...rest }) => {
+const StickyButton: React.FC<IButtonWithIconProps> = ({ children, onClick, variant, ...rest }) => {
   const [sticky, setSticky] = useState(false);
   const stickyRef = useRef(sticky); // useRef to store the current sticky state
   const stickyStylesRef = useRef({}); // useRef to store the current sticky styles
@@ -81,13 +88,12 @@ const StickyButton: React.FC<IButtonWithIconProps> = ({ children, onClick, ...re
   return (
     <StyledButton
       {...rest}
+      variant={variant}
       id='save-button'
-      rref={buttonRef}
       sticky={sticky}
       navHeight={navHeight + OFFSET}
       onClick={onClick}
       style={stickyStylesRef.current}
-      icon={<SaveIcon size={'0.8rem'} />}
     >
       {children}
     </StyledButton>

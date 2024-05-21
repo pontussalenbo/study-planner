@@ -8,20 +8,23 @@
  * the full text of the GNU General Public License.
  */
 
-import { useState, useEffect, useRef, ChangeEvent, FC } from 'react';
+import { ChangeEvent, FC, useEffect, useRef, useState } from 'react';
+import { Endpoints } from 'api/constants';
+import { useStudyplanContext } from 'hooks/CourseContext';
+import { Filters } from 'interfaces/Types';
+
+import { ContainedButton } from 'components/Button/Buttons';
+import { FormInput } from 'components/Form';
+import { FormContainer, FormRow } from 'components/Form/styles';
 import Modal from 'components/Modal';
 import { Heading2 } from 'components/Typography/Heading2';
 import { Paragraph } from 'components/Typography/Paragraph';
-import { Filters } from 'interfaces/Types';
-import { useStudyplanContext } from 'hooks/CourseContext';
+
 import CopyButton from './CopyButton';
-import { FormContainer, FormRow } from 'components/Form/styles';
-import { FormInput } from 'components/Form';
-import { StyledButton } from 'components/Button/style';
-import { Endpoints } from 'api/constants';
 
 interface SavePlanModalProps {
   isOpen: boolean;
+  shouldCopy?: boolean;
   data: Filters;
   onClose: () => void;
 }
@@ -30,7 +33,7 @@ interface URLS {
   sId: string;
   sIdReadOnly: string;
 }
-const SavePlanModal: FC<SavePlanModalProps> = ({ data, isOpen, onClose }) => {
+const SavePlanModal: FC<SavePlanModalProps> = ({ data, isOpen, shouldCopy, onClose }) => {
   const [planName, setPlanName] = useState<string>('');
   const [submitSuccess, setSubmitSuccess] = useState(false);
   const [urls, setUrls] = useState<URLS | null>(null);
@@ -64,8 +67,7 @@ const SavePlanModal: FC<SavePlanModalProps> = ({ data, isOpen, onClose }) => {
 
   const submitData = async () => {
     try {
-      // const response = await savePlan(body);
-      const { urls: planUrls } = await savePlan(data);
+      const { urls: planUrls } = await savePlan(data, shouldCopy);
       const BASE_URL = window.location.origin + Endpoints.studyPlan;
 
       const urls = {
@@ -123,9 +125,9 @@ const SavePlanModal: FC<SavePlanModalProps> = ({ data, isOpen, onClose }) => {
                 onChange={handleInputChange}
                 required
               />
-              <StyledButton variant='primary' type='submit'>
+              <ContainedButton variant='primary' type='submit'>
                 Save plan
-              </StyledButton>
+              </ContainedButton>
             </FormRow>
           </FormContainer>
         </>
@@ -143,7 +145,7 @@ const SavePlanModal: FC<SavePlanModalProps> = ({ data, isOpen, onClose }) => {
             Share your study plan with others by sharing the read only link below.
           </Paragraph>
           <FormRow>
-            <FormInput readOnly type='text' label='Read only Link' value={urls?.sIdReadOnly} />
+            <FormInput readOnly type='text' label='Readonly Link' value={urls?.sIdReadOnly} />
             <CopyButton onClick={() => copyToClipboard(urls?.sIdReadOnly)} />
           </FormRow>
         </>

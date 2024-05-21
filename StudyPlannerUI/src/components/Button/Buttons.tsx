@@ -8,19 +8,13 @@
  * the full text of the GNU General Public License.
  */
 
-import styled from 'styled-components';
 import { CustomTheme } from 'style/Theme';
 import { Tokens } from 'style/tokens';
+import styled from 'styled-components';
 
 type Token = keyof typeof Tokens;
 type ThemeColor = keyof CustomTheme;
 export type ButtonVariant = 'primary' | 'secondary' | 'tertiary' | 'error';
-interface StyledButtonProps {
-  disabled?: boolean;
-  variant: ButtonVariant;
-  disableElevation?: boolean;
-}
-
 interface Tokens {
   light: Token;
   dark: Token;
@@ -36,6 +30,13 @@ interface Colors {
 type ButtonColors = {
   [variant in ButtonVariant]: Colors;
 };
+
+interface BaseButtonProps {
+  color?: string;
+  size?: keyof typeof buttonSizes;
+  disableElevation?: boolean;
+  variant: ButtonVariant;
+}
 
 export const variantTokens: ButtonColors = {
   primary: {
@@ -118,121 +119,93 @@ export const boxShadowActive = `
   0px 3px 14px 2px rgba(0,0,0,0.12);
 `;
 
-export const StyledButton = styled.button<StyledButtonProps>`
+const buttonSizes = {
+  small: '0.8125rem',
+  medium: '0.875rem',
+  large: '0.9375rem'
+};
+
+const paddings = {
+  small: '4px 10px',
+  medium: '6px 16px',
+  large: '8px 22px'
+};
+
+const ButtonBase = styled.button<BaseButtonProps>`
   display: inline-flex;
+  flex-shrink: 0;
   align-items: center;
   justify-content: center;
   gap: 4px;
-  border-color: ${({ theme }) => theme.onPrimaryContainer};
-  font-size: 1em;
-  padding: 8px 12px;
+  border: none;
+  font-size: ${({ size }) => buttonSizes[size || 'medium']};
+  padding: ${({ size }) => paddings[size || 'medium']};
   border-radius: 4px;
-
-  & > svg {
-    fill: ${({ theme }) => theme.onPrimaryContainer};
-    width: 1em;
-    height: 1em;
-  }
-
-  ${({ theme, variant }) => {
-    const { background, color } = variantTokens[variant];
+  font-weight: 500;
+  line-height: 1.75;
+  letter-spacing: 0.02857em;
+  min-width: 64px;
+  appearance: none;
+  -webkit-appearance: none;
+  -webkit-text-decoration: none;
+  background: none;
+  color: ${({ color }) => color || 'inherit'};
+  cursor: ${({ disabled }) => (disabled ? 'default' : 'pointer')};
+  opacity: ${({ disabled }) => (disabled ? 0.5 : 1)};
+  ${({ disableElevation }) => !disableElevation && `box-shadow: ${boxShadowDefault};`}
+  ${({ variant }) => {
+    const { hover, active } = variantTokens[variant];
     return `
-      background-color: ${theme[background]};
-      color: ${theme[color]};
+    &:hover {
+      background-color: ${Tokens[hover.dark]};
+    }
+
+    &:active {
+      scale: 0.97;
+      background-color: ${Tokens[active.dark]};
+    }
     `;
   }}
-
-  ${({ disableElevation }) => !disableElevation && `box-shadow: ${boxShadowDefault};`}
-
-  ${({ theme, disabled, disableElevation, variant }) => {
-    if (disabled) {
-      return `
-        background-color: ${theme.surfaceVariant};
-        opacity: 0.5;
-        color: ${theme.onSurfaceVariant};
-        cursor: not-allowed;
-      `;
-    }
-
-    if (!disableElevation) {
-      const { hover, active } = variantTokens[variant];
-      return `
-        &:hover {
-          background-color: ${Tokens[hover.dark]};
-          box-shadow: ${boxShadowHover};
-        }
-
-        &:active {
-          scale: 0.97;
-          background-color: ${Tokens[active.dark]};
-          box-shadow: ${boxShadowActive};
-        }
-      `;
+  ${({ disableElevation, disabled }) => {
+    if (disabled || disableElevation) {
+      return 'box-shadow: none; &:hover { box-shadow: none; }; &:active { box-shadow: none;}';
     }
   }}
+
+  background-color: ${({ color, theme, variant }) => color || getColors(variant, theme).background};
 `;
 
-export const OutlinedButton = styled.button<StyledButtonProps>`
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 4px;
-  background-color: transparent;
-  border: 1px solid; // Adjust the border width as needed
-  border-color: ${({ theme }) => theme.onPrimaryContainer};
-  font-size: 1em;
-  padding: 6px 10px; // Adjusted padding to account for the border width
-  border-radius: 4px;
-  transition: background-color 0.3s, border-color 0.3s, color 0.3s; // Smooth transitions
+export const TextButton = styled(ButtonBase);
 
-  ${({ theme, variant }) => {
-    const { color } = variantTokens[variant]; // Assuming variantTokens has color for outlined variant
-    return `
-      color: ${theme[color]};
-    `;
-  }}
-
+export const ContainedButton = styled(ButtonBase)`
   &:hover {
-    background-color: rgba(0, 0, 0, 0.05); // Slight background color on hover for better UX
+    box-shadow: ${boxShadowHover};
   }
 
   &:active {
-    background-color: rgba(0, 0, 0, 0.1); // Slightly darker background for active state
+    box-shadow: ${boxShadowActive};
   }
-
-  ${({ disabled, theme }) =>
-    disabled &&
-    `
-    color: ${theme.onSurfaceVariant};
-    border-color: ${theme.surfaceVariant};
-    cursor: not-allowed;
-    background-color: transparent;
-  `}
 `;
 
-export const IconWrapper = styled.span`
+export const OutlinedButton = styled(ButtonBase)`
+  background-color: transparent;
+  border: 1px solid ${({ theme }) => theme.outline};
+`;
+
+export const IconButton = styled.button<{
+  color?: string;
+  size?: keyof typeof buttonSizes;
+  disabled?: boolean;
+}>`
   display: inline-flex;
-  flex-direction: row;
   align-items: center;
   justify-content: center;
-  color: inherit;
-  & > svg {
-    width: 0.8em;
-    height: 0.8em;
-  }
+  border: none;
+  padding: 8px;
+  border-radius: 50%;
+  font-size: ${({ size }) => buttonSizes[size || 'medium']};
+  background: none;
+  color: ${({ color }) => color || 'inherit'};
+  cursor: ${({ disabled }) => (disabled ? 'not-allowed' : 'pointer')};
+  opacity: ${({ disabled }) => (disabled ? 0.5 : 1)};
 `;
-
-export const Text = styled.span`
-  text-wrap: nowrap;
-  @media (max-width: 520px) {
-    display: none;
-  }
-`;
-
-/*
-export const StyledStickyButton = styled(IconButton)<{ sticky: boolean; navHeight: number }>`
-  z-index: 2;
-  position: ${({ sticky }) => (sticky ? 'fixed' : 'relative')};
-  top: ${({ sticky, navHeight }) => (sticky ? `${navHeight}px` : '0')};
-`;
-*/

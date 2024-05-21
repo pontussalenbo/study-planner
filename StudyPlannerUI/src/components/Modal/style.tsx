@@ -8,8 +8,8 @@
  * the full text of the GNU General Public License.
  */
 
-import styled from 'styled-components';
 import { Tokens } from 'style/tokens';
+import styled from 'styled-components';
 
 export const ModalDialog = styled.dialog`
   background: ${Tokens.neutral20};
@@ -20,10 +20,6 @@ export const ModalDialog = styled.dialog`
   padding: 2rem;
   border: 0;
   border-radius: 0.5rem;
-  position: fixed; // Use fixed positioning to position relative to the viewport
-  top: 50%; // Start from the middle of the viewport
-  left: 50%; // Start from the middle of the viewport
-  transform: translate(-50%, -50%); // This ensures the dialog is perfectly centered
   box-shadow: hsl(0 0% 0% / 10%) 0 0 0.5rem 0.25rem;
 
   &::backdrop {
@@ -55,4 +51,13 @@ export const CloseButton = styled.button`
     }
     scale: 0.95;
   }
+`;
+export const ToastContainer = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 5px 20px;
+  border-radius: 4px;
+  border: 1px solid #000;
+  background-color ${({ theme }) => theme.primaryContainer};
 `;

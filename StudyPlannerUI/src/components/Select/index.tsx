@@ -8,7 +8,8 @@
  * the full text of the GNU General Public License.
  */
 
-import React, { useState, ReactNode, useContext, useEffect, useRef, FC } from 'react';
+import React, { FC, ReactNode, useContext, useEffect, useRef, useState } from 'react';
+
 import {
   Arrow,
   Checkbox,
@@ -30,7 +31,15 @@ interface SelectContextType<T = any> {
   multiple: boolean;
 }
 
-const SelectContext = React.createContext<SelectContextType | undefined>(undefined);
+export const SelectContext = React.createContext<SelectContextType | undefined>(undefined);
+
+export function useSelectContext() {
+  const context = useContext(SelectContext);
+  if (!context) {
+    throw new Error('useSelectContext must be used within a SelectProvider');
+  }
+  return context;
+}
 
 interface SelectedItemProps {
   label: string;
@@ -46,36 +55,48 @@ export const SelectedItem: FC<SelectedItemProps> = ({ label, onRemove }) => {
   );
 };
 
-interface OptionProps {
+interface OptionProps extends React.OptionHTMLAttributes<HTMLOptionElement> {
   value: string;
   children: ReactNode;
+  focused?: boolean;
 }
 
-export const Option: React.FC<OptionProps> = ({ value, children }) => {
-  const { selectValue, setSelectValue, multiple } = useContext(SelectContext) as SelectContextType;
+// eslint-disable-next-line react/display-name
+export const Option = React.forwardRef<HTMLLIElement, OptionProps>(
+  ({ value, children, focused }, ref) => {
+    const { selectValue, setSelectValue, multiple } = useContext(
+      SelectContext
+    ) as SelectContextType;
 
-  const handleClick = () => {
-    if (multiple) {
-      const valuesArray = selectValue as string[];
-      if (valuesArray.includes(value)) {
-        setSelectValue(valuesArray.filter(v => v !== value));
+    const handleClick = () => {
+      if (multiple) {
+        const valuesArray = selectValue as string[];
+        if (valuesArray.includes(value)) {
+          setSelectValue(valuesArray.filter(v => v !== value));
+        } else {
+          setSelectValue([...valuesArray, value]);
+        }
       } else {
-        setSelectValue([...valuesArray, value]);
+        setSelectValue(value);
       }
-    } else {
-      setSelectValue(value);
-    }
-  };
+    };
 
-  const isSelected = multiple ? (selectValue as string[]).includes(value) : selectValue === value;
+    const isSelected = multiple ? (selectValue as string[]).includes(value) : selectValue === value;
 
-  return (
-    <OptionItem data-value={value} onClick={handleClick}>
-      {multiple && <Checkbox type='checkbox' checked={isSelected} readOnly />}
-      {children}
-    </OptionItem>
-  );
-};
+    return (
+      <OptionItem
+        focused={focused}
+        ref={ref}
+        role='option'
+        data-value={value}
+        onClick={handleClick}
+      >
+        {multiple && <Checkbox type='checkbox' checked={isSelected} readOnly />}
+        {children}
+      </OptionItem>
+    );
+  }
+);
 
 interface CommonProps {
   children?: ReactNode;
@@ -88,6 +109,7 @@ interface CommonProps {
 type Value = string | number | readonly string[] | readonly number[] | undefined;
 
 type SelectProps<T extends boolean, S extends Value> = CommonProps & {
+  options: { value: string; label: string }[];
   multiple?: T;
   value: S;
   defaultValue?: S;
@@ -95,9 +117,8 @@ type SelectProps<T extends boolean, S extends Value> = CommonProps & {
 };
 
 export const Select = <T extends boolean, S extends Value>({
-  children,
+  options,
   multiple,
-  pills = false,
   placeholder,
   value,
   label,
@@ -105,7 +126,10 @@ export const Select = <T extends boolean, S extends Value>({
   onChange
 }: SelectProps<T, S>) => {
   const [isOpen, setIsOpen] = useState(false);
+  const [focused, setFocused] = useState(false);
   const selectRef = useRef<HTMLDivElement | null>(null);
+  const [focusedOptionIndex, setFocusedOptionIndex] = useState(-1);
+  const optionsRef = useRef<(HTMLLIElement | null)[]>([]);
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -131,6 +155,33 @@ export const Select = <T extends boolean, S extends Value>({
     }
   };
 
+  const handleKeyDown = (event: React.KeyboardEvent<HTMLDivElement>) => {
+    if (event.key === 'ArrowDown' || event.key === 'ArrowUp') {
+      event.preventDefault();
+
+      if (!isOpen) {
+        setIsOpen(true);
+      } else {
+        const direction = event.key === 'ArrowDown' ? 1 : -1;
+        const nextIndex = (focusedOptionIndex + direction + options.length) % options.length;
+        setFocusedOptionIndex(nextIndex);
+        optionsRef.current[nextIndex]?.scrollIntoView({ block: 'nearest' });
+      }
+    } else if (event.key === 'Enter') {
+      event.preventDefault();
+      if (!isOpen) {
+        setIsOpen(true);
+      }
+      if (isOpen && optionsRef.current[focusedOptionIndex]) {
+        optionsRef.current[focusedOptionIndex]?.click();
+        setIsOpen(false);
+      }
+    }
+    if (event.key === 'Escape') {
+      setIsOpen(false);
+    }
+  };
+
   const selectedValues = Array.isArray(value) ? value.join(', ') : value;
   const hasValue = Array.isArray(value) ? value.length > 0 : value !== '';
 
@@ -139,27 +190,42 @@ export const Select = <T extends boolean, S extends Value>({
       disabled={!enabled}
       isOpen={isOpen}
       ref={selectRef}
+      aria-haspopup='listbox'
+      onKeyDown={handleKeyDown}
       onClick={handleContainerClick}
+      onFocus={() => setFocused(true)}
+      onBlur={() => setFocused(false)}
+      role='combobox'
+      aria-expanded={isOpen}
+      aria-labelledby={label}
+      tabIndex={0}
     >
-      <SelectLabel isOpen={isOpen}>{selectedValues || placeholder || label}</SelectLabel>
-      {Array.isArray(value) && pills && (
-        <div>
-          {value.map(item => (
-            // TODO: implement onRemove
-            // eslint-disable-next-line @typescript-eslint/no-empty-function
-            <SelectedItem key={item} label={item.toString()} onRemove={() => {}} />
-          ))}
-        </div>
-      )}
+      <SelectLabel id={label} isOpen={isOpen}>
+        {selectedValues || placeholder || label}
+      </SelectLabel>
       <Arrow isOpen={isOpen}>&#x25BC;</Arrow>
-      <DropdownList data-visible={isOpen} onClick={handleDropdownClick}>
+      <DropdownList
+        role='listbox'
+        tabIndex={-1}
+        data-visible={isOpen}
+        onClick={handleDropdownClick}
+      >
         <SelectContext.Provider
-          value={{ selectValue: value, setSelectValue: onChange, multiple: multiple || false }}
+          value={{ selectValue: value, setSelectValue: onChange, multiple: !!multiple }}
         >
-          {children}
+          {options?.map((option, index) => (
+            <Option
+              key={option.label}
+              ref={el => (optionsRef.current[index] = el)}
+              value={option.value?.toString() || option.label}
+              focused={focusedOptionIndex === index}
+            >
+              {option.label}
+            </Option>
+          ))}
         </SelectContext.Provider>
       </DropdownList>
-      <StyledFieldset isOpen={isOpen}>
+      <StyledFieldset focused={focused} isOpen={isOpen}>
         <StyledLegend hasValue={hasValue || isOpen}>
           <LegendContent>{label}</LegendContent>
         </StyledLegend>

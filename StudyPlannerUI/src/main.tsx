@@ -10,17 +10,54 @@
 
 import React from 'react';
 import ReactDOM from 'react-dom/client';
-import App from './App';
-import whyDidYouRender from '@welldone-software/why-did-you-render';
-import './index.css';
+import {
+  createRoutesFromChildren,
+  matchRoutes,
+  useLocation,
+  useNavigationType
+} from 'react-router-dom';
+import * as Sentry from '@sentry/react';
+import GlobalStyles from 'style/GlobalStyles';
+import { customDarkTheme } from 'style/Theme';
+import { ThemeProvider } from 'styled-components';
 
-/*
-if (process.env.NODE_ENV === 'development') {
-  whyDidYouRender(React, { include: [/^CoursesFilter$/] });
-}
-*/
+import App from './App';
+
+Sentry.init({
+  dsn: 'https://cf13be415fb5e099be06b3bad8a57c24@o389741.ingest.sentry.io/4506649314525184',
+  integrations: [
+    new Sentry.BrowserTracing({
+      // See docs for support of different versions of variation of react router
+      // https://docs.sentry.io/platforms/javascript/guides/react/configuration/integrations/react-router/
+      routingInstrumentation: Sentry.reactRouterV6Instrumentation(
+        React.useEffect,
+        useLocation,
+        useNavigationType,
+        createRoutesFromChildren,
+        matchRoutes
+      )
+    }),
+    Sentry.replayIntegration()
+  ],
+
+  // Set tracesSampleRate to 1.0 to capture 100%
+  // of transactions for performance monitoring.
+  tracesSampleRate: 1.0,
+
+  // Set `tracePropagationTargets` to control for which URLs distributed tracing should be enabled
+  tracePropagationTargets: ['localhost', /^https:\/\/yourserver\.io\/api/],
+
+  // Capture Replay for 10% of all sessions,
+  // plus for 100% of sessions with an error
+  replaysSessionSampleRate: 0.1,
+  replaysOnErrorSampleRate: 1.0
+});
+
 ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
   <React.StrictMode>
-    <App />
+    <ThemeProvider theme={customDarkTheme}>
+      <GlobalStyles />
+      <App />
+    </ThemeProvider>
   </React.StrictMode>
 );
