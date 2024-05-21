@@ -14,7 +14,7 @@
 
 <h1 align="center">Study Planner</h1>
 
-[!["Buy Me A Coffee"](https://www.buymeacoffee.com/assets/img/custom_images/orange_img.png)](https://www.buymeacoffee.com/studyplannerLTH)
+We regret to inform you that this project has been deprecated due to insufficient time for its proper development and maintenance. Our primary focus has shifted towards our academic responsibilities and graduating, which has consumed the majority of our time and efforts. We highly recommend using the excellent app available at studyplan.se, created by fellow students who share a passion for web development. Their dedication and expertise have resulted in a robust and effective tool for study planning :)
 
 ## About
 >
